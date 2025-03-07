@@ -426,9 +426,6 @@ class Association(db.Model):
 
     #Liste des publications de l'association à afficher la page de l'association et sur le fil d'actualité, il s'agit d'une liste de dictionnaires
     publications = db.Column(db.JSON, nullable=True)
-    
-    #Liste des événements de l'association à afficher sur le calendrier
-    evenements = db.Column(db.JSON, nullable=True)
 
     type_association = db.Column(db.String(1000), nullable=True)
 
@@ -442,7 +439,6 @@ class Association(db.Model):
         self.description = description
         self.membres = {}
         self.publications = []
-        self.evenements = []
         self.type_association = type_association
 
     def __repr__(self):
@@ -485,14 +481,7 @@ class Association(db.Model):
             date est la date de publication, liste_images est la liste des images de la 
             publication, likes est la liste des id des utilisateurs ayant liké la publication, 
             commentaires est la liste des commentaires de la publication.
-        - evenements : liste des évènements à venir de l'association au format :
-            [{nom : nom_evenement, 
-              date : AAAAMMJJHHMM, 
-              lieu : lieu_evenement, 
-              description : description_evenement, 
-            nom est le nom de l'évènement, date est la date de l'évènement, 
-            lieu est le lieu de l'évènement, description est la description de l'évènement, 
-            liste_images est la liste des images de l'évènement.
+       
         - type_association : str
             Type de l'association, doit etre un des types suivants :
             {'loi 1901','club BDE','club BDS','club BDA','autre'}
@@ -553,32 +542,7 @@ class Association(db.Model):
         """
         del self.publications[index]['commentaires'][index_comment]
     
-    def add_event(self, nom:str, date:str, lieu:str, description:str, liste_images:list) :
-        """
-        Ajoute un évènement à l'association
-        """
-        self.evenements.append({'nom': nom, 'date': date, 'lieu': lieu, 'description': description, 'liste_images': liste_images})
     
-    def remove_event(self, index:int) :
-        """
-        Retire un évènement de l'association
-        """
-        del self.evenements[index]
-    
-    def update_event(self, index:int, nom:str=None, date:str=None, lieu:str=None, description:str=None, liste_images:list=None) :
-        """
-        Modifie un évènement de l'association
-        """
-        if nom != None :
-            self.evenements[index]['nom'] = nom
-        if date != None :
-            self.evenements[index]['date'] = date
-        if lieu != None :
-            self.evenements[index]['lieu'] = lieu
-        if description != None :
-            self.evenements[index]['description'] = description
-        if liste_images != None :
-            self.evenements[index]['liste_images'] = liste_images
             
 
 
