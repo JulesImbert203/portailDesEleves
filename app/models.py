@@ -412,5 +412,174 @@ class Utilisateur(db.Model, UserMixin) :
 
         # reste a implementer la partie modif de mdp
 
+class Association(db.Model):
+    __tablename__ = 'associations'
+    #ID de l'association
+    id = db.Column(db.Integer, primary_key=True)
+
+    #Éléments ajoutés à la création de l'association — Modifiables par les membres de l'association
+    nom = db.Column(db.String(1000), nullable=True)
+    description = db.Column(db.String(1000), nullable=True)
+
+    #Liste des membres de l'association
+    membres = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
+
+    #Liste des publications de l'association à afficher la page de l'association et sur le fil d'actualité, il s'agit d'une liste de dictionnaires
+    publications = db.Column(db.JSON, nullable=True)
+    
+    #Liste des événements de l'association à afficher sur le calendrier
+    evenements = db.Column(db.JSON, nullable=True)
+
+    type_association = db.Column(db.String(1000), nullable=True)
+
+    ordre_importance = db.Column(db.Integer, nullable=True)
+
+    def __init__(self, nom:str, description:str,type_association:str) :
+        """
+        Crée une nouvelle association
+        """
+        self.nom = nom
+        self.description = description
+        self.membres = {}
+        self.publications = []
+        self.evenements = []
+        self.type_association = type_association
+
+    def __repr__(self):
+        """
+        Methode optionnelle, mais utile pour deboguer et afficher l'association.
+        """
+        return f"<Association {self.nom}>"
+    
+    def update(self, 
+               nom:str=None,
+               description:str=None) :
+        """
+        Modifie les valeurs d'une association, puis met a jour la base de donnee.
+
+        Les formats a respecter sont listes si apres. Cette doumentation fait autorite
+        quant au format que doit avoir la class association
+
+        /!\ Sauf exceptions la table association n'est pas vouee a etre modifiee a la main.
+        Cette fonction sera utilisee au sein de fonctions bien precises.
+
+        ----------------------
+        - nom : str
+            Nom de l'association, peut contenir des accents et des caracteres speciaux.
+        - description : str
+            Description de l'association, peut contenir des accents et des caracteres speciaux 
+            ainsi que des sauts de ligne et des informations de mise en page HTML.
+        - membres : dict
+            Liste des membres de l'association au format {id_utilisateur : role}.
+            role est une chaine de caracteres, peut contenir des accents et des caracteres speciaux.
+            exemple : { 1 : "Trez, VP fraude fiscale" }
+        - publications : liste de dictionnaires
+            Liste des publications de l'association au format :
+              [{auteur : id_utilisateur, 
+                contenu : texte, 
+                date : AAAAMMJJHHMM, 
+                liste_images :[image1, image2, ...]}, 
+                likes : [id_utilisateur1, id_utilisateur2, ...], 
+                commentaires : [{auteur : id_utilisateur, contenu : texte, date : AAAAMMJJHHMM}, ...]}]
+            auteur est l'id de l'utilisateur, contenu est le texte de la publication, 
+            date est la date de publication, liste_images est la liste des images de la 
+            publication, likes est la liste des id des utilisateurs ayant liké la publication, 
+            commentaires est la liste des commentaires de la publication.
+        - evenements : liste des évènements à venir de l'association au format :
+            [{nom : nom_evenement, 
+              date : AAAAMMJJHHMM, 
+              lieu : lieu_evenement, 
+              description : description_evenement, 
+            nom est le nom de l'évènement, date est la date de l'évènement, 
+            lieu est le lieu de l'évènement, description est la description de l'évènement, 
+            liste_images est la liste des images de l'évènement.
+        - type_association : str
+            Type de l'association, doit etre un des types suivants :
+            {'loi 1901','club BDE','club BDS','club BDA','autre'}
+        - ordre_importance : int
+            Ordre d'importance de l'association, doit etre un entier positif (vaut par défaut l'id de l'association)
+        """
+
+        if nom != None :
+            self.nom = nom
+        if description != None :
+            self.description = description
+    
+    def add_member(self, id_utilisateur:int, role:str) :
+        """
+        Ajoute un membre à l'association
+        """
+        self.membres[id_utilisateur] = role
+
+    def remove_member(self, id_utilisateur:int) :
+        """
+        Retire un membre de l'association
+        """
+        del self.membres[id_utilisateur]
+
+    def add_publication(self, auteur:int, contenu:str, date:str, liste_images:list) :
+        """
+        Ajoute une publication à l'association
+        """
+        self.publications.append({'auteur': auteur, 'contenu': contenu, 'date': date, 'liste_images': liste_images, 'likes': [], 'commentaires': []})
+    
+    def remove_publication(self, index:int) :
+        """
+        Retire une publication de l'association
+        """
+        del self.publications[index]
+    
+    def add_like(self, index:int, id_utilisateur:int) :
+        """
+        Ajoute un like à une publication
+        """
+        self.publications[index]['likes'].append(id_utilisateur)
+    
+    def remove_like(self, index:int, id_utilisateur:int) :
+        """
+        Retire un like d'une publication
+        """
+        self.publications[index]['likes'].remove(id_utilisateur)
+    
+    def add_comment(self, index:int, auteur:int, contenu:str, date:str) :
+        """
+        Ajoute un commentaire à une publication
+        """
+        self.publications[index]['commentaires'].append({'auteur': auteur, 'contenu': contenu, 'date': date})
+    
+    def remove_comment(self, index:int, index_comment:int) :
+        """
+        Retire un commentaire d'une publication
+        """
+        del self.publications[index]['commentaires'][index_comment]
+    
+    def add_event(self, nom:str, date:str, lieu:str, description:str, liste_images:list) :
+        """
+        Ajoute un évènement à l'association
+        """
+        self.evenements.append({'nom': nom, 'date': date, 'lieu': lieu, 'description': description, 'liste_images': liste_images})
+    
+    def remove_event(self, index:int) :
+        """
+        Retire un évènement de l'association
+        """
+        del self.evenements[index]
+    
+    def update_event(self, index:int, nom:str=None, date:str=None, lieu:str=None, description:str=None, liste_images:list=None) :
+        """
+        Modifie un évènement de l'association
+        """
+        if nom != None :
+            self.evenements[index]['nom'] = nom
+        if date != None :
+            self.evenements[index]['date'] = date
+        if lieu != None :
+            self.evenements[index]['lieu'] = lieu
+        if description != None :
+            self.evenements[index]['description'] = description
+        if liste_images != None :
+            self.evenements[index]['liste_images'] = liste_images
+            
+
 
 
