@@ -172,36 +172,7 @@ class Utilisateur(db.Model, UserMixin) :
         """
         return f"<Utilisateur {self.nom_utilisateur}>"
     
-    def update(self, 
-               nom_utilisateur:str=None,
-               prenom:str=None,
-               nom_de_famille:str=None,
-               promotion:int=None,
-               email:str=None,
-               cycle:str=None,
-               est_nouveau_a_la_mine:bool=None,
-               est_visible:bool=None,
-               est_vp_sondaj:bool=None,
-               mot_de_passe_non_hache:str=None,
-               date_de_naissance:str=None,
-               surnom:str=None,
-               ville_origine:str=None,
-               telephone:str=None,
-               chambre:str=None,
-               sports:str=None,
-               instruments:str=None,
-               marrain_id:int=None,
-               marrain_nom:str=None,
-               fillots_dict:dict=None,
-               co_id:int=None,
-               co_nom:str=None,
-               questions_reponses_du_portail:dict=None,
-               assos_actuelles:dict=None,
-               anciennes_assos:dict=None,
-               vote_sondaj_du_jour:int=None,
-               nombre_participations_sondaj:int=None,
-               nombre_victoires_sondaj:int=None,
-               meilleur_score_2048:int=None) :
+    def update(self, **kwargs) :
         """
         Modifie les valeurs d'un utilisateur, puis met a jour la base de donnee.
         Dans le cas du mdp, hash la chaine de caracteres donnee avant de l'enregistrer
@@ -211,7 +182,8 @@ class Utilisateur(db.Model, UserMixin) :
 
         /!\ Sauf exceptions la table utilisateur n'est pas vouee a etre modifiee a la main. 
         Cette fonction sera utilisee au sein de fonctions bien precises. 
-        
+
+        Les valeurs de la class qui ont "nullable=True" peuvent etre mise a None. 
         ----------------------
 
         - nom_utilisateur : str
@@ -287,127 +259,146 @@ class Utilisateur(db.Model, UserMixin) :
             Sera incremente a minuit pour chaque utlisateur en fonction du vote qui a gagne.
         meilleur_score_2048 : int
             Sera update a chaque partie ou le reccord est battu.
+        mot_de_passe : str
+            Est hache puis modifie
         """
-        if nom_utilisateur != None :
-            if verifier_chaine_nom_utilisateur(nom_utilisateur) :
-                self.nom_utilisateur = nom_utilisateur
+        for key, value in kwargs.items():
+            if key == "nom_utilisateur" :
+                if value != None and verifier_chaine_nom_utilisateur(value):
+                    self.nom_utilisateur = value
+                else :
+                    raise ValueError(f"Non modifie. Le nom d'utilisateur '{value}' est invalide.")
+            elif key == "prenom" :
+                if value != None and verifier_chaine_prenom_nom(value) :
+                    self.prenom = value
+                else :
+                    raise ValueError(f"Non modifie. Le prenom '{value}' est invalide.")
+            elif key == "nom_de_famille" :
+                if value != None and verifier_chaine_prenom_nom(value) :
+                    self.nom_de_famille = value
+                else :
+                    raise ValueError(f"Non modifie. Le nom de famille '{value}' est invalide.")
+            elif key == "promotion" : 
+                self.promotion = value # None pour la DE
+            
+            elif key == "email" :
+                if value != None and verifier_chaine_mail(value) :
+                    self.email = value
+                else :
+                    raise ValueError(f"Non modifie. Le mail '{value}' est invalide.")
+            elif key=="cycle" :
+                if value in {'ic', 'ast', 'vs', 'isup', 'ev', 'de'} :
+                    self.cycle = value
+                else :
+                    raise ValueError(f"Non modifie. '{value}' doit etre 'ic', 'ast', 'vs', 'isup', 'ev' ou 'de'")
+            elif key=="est_nouveau_a_la_mine" :
+                if isinstance(value, bool) :
+                    self.est_nouveau_a_la_mine = value
+                else :
+                    raise ValueError(f"Non modifie. est_nouveau_a_la_mine doit etre un booleen")
+            elif key=="est_visible" :
+                if isinstance(value, bool) :
+                    self.est_visible = value
+                else :
+                    raise ValueError(f"Non modifie. est_nouveau_a_la_mine doit etre un booleen")
+            elif key=="est_vp_sondaj" :
+                if isinstance(value, bool) :
+                    self.est_vp_sondaj = value
+                else :
+                    raise ValueError(f"Non modifie. est_nouveau_a_la_mine doit etre un booleen")
+            elif key=="date_de_naissance" :
+                if value==None or valider_chaine_date_naissance(value) :
+                    self.date_de_naissance = value
+                else :
+                    raise ValueError(f"Non modifie. date_de_naissance doit etre au format 'AAAAMMJJ'. Date donnee : {value}")
+            elif key=="surnom" :
+                if value==None or valider_chaine_surnom(value) :
+                    self.surnom = value
+                else :
+                    raise ValueError(f"Non modifie. Le surnom '{value}' est invalide.")
+            elif key=="ville_origine" :
+                if value==None or verifier_chaine_prenom_nom(value) :
+                    self.ville_origine = value
+                else :
+                    raise ValueError(f"Non modifie. La ville '{value}' est invalide.")
+            elif key=="telephone" :
+                if value==None or valider_chaine_telephone(value) :
+                    self.telephone = value
+                else :
+                    raise ValueError(f"Non modifie. Le format du numero '{value}' n'est pas reconnu.")
+            elif key=="chambre" :
+                if value==None or valider_chaines_de_base(value) :
+                    self.chambre = value
+                else :
+                    raise ValueError(f"Non modifie. Caracteres interdits dans '{value}'.")
+            elif key=="sports" :
+                if value==None or valider_chaines_de_base(value) :
+                    self.sports = value
+                else :
+                    raise ValueError(f"Non modifie. Caracteres interdits dans '{value}'.")
+            elif key=="instruments" :
+                if value==None or valider_chaines_de_base(value) :
+                    self.instruments = value
+                else :
+                    raise ValueError(f"Non modifie. Caracteres interdits dans '{value}'.")
+            elif key=="fillots_dict" :
+                if value==None or valider_dict_fillots(value) :
+                    self.fillots_dict = value
+            elif key=="marrain_id" :
+                if value==None or isinstance(value, int) :
+                    self.marrain_id = value
+                else :
+                    raise ValueError(f"Non modifie. marrain_id doit etre un int")
+            elif key=="co_id" :
+                if value==None or isinstance(value, int) :
+                    self.co_id = value
+                else :
+                    raise ValueError(f"Non modifie. co_id doit etre un int")
+            elif key=="marrain_nom" :
+                if value==None or verifier_chaine_prenom_nom(value) :
+                    self.marrain_nom = value
+                else :
+                    raise ValueError(f"Non modifie. {value} ne respecte pas le format de nom.")
+            elif key=="co_nom" :
+                if value==None or verifier_chaine_prenom_nom(value) :
+                    self.co_nom = value
+                else :
+                    raise ValueError(f"Non modifie. {value} ne respecte pas le format de nom.")
+            elif key=="questions_reponses_du_portail" :
+                if value == None or valider_questions_du_portail(value) :
+                    self.questions_reponses_du_portail = value
+            elif key=="assos_actuelles" :
+                if value==None or valider_assos_roles(value):
+                    self.assos_actuelles = value
+                else :
+                    raise ValueError("Erreur du format des donnees pour assos_actuelles. Le format a respecter est :\n \
+                                    { 101 : \"Trez, VP fraude fiscale\"}") 
+            elif key=="anciennes_assos" :
+                if value==None or valider_anciennes_assos(value):
+                    self.anciennes_assos = value
+                else :
+                    raise ValueError("Erreur du format des donnees pour anciennes_assos. Le format a respecter est :\n \
+                                    {id_asso1 : [promo_du_mandat, roles], id_asso2 : [promo_du_mandat, roles], ...}\n \
+                                    Exemple : {101 : [23, \"Trez\"], 54 : [23, \"Sec Gen, vp vert\"]}")
+            elif key=="vote_sondaj_du_jour" :
+                if value==None or value in {1,2,3,4} :
+                    self.vote_sondaj_du_jour = value
+                else :
+                    raise ValueError("Le vote au sondage du jour doit etre 1, 2, 3 ou 4")
+            elif key=="nombre_participations_sondaj" :
+                if value != None :
+                    self.nombre_participations_sondaj = value
+            elif key=="nombre_victoires_sondaj" :
+                if value != None :
+                    self.nombre_victoires_sondaj = value
+            elif key=="meilleur_score_2048" :
+                if value != None :
+                    self.meilleur_score_2048 = value
+            elif key=="mot_de_passe_non_hache" : 
+                if value != None :
+                    self.mot_de_passe = generate_password_hash(value)
             else :
-                raise ValueError(f"Non modifie. Le nom d'utilisateur '{nom_utilisateur}' est invalide.")
-        if prenom != None :
-            if verifier_chaine_prenom_nom(prenom) :
-                self.prenom = prenom
-            else :
-                raise ValueError(f"Non modifie. Le prenom '{prenom}' est invalide.")
-        if nom_de_famille != None :
-            if verifier_chaine_prenom_nom(nom_de_famille) :
-                self.nom_de_famille = nom_de_famille
-            else :
-                raise ValueError(f"Non modifie. Le nom de famille '{nom_de_famille}' est invalide.")
-        if promotion == None : # la DE
-            self.promotion = promotion
-        elif promotion >= 0 :
-            self.promotion = promotion
-        else :
-            raise ValueError(f"Non modifie. La promotion entree ({promotion}) est invalide")
-        if email != None :
-            if verifier_chaine_mail(email) :
-                self.email = email
-            else :
-                raise ValueError(f"Non modifie. Le mail '{email}' est invalide.")
-        if cycle != None :
-            if cycle in {'ic', 'ast', 'vs', 'isup', 'ev', 'de'} :
-                self.cycle = cycle
-            else :
-                raise ValueError(f"Non modifie. '{cycle}' doit etre 'ic', 'ast', 'vs', 'isup', 'ev' ou 'de'")
-        if est_nouveau_a_la_mine != None :
-            self.est_nouveau_a_la_mine = est_nouveau_a_la_mine
-        if est_visible != None :
-            self.est_visible = est_visible
-        if est_vp_sondaj != None :
-            self.est_vp_sondaj = est_vp_sondaj
-        if date_de_naissance != None :
-            if valider_chaine_date_naissance(date_de_naissance) :
-                self.date_de_naissance = date_de_naissance
-            else :
-                raise ValueError(f"Non modifie. date_de_naissance doit etre au format 'AAAAMMJJ'. Date donnee : {date_de_naissance}")
-        if surnom != None :
-            if valider_chaine_surnom(surnom) :
-                self.surnom = surnom
-            else :
-                raise ValueError(f"Non modifie. Le surnom '{surnom}' est invalide.")
-        if ville_origine != None :
-            if verifier_chaine_prenom_nom(ville_origine) :
-                self.ville_origine = ville_origine
-            else :
-                raise ValueError(f"Non modifie. La ville '{ville_origine}' est invalide.")
-        if telephone != None :
-            if valider_chaine_telephone(telephone) :
-                self.telephone = telephone
-            else :
-                raise ValueError(f"Non modifie. Le format du numero '{telephone}' n'est pas reconnu.")
-        if chambre != None :
-            if valider_chaines_de_base(chambre) :
-                self.chambre = chambre
-            else :
-                raise ValueError(f"Non modifie. Caracteres interdits dans '{chambre}'.")
-        if sports != None :
-            if valider_chaines_de_base(sports) :
-                self.sports = sports
-            else :
-                raise ValueError(f"Non modifie. Caracteres interdits dans '{sports}'.")
-        if instruments != None :
-            if valider_chaines_de_base(instruments) :
-                self.instruments = instruments
-            else :
-                raise ValueError(f"Non modifie. Caracteres interdits dans '{instruments}'.")
-        if fillots_dict != None :
-            if valider_dict_fillots(fillots_dict) :
-                self.fillots_dict = fillots_dict
-        if marrain_id != None :
-            self.marrain_id = marrain_id
-        if co_id != None :
-            self.co_id = co_id
-        if marrain_nom != None :
-            if verifier_chaine_prenom_nom(marrain_nom) :
-                self.marrain_nom = marrain_nom
-            else :
-                raise ValueError(f"Non modifie. {marrain_nom} ne respecte pas le format de nom.")
-        if co_nom != None :
-            if verifier_chaine_prenom_nom(co_nom) :
-                self.co_nom = co_nom
-            else :
-                raise ValueError(f"Non modifie. {co_nom} ne respecte pas le format de nom.")
-        
-        if questions_reponses_du_portail != None :
-            if valider_questions_du_portail(questions_reponses_du_portail) :
-                self.questions_reponses_du_portail = questions_reponses_du_portail
-
-        if assos_actuelles != None :
-            if valider_assos_roles(assos_actuelles):
-                self.assos_actuelles = assos_actuelles
-            else :
-                raise ValueError("Erreur du format des donnees pour assos_actuelles. Le format a respecter est :\n \
-                                 { 101 : \"Trez, VP fraude fiscale\"}") 
-        if anciennes_assos != None :
-            if valider_anciennes_assos(anciennes_assos):
-                self.anciennes_assos = anciennes_assos
-            else :
-                raise ValueError("Erreur du format des donnees pour anciennes_assos. Le format a respecter est :\n \
-                                 {id_asso1 : [promo_du_mandat, roles], id_asso2 : [promo_du_mandat, roles], ...}\n \
-                                 Exemple : {101 : [23, \"Trez\"], 54 : [23, \"Sec Gen, vp vert\"]}")
-
-        if vote_sondaj_du_jour != None :
-            if vote_sondaj_du_jour in {1,2,3,4} :
-                self.vote_sondaj_du_jour = vote_sondaj_du_jour
-            else :
-                raise ValueError("Le vote au sondage du jour doit etre 1, 2, 3 ou 4")
-
-        if nombre_participations_sondaj != None :
-            self.nombre_participations_sondaj = nombre_participations_sondaj
-        if nombre_victoires_sondaj != None :
-            self.nombre_victoires_sondaj = nombre_victoires_sondaj
-        if meilleur_score_2048 != None :
-            self.meilleur_score_2048 = meilleur_score_2048
+                raise KeyError("L'attribut {key} n'existe pas.")
 
         # reste a implementer la partie modif de mdp
         # pas de db.session.commit() ici

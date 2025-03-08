@@ -107,7 +107,6 @@ def supprimer_fillots(marrain:Utilisateur) :
     if marrain.fillots_dict != None :
         for fillot_id in marrain.fillots_dict:
             fillot = Utilisateur.query.get(fillot_id)
-            print(f"fillot a supprimer : {fillot.nom_utilisateur}")
             if fillot :
                 if fillot.marrain_id == marrain.id :
                     fillot.update(marrain_id=None, marrain_nom=None)
