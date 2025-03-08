@@ -26,6 +26,7 @@ def test_creer_utilisateur():
             #
             #
 
+            # marrain 
             def print_marrain_fillot(utilisateur):
                 marrain_nom = "pas de marrain"
                 if utilisateur.marrain_nom :
@@ -56,7 +57,29 @@ def test_creer_utilisateur():
             print_marrain_fillot(jules)
             print_marrain_fillot(achille)
 
+            # co
+            def print_co(utilisateur):
+                co_nom = "pas de co"
+                if utilisateur.co_id :
+                    co_nom = f"({utilisateur.co_id}){utilisateur.co_nom}"
+                print(f"({utilisateur.id}) {utilisateur.prenom} {utilisateur.nom_de_famille} - co : {co_nom}")
+                
+            print_co(jules)
+            print_co(louise)
+            print_co(achille)
 
+            creer_co(achille, jules)
+
+            print_co(jules)
+            print_co(louise)
+            print_co(achille)
+
+            creer_co(achille, louise)
+
+            print_co(jules)
+            print_co(louise)
+            print_co(achille)
+            
             #
             #
             ###########

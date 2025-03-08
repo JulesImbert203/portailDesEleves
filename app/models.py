@@ -225,41 +225,42 @@ class Utilisateur(db.Model, UserMixin) :
         instruments : str
             Du texte, avec accents et caracteres speciaux autorises mais pas emojis. 
         
-        # Pour marrains, fillots et co, aucune correspondance n'est geree par cette fonction. 
+        ### Pour marrains, fillots et co, aucune correspondance n'est geree par cette fonction. 
         Cette fonctionnalite ne doit pas etre utilisee, sauf dans un cas bien precis. 
-        marrain_id : int
+
+        - marrain_id : int
             L'id du marrain dans la table des utilisateurs
-        marrain_nom : str
+        - marrain_nom : str
             le nom du marrain au format "Prenom Nom". Aucune verification sur la correspondance id-nom n'est effectuee
-        fillots_dict : Le dictionnaire des fillots : {id : prenom nom}
+        - fillots_dict : Le dictionnaire des fillots : {id : prenom nom}
             les noms des fillots au format "Prenom Nom". Aucune verification sur la correspondance id-nom n'est effectuee        
-        co_id : int 
+        - co_id : int 
             L'id du co. None pour les PAMs
-        co_nom : str
+        - co_nom : str
             Meme format que les autres noms
 
-        questions_reponses_du_portail : dict
+        - questions_reponses_du_portail : dict
             Les questions et les reponses au format {question1 : reponse1, question2 : reponse2, ...}
             Le dictionnaire contient du texte, pas d'emojis ou de caracteres speciaux. 
         
         /!\ Ne doivent pas etre utilise hors d'une fonction qui verifie la validite des id
 
-        assos_actuelles : dict
+        - assos_actuelles : dict
             clef : id de l'asso, contenu : role(s). Ce role sera le meme que dans la liste des roles dans la table de l'asso.
             Exemple = { 101 : "Trez, VP fraude fiscale" } 
-        anciennes_assos : dict
+        - anciennes_assos : dict
             Sous la forme suivante : {id_asso1 : [promo_du_mandat, roles], id_asso2 : [promo_du_mandat, roles], ...}
             Exemple : {101 : [23, "Trez"], 54 : [23, "Sec Gen, vp vert"]}
         
-        vote_sondaj_du_jour : int
+        - vote_sondaj_du_jour : int
             1, 2, 3 ou 4 selon le vote de l'utilisateur au sondaj du jour. 
-        nombre_participations_sondaj : int
+        - nombre_participations_sondaj : int
             Sera incremente a chaque vote.
-        nombre_victoires_sondaj : int
+        - nombre_victoires_sondaj : int
             Sera incremente a minuit pour chaque utlisateur en fonction du vote qui a gagne.
-        meilleur_score_2048 : int
+        - meilleur_score_2048 : int
             Sera update a chaque partie ou le reccord est battu.
-        mot_de_passe : str
+        - mot_de_passe : str
             Est hache puis modifie
         """
         for key, value in kwargs.items():
