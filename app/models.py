@@ -667,9 +667,6 @@ class Association(db.Model):
 
         db.session.commit()
 
-    
-    
-            
 
 
 
