@@ -27,49 +27,37 @@ class ErreurDeLienUtilisateurs(Exception):
 
 # CO
 
-def supprimer_co(user1_id, user2_id):
+def supprimer_co(utilisateur1:Utilisateur, utilisateur2:Utilisateur):
     """
     Supprime le lien de colocation entre les deux utilisateurs. 
-    Leve une erreur si un utilisateur n'existe pas, ou si l'un des deux utilisateurs a un autre co.
+    Leve si les deux utilisateurs ne sont pas co
     """
-    user1 = Utilisateur.query.get(user1_id)
-    user2 = Utilisateur.query.get(user2_id)
-    if user1 and user2 :
-        if user1.co_id == user2_id and user2.co_id == user1_id : # les deux sont co
-            user1.update(co_id=None)
-            user2.update(co_id=None)
-            db.session.commit()
-        else :
-            if not (user1.co_id == None and user2.co_id == None) : # si ils n'ont deja pas de co rien ne se passe
-                raise ErreurDeLienUtilisateurs("Erreur : les deux utilisateurs ne sont pas co.") # sinon erreur
+    if utilisateur1.co_id == utilisateur2.id and utilisateur2.co_id == utilisateur1.id : # les deux sont co
+            utilisateur1.update(co_id=None, co_nom=None)
+            utilisateur2.update(co_id=None, co_nom=None)        
     else :
-        raise ValueError("Erreur : l'un des utilisateurs n'existe pas.")
+        raise ErreurDeLienUtilisateurs("Erreur : les deux utilisateurs ne sont pas co.") # sinon erreur
+    # pas de db.session.commit()
 
-
-def creer_co(user1_id, user2_id):
+def creer_co(utilisateur1:Utilisateur, utilisateur2:Utilisateur):
     """
     Crée un lien de colocation entre deux utilisateurs en modifiant leurs attributs.
     Si l'un des deux utilisateurs avait deja un co, le lien precedent est detruit. 
     """
-    user1 = Utilisateur.query.get(user1_id)
-    user2 = Utilisateur.query.get(user2_id)
-    if user1 and user2:
-        if user1.co_id == None and user2.co_id == None : # les deux sont libres : on cree le lien
-            user1.update(co_id=user2_id)
-            user2.update(co_id=user1_id)
-            db.session.commit()            
-        else :
-            co_user_1_id = user1.co_id
-            co_user_2_id = user2.co_id
-            if co_user_1_id != None : # si ils ne sont pas libres, on supprime leur ancien lien
-                supprimer_co(user1_id, co_user_1_id)
-            if co_user_2_id != None :
-                supprimer_co(user2_id, co_user_2_id)
-            user1.update(co_id=user2_id, co_nom=f"{user2.prenom} {user2.nom_de_famille}")
-            user2.update(co_id=user1_id, co_nom=f"{user1.prenom} {user1.nom_de_famille}")
-            db.session.commit()       
-    else:
-        raise ValueError("Erreur : l'un des utilisateurs n'existe pas.")
+    if utilisateur1.co_id == None and utilisateur2.co_id == None : # les deux sont libres : on cree le lien
+        utilisateur1.update(co_id=utilisateur2.id, co_nom=f"{utilisateur2.prenom} {utilisateur2.nom_de_famille}")
+        utilisateur2.update(co_id=utilisateur1.id, co_nom=f"{utilisateur1.prenom} {utilisateur1.nom_de_famille}")         
+    else :
+        if utilisateur1.co_id != None : # 1 a un co : on le supprime
+            co_utilisateur1 = db.session.get(Utilisateur, utilisateur1.co_id)
+            supprimer_co(utilisateur1, co_utilisateur1)
+        if utilisateur2.co_id != None : # 2 a un co : on le supprime
+            co_utilisateur2 = db.session.get(Utilisateur, utilisateur2.co_id)
+            supprimer_co(utilisateur2, co_utilisateur2)
+        # Les deux sont libres : on met a jour
+        utilisateur1.update(co_id=utilisateur2.id, co_nom=f"{utilisateur2.prenom} {utilisateur2.nom_de_famille}")
+        utilisateur2.update(co_id=utilisateur1.id, co_nom=f"{utilisateur1.prenom} {utilisateur1.nom_de_famille}")
+    # pas de db.session.commit()       
 
 # PARRAINAGE
 
@@ -80,7 +68,6 @@ def ajouter_fillots_a_la_famille(marrain:Utilisateur, liste_fillots:Utilisateur)
     Ne devra etre utilisee qu'une fois, au moment d'ajouter ses fillots au parrainnage. 
     """
     if marrain.fillots_dict == None : # verification que le marrain est libre
-            
         # verification que chaque fillot est libre 
         for fillot in liste_fillots :
             if fillot.marrain_id != None or fillot.marrain_nom != None :
@@ -103,11 +90,9 @@ def supprimer_fillots(marrain:Utilisateur) :
     Verifie avant de modifier le fillot que le lien etait bien comme il devait etre
     Cette fonction ne doit etre utilisee qu'en cas d'erreur lors de l'attribution des fillots
     """
-    
     if marrain.fillots_dict != None :
         for fillot_id in marrain.fillots_dict:
             fillot = Utilisateur.query.get(fillot_id)
-            print(f"fillot a supprimer : {fillot.nom_utilisateur}")
             if fillot :
                 if fillot.marrain_id == marrain.id :
                     fillot.update(marrain_id=None, marrain_nom=None)
@@ -115,8 +100,4 @@ def supprimer_fillots(marrain:Utilisateur) :
                     raise ErreurDeLienUtilisateurs(f"le fillot {marrain.fillots_dict[fillot_id]}, present dans la liste des fillots de {marrain.nom_utilisateur} n'a pas enregistre {marrain.nom_utilisateur} comme marrain.")
             else :
                 raise ErreurDeLienUtilisateurs(f"le fillot d'id {fillot_id}, present dans la liste des fillots de {marrain.nom_utilisateur} n'existe pas.")
-        marrain.update(fillots_dict=None)
-    else :
-        print("Aucune modification (pas de fillots)")
-        
-    
+        marrain.update(fillots_dict=None)   
