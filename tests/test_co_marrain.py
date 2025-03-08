@@ -1,7 +1,3 @@
-"""
-Ce fichier de test ne sert qu'a developper. Il permet de tester les fonctions de controllers.py en lien avec la base de donnee.  
-"""
-
 # tests/test_app.py
 
 from app import create_app, db
@@ -14,36 +10,64 @@ def test_creer_utilisateur():
     with app.app_context():
         db.create_all()  # Creer les tables
 
+        try:
+            # CREATION DE BASE DE TEST ICI -------------------------------------
+            jules = Utilisateur(nom_utilisateur="23imbert", prenom="Jules", nom_de_famille="Imbert", promotion=23, email="jules@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
+            achille = Utilisateur(nom_utilisateur="23fruchard", prenom="Achille", nom_de_famille="Fruchard", promotion=23, email="achille@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
+            louise = Utilisateur(nom_utilisateur="24deferran", prenom="Louise", nom_de_famille="De Ferran", promotion=24, email="louise@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
 
-        # CREATION DE BASE DE TEST ICI -------------------------------------
-        #
-        #
+            db.session.add(jules)
+            db.session.add(achille)
+            db.session.add(louise)
 
-        jules = Utilisateur(nom_utilisateur="23imbert", prenom="Jules", nom_de_famille="Imbert", promotion=23, email="jules@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
-        achille = Utilisateur(nom_utilisateur="23fruchard", prenom="Achille", nom_de_famille="Fruchard", promotion=23, email="achille@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
-        louise = Utilisateur(nom_utilisateur="24deferran", prenom="Louise", nom_de_famille="De Ferran", promotion=24, email="louise@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
+            db.session.commit()
 
-        db.session.add(jules)
-        db.session.add(achille)
-        db.session.add(louise)
+            # TESTS ICI
+            #
+            #
 
-        db.session.commit()
+            def print_marrain_fillot(utilisateur):
+                marrain_nom = "pas de marrain"
+                if utilisateur.marrain_nom :
+                    marrain_nom = f"({utilisateur.marrain_id}){utilisateur.marrain_nom}"
+                fillots = "pas de fillots"
+                if utilisateur.fillots_dict :
+                    fillots = ", ".join([f"({id_f}) " + utilisateur.fillots_dict[id_f] for id_f in utilisateur.fillots_dict])
+                print(f"({utilisateur.id}) {utilisateur.prenom} {utilisateur.nom_de_famille} - marrain : {marrain_nom}, fillot(s) : {fillots}")
+                
 
-        #
-        #--------------------------------------------------------------------
-        # TESTS ICI
-        #
-        def print_co_marrain(utilisateur):
-            print(f"{utilisateur.prenom} {utilisateur.nom_de_famille}")
-        
+            print_marrain_fillot(louise)
+            print_marrain_fillot(jules)
+            print_marrain_fillot(achille)
+            print("ajout...")
+            ajouter_fillots_a_la_famille(jules, [louise, achille])
 
-        #
-        #
-        # -------------------------------------------------------------------
+            db.session.commit()
+
+            print_marrain_fillot(louise)
+            print_marrain_fillot(jules)
+            print_marrain_fillot(achille)
+
+            print("suppression...")
+            supprimer_fillots(jules)
+            db.session.commit()
+
+            print_marrain_fillot(louise)
+            print_marrain_fillot(jules)
+            print_marrain_fillot(achille)
 
 
-        db.session.remove()
-        db.drop_all()  # Nettoyer la base de données après le test
+            #
+            #
+            ###########
+
+        except Exception as e:
+            print(f"Une erreur est survenue : {e}")
+            raise e
+
+        finally:
+            db.session.remove()
+            db.drop_all()  # Nettoyer la BDD
 
 if __name__ == "__main__":
     test_creer_utilisateur()

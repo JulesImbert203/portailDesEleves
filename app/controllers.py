@@ -1,5 +1,19 @@
 # Logique metier de l'application
 
+
+
+# - - - -
+# Regles generales : 
+#
+# * Pas de db.session.commit dans ces fonctions. Ces fonctions agissent sur les classes, 
+# mais les changements ne sont enregistres par db.session.commit() qu'au sein des routes
+# flaks (dans views/) pour des raisons de performance (par exemple, il vaut mieux mettre 
+# a jour une fois apres avoir modifie trois utilisateurs que mettre a jour trois fois, 
+# une fois par utilisateur).
+#
+# * Attention a ne jamais commit un changement ayant renvoye une erreur
+
+
 from app import db
 from app.models import Utilisateur
 
@@ -59,52 +73,50 @@ def creer_co(user1_id, user2_id):
 
 # PARRAINAGE
 
-def ajouter_fillots_a_la_famille(marrain_id, liste_ids_fillots) :
+def ajouter_fillots_a_la_famille(marrain:Utilisateur, liste_fillots:Utilisateur) :
     """
     Ajoute une liste de fillots a la famille. Si des fillots existent deja, une erreur est levee.
     Si l'un des fillots possede deja un marrain, une erreur est levee. 
+    Ne devra etre utilisee qu'une fois, au moment d'ajouter ses fillots au parrainnage. 
     """
-    marrain = Utilisateur.query.get(marrain_id)
-    if marrain :
-        if marrain.fillots_dict == None : # verification que le marrain est libre
-            liste_fillots = []
-            for fillot_id in liste_ids_fillots :
-                fillot = Utilisateur.query.get(fillot_id)
-                if fillot :
-                    liste_fillots.append(fillot)
-                else : 
-                    raise ValueError("Erreur : l'utilisateur fillot n'existe pas")
+    if marrain.fillots_dict == None : # verification que le marrain est libre
+            
+        # verification que chaque fillot est libre 
+        for fillot in liste_fillots :
+            if fillot.marrain_id != None or fillot.marrain_nom != None :
+                raise ErreurDeLienUtilisateurs(f"Erreur : {fillot.prenom} {fillot.nom_de_famille} a deja un marrain.")
 
-            # verification que chaque fillot est libre 
-            for fillot in liste_fillots :
-                if fillot.marrain_id != None :
-                    raise ErreurDeLienUtilisateurs("Erreur : l'un des fillots a deja un marrain.")
-
-            # modification
-            dict_fillots = dict()
-            for fillot in liste_fillots :
-                fillot.update(marrain_id=marrain_id)
-                dict_fillots[fillot.id] = f"{fillot.prenom} {fillot.nom_de_famille}"
-            marrain.update(dict_fillots=dict_fillots)
-            db.session.commit()
-        else :
-            raise ErreurDeLienUtilisateurs("Erreur : l'utilisateur marrain a deja des fillots. utilisez la fonction de suppression.")
+        # modification
+        fillots_dict = dict()
+        marrain_id = marrain.id
+        for fillot in liste_fillots :
+            fillot.update(marrain_id=marrain_id, marrain_nom=f"{marrain.prenom} {marrain.nom_de_famille}")
+            fillots_dict[fillot.id] = f"{fillot.prenom} {fillot.nom_de_famille}"
+        marrain.update(fillots_dict=fillots_dict)
     else :
-        raise ValueError("Erreur : l'utilisateur marrain n'existe pas")
-    
-def supprimer_fillots(marrainid) :
+        raise ErreurDeLienUtilisateurs("Erreur : l'utilisateur marrain a deja des fillots. utilisez la fonction de suppression.")
+
+def supprimer_fillots(marrain:Utilisateur) :
     """
     Supprime les fillots d'un utilisateur. Ne renvoie pas d'erreur si l'utilisateur n'a pas de fillot. 
+    Supprime donc en consequence le marrain des fillots concernes
+    Verifie avant de modifier le fillot que le lien etait bien comme il devait etre
+    Cette fonction ne doit etre utilisee qu'en cas d'erreur lors de l'attribution des fillots
     """
-    marrain = Utilisateur.query.get(marrainid)
-    if marrain :
-        fillots_dict = marrain.dict_fillots
-        if fillots_dict != None :
-            for fillot_id, fillot_nom in fillots_dict.items():
-                fillot = Utilisateur.query.get(fillot_id)
-                if fillot :
-                    fillot.update(marrain_id=None)
-            marrain.update(dict_fillots=None)
-            db.session.commit()
+    
+    if marrain.fillots_dict != None :
+        for fillot_id in marrain.fillots_dict:
+            fillot = Utilisateur.query.get(fillot_id)
+            print(f"fillot a supprimer : {fillot.nom_utilisateur}")
+            if fillot :
+                if fillot.marrain_id == marrain.id :
+                    fillot.update(marrain_id=None, marrain_nom=None)
+                else :
+                    raise ErreurDeLienUtilisateurs(f"le fillot {marrain.fillots_dict[fillot_id]}, present dans la liste des fillots de {marrain.nom_utilisateur} n'a pas enregistre {marrain.nom_utilisateur} comme marrain.")
+            else :
+                raise ErreurDeLienUtilisateurs(f"le fillot d'id {fillot_id}, present dans la liste des fillots de {marrain.nom_utilisateur} n'existe pas.")
+        marrain.update(fillots_dict=None)
     else :
-        raise ValueError("Erreur : l'utilisateur marrain n'existe pas")
+        print("Aucune modification (pas de fillots)")
+        
+    

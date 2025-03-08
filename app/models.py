@@ -259,10 +259,8 @@ class Utilisateur(db.Model, UserMixin) :
             L'id du marrain dans la table des utilisateurs
         marrain_nom : str
             le nom du marrain au format "Prenom Nom". Aucune verification sur la correspondance id-nom n'est effectuee
-        fillot_ids : [int, int, ...]
-            L'id des fillots dans la table des utilisateurs
-        fillot_noms : [str, str, ...]
-            les noms des fillots au format "Prenom Nom", dans le meme ordre que les id. Aucune verification sur la correspondance id-nom n'est effectuee        
+        fillots_dict : Le dictionnaire des fillots : {id : prenom nom}
+            les noms des fillots au format "Prenom Nom". Aucune verification sur la correspondance id-nom n'est effectuee        
         co_id : int 
             L'id du co. None pour les PAMs
         co_nom : str
@@ -316,10 +314,11 @@ class Utilisateur(db.Model, UserMixin) :
                 self.email = email
             else :
                 raise ValueError(f"Non modifie. Le mail '{email}' est invalide.")
-        if cycle in {'ic', 'ast', 'vs', 'isup', 'ev', 'de'} :
-            self.cycle = cycle
-        else :
-            raise ValueError(f"Non modifie. '{cycle}' doit etre 'ic', 'ast', 'vs', 'isup', 'ev' ou 'de'")
+        if cycle != None :
+            if cycle in {'ic', 'ast', 'vs', 'isup', 'ev', 'de'} :
+                self.cycle = cycle
+            else :
+                raise ValueError(f"Non modifie. '{cycle}' doit etre 'ic', 'ast', 'vs', 'isup', 'ev' ou 'de'")
         if est_nouveau_a_la_mine != None :
             self.est_nouveau_a_la_mine = est_nouveau_a_la_mine
         if est_visible != None :
@@ -411,6 +410,7 @@ class Utilisateur(db.Model, UserMixin) :
             self.meilleur_score_2048 = meilleur_score_2048
 
         # reste a implementer la partie modif de mdp
+        # pas de db.session.commit() ici
 
 class Association(db.Model):
     __tablename__ = 'associations'
