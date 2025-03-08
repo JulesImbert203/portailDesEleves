@@ -412,6 +412,69 @@ class Utilisateur(db.Model, UserMixin) :
         # reste a implementer la partie modif de mdp
         # pas de db.session.commit() ici
 
+class Commentaire():
+    def __init__(self, auteur:int, contenu:str, date:str) :
+        """
+        Crée un nouveau commentaire
+        """
+        self.auteur = auteur
+        self.contenu = contenu
+        self.date = date
+        self.likes = []
+
+    def add_like(self, id_utilisateur:int) :
+        """
+        Ajoute un like au commentaire
+        """
+        self.likes.append(id_utilisateur)
+        self.likes = list(set(self.likes))
+    
+    def remove_like(self, id_utilisateur:int) :
+        """
+        Retire un like du commentaire
+        """
+        self.likes.remove(id_utilisateur)
+    
+
+class Publication():
+    def __init__(self, auteur:int, contenu:str, date:str, liste_images:list) :
+        """
+        Crée une nouvelle publication
+        """
+        self.auteur = auteur
+        self.contenu = contenu
+        self.date = date
+        self.liste_images = liste_images
+        self.likes = []
+        self.commentaires = []
+    
+    def add_like(self, id_utilisateur:int) :
+        """
+        Ajoute un like à la publication
+        """
+        self.likes.append(id_utilisateur)
+        self.likes = list(set(self.likes))
+    
+    def remove_like(self, id_utilisateur:int) :
+        """
+        Retire un like de la publication
+        """
+        self.likes.remove(id_utilisateur)
+    
+    def add_comment(self, auteur:int, contenu:str, date:str) :
+        """
+        Ajoute un commentaire à la publication
+        """
+        self.commentaires.append(Commentaire(auteur, contenu, date))
+    
+    def remove_comment(self, index:int) :
+        """
+        Retire un commentaire de la publication
+        """
+        del self.commentaires[index]
+    
+
+
 class Association(db.Model):
     __tablename__ = 'associations'
     #ID de l'association
@@ -422,30 +485,33 @@ class Association(db.Model):
     description = db.Column(db.String(1000), nullable=True)
 
     #Liste des membres de l'association
-    membres = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
+    membres = db.Column(db.JSON, nullable=True)
 
     #Liste des publications de l'association à afficher la page de l'association et sur le fil d'actualité, il s'agit d'une liste de dictionnaires
     publications = db.Column(db.JSON, nullable=True)
-
+    
     type_association = db.Column(db.String(1000), nullable=True)
-
     ordre_importance = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, nom:str, description:str,type_association:str) :
+    def __init__(self, nom:str, description:str, type_association:str) :
         """
         Crée une nouvelle association
         """
         self.nom = nom
         self.description = description
-        self.membres = {}
+        self.membres = []  # Initialiser comme une liste
         self.publications = []
         self.type_association = type_association
+
+        # Créer un dossier pour l'association
+        self.create_association_folder()
 
     def __repr__(self):
         """
         Methode optionnelle, mais utile pour deboguer et afficher l'association.
         """
         return f"<Association {self.nom}>"
+
     
     def update(self, 
                nom:str=None,
@@ -469,19 +535,9 @@ class Association(db.Model):
             Liste des membres de l'association au format {id_utilisateur : role}.
             role est une chaine de caracteres, peut contenir des accents et des caracteres speciaux.
             exemple : { 1 : "Trez, VP fraude fiscale" }
-        - publications : liste de dictionnaires
-            Liste des publications de l'association au format :
-              [{auteur : id_utilisateur, 
-                contenu : texte, 
-                date : AAAAMMJJHHMM, 
-                liste_images :[image1, image2, ...]}, 
-                likes : [id_utilisateur1, id_utilisateur2, ...], 
-                commentaires : [{auteur : id_utilisateur, contenu : texte, date : AAAAMMJJHHMM}, ...]}]
-            auteur est l'id de l'utilisateur, contenu est le texte de la publication, 
-            date est la date de publication, liste_images est la liste des images de la 
-            publication, likes est la liste des id des utilisateurs ayant liké la publication, 
-            commentaires est la liste des commentaires de la publication.
-       
+        - publications : liste d'objets Publication
+            Liste des publications de l'association
+        
         - type_association : str
             Type de l'association, doit etre un des types suivants :
             {'loi 1901','club BDE','club BDS','club BDA','autre'}
@@ -498,49 +554,119 @@ class Association(db.Model):
         """
         Ajoute un membre à l'association
         """
-        self.membres[id_utilisateur] = role
+        utilisateur = Utilisateur.query.get(id_utilisateur)
+        if utilisateur:
+            membre = {
+                'id': utilisateur.id,
+                'role': role
+            }
+            self.membres.append(membre)
+            utilisateur.assos_actuelles[self.id] = role
 
+            db.session.commit()
+        else:
+            raise ValueError(f"Utilisateur avec id {id_utilisateur} n'existe pas.")
+    
     def remove_member(self, id_utilisateur:int) :
         """
         Retire un membre de l'association
         """
-        del self.membres[id_utilisateur]
+        self.membres = [membre for membre in self.membres if membre['id'] != id_utilisateur]
+        utilisateur = Utilisateur.query.get(id_utilisateur)
+        if utilisateur:
+            del utilisateur.assos_actuelles[self.id]
+
+            db.session.commit()
+
+    def update_member_role(self, id_utilisateur:int, role:str) :
+        """
+        Modifie le role d'un membre de l'association
+        """
+        for membre in self.membres:
+            if membre['id'] == id_utilisateur:
+                membre['role'] = role
+                break
+        utilisateur = Utilisateur.query.get(id_utilisateur)
+        if utilisateur:
+            utilisateur.assos_actuelles[self.id] = role
+
+            db.session.commit()
+
+    def get_members(self) :
+        """
+        Récupère les membres de l'association
+        """
+        members = []
+        for member in self.membres:
+            utilisateur = Utilisateur.query.get(member['id'])
+            if utilisateur:
+                members.append({
+                    'id': utilisateur.id,
+                    'nom_utilisateur': utilisateur.nom_utilisateur,
+                    'prenom': utilisateur.prenom,
+                    'nom_de_famille': utilisateur.nom_de_famille,
+                    'role': member['role']
+                })
+        return members
+
+    def update_members_order(self, members_weights:list,members : list) :
+        """
+        Modifie l'ordre des membres de l'association en fonction de leur poids
+        """
+        ordre=[[i, members_weights[i],members[i].nom_utilisateur] for i in range(len(members_weights))]
+
+        #tri weight décroissant puis nom croissant
+        ordre.sort(key=lambda x: (-x[1], x[2]))
+        self.membres=[members[i] for i in ordre]
 
     def add_publication(self, auteur:int, contenu:str, date:str, liste_images:list) :
         """
         Ajoute une publication à l'association
         """
-        self.publications.append({'auteur': auteur, 'contenu': contenu, 'date': date, 'liste_images': liste_images, 'likes': [], 'commentaires': []})
-    
+        self.publications.append(Publication(auteur, contenu, date, liste_images))
+
+        db.session.commit()
+
     def remove_publication(self, index:int) :
         """
         Retire une publication de l'association
         """
         del self.publications[index]
-    
+
+        db.session.commit()
+
     def add_like(self, index:int, id_utilisateur:int) :
         """
-        Ajoute un like à une publication
+        Ajoute un like à une publication de l'association
         """
-        self.publications[index]['likes'].append(id_utilisateur)
+        self.publications[index].add_like(id_utilisateur)
+
+        db.session.commit()
     
     def remove_like(self, index:int, id_utilisateur:int) :
         """
-        Retire un like d'une publication
+        Retire un like d'une publication de l'association
         """
-        self.publications[index]['likes'].remove(id_utilisateur)
-    
+        self.publications[index].remove_like(id_utilisateur)
+
+        db.session.commit()
+
     def add_comment(self, index:int, auteur:int, contenu:str, date:str) :
         """
-        Ajoute un commentaire à une publication
+        Ajoute un commentaire à une publication de l'association
         """
-        self.publications[index]['commentaires'].append({'auteur': auteur, 'contenu': contenu, 'date': date})
+        self.publications[index].add_comment(auteur, contenu, date)
+
+        db.session.commit()
     
     def remove_comment(self, index:int, index_comment:int) :
         """
-        Retire un commentaire d'une publication
+        Retire un commentaire d'une publication de l'association
         """
-        del self.publications[index]['commentaires'][index_comment]
+        self.publications[index].remove_comment(index_comment)
+
+        db.session.commit()
+
     
     
             
