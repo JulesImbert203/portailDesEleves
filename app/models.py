@@ -542,48 +542,6 @@ class Association(db.Model):
         if description != None :
             self.description = description
     
-    def add_member(self, id_utilisateur:int, role:str) :
-        """
-        Ajoute un membre à l'association
-        """
-        utilisateur = Utilisateur.query.get(id_utilisateur)
-        if utilisateur:
-            membre = {
-                'id': utilisateur.id,
-                'role': role
-            }
-            self.membres.append(membre)
-            utilisateur.assos_actuelles[self.id] = role
-
-            db.session.commit()
-        else:
-            raise ValueError(f"Utilisateur avec id {id_utilisateur} n'existe pas.")
-    
-    def remove_member(self, id_utilisateur:int) :
-        """
-        Retire un membre de l'association
-        """
-        self.membres = [membre for membre in self.membres if membre['id'] != id_utilisateur]
-        utilisateur = Utilisateur.query.get(id_utilisateur)
-        if utilisateur:
-            del utilisateur.assos_actuelles[self.id]
-
-            db.session.commit()
-
-    def update_member_role(self, id_utilisateur:int, role:str) :
-        """
-        Modifie le role d'un membre de l'association
-        """
-        for membre in self.membres:
-            if membre['id'] == id_utilisateur:
-                membre['role'] = role
-                break
-        utilisateur = Utilisateur.query.get(id_utilisateur)
-        if utilisateur:
-            utilisateur.assos_actuelles[self.id] = role
-
-            db.session.commit()
-
     def get_members(self) :
         """
         Récupère les membres de l'association
@@ -600,64 +558,6 @@ class Association(db.Model):
                     'role': member['role']
                 })
         return members
-
-    def update_members_order(self, members_weights:list,members : list) :
-        """
-        Modifie l'ordre des membres de l'association en fonction de leur poids
-        """
-        ordre=[[i, members_weights[i],members[i].nom_utilisateur] for i in range(len(members_weights))]
-
-        #tri weight décroissant puis nom croissant
-        ordre.sort(key=lambda x: (-x[1], x[2]))
-        self.membres=[members[i] for i in ordre]
-
-    def add_publication(self, auteur:int, contenu:str, date:str, liste_images:list) :
-        """
-        Ajoute une publication à l'association
-        """
-        self.publications.append(Publication(auteur, contenu, date, liste_images))
-
-        db.session.commit()
-
-    def remove_publication(self, index:int) :
-        """
-        Retire une publication de l'association
-        """
-        del self.publications[index]
-
-        db.session.commit()
-
-    def add_like(self, index:int, id_utilisateur:int) :
-        """
-        Ajoute un like à une publication de l'association
-        """
-        self.publications[index].add_like(id_utilisateur)
-
-        db.session.commit()
-    
-    def remove_like(self, index:int, id_utilisateur:int) :
-        """
-        Retire un like d'une publication de l'association
-        """
-        self.publications[index].remove_like(id_utilisateur)
-
-        db.session.commit()
-
-    def add_comment(self, index:int, auteur:int, contenu:str, date:str) :
-        """
-        Ajoute un commentaire à une publication de l'association
-        """
-        self.publications[index].add_comment(auteur, contenu, date)
-
-        db.session.commit()
-    
-    def remove_comment(self, index:int, index_comment:int) :
-        """
-        Retire un commentaire d'une publication de l'association
-        """
-        self.publications[index].remove_comment(index_comment)
-
-        db.session.commit()
 
 
 

@@ -15,7 +15,7 @@
 
 
 from app import db
-from app.models import Utilisateur
+from app.models import Utilisateur,Association,Publication,Commentaire
 
 
 #### Lien entre les utilisateurs
@@ -101,3 +101,168 @@ def supprimer_fillots(marrain:Utilisateur) :
             else :
                 raise ErreurDeLienUtilisateurs(f"le fillot d'id {fillot_id}, present dans la liste des fillots de {marrain.nom_utilisateur} n'existe pas.")
         marrain.update(fillots_dict=None)   
+
+def add_member(association:Association, utilisateur:Utilisateur, role:str) :
+        """
+        Ajoute un membre à l'association
+        Renvoie une erreur si l'utilisateur ou l'association n'existe pas
+        """
+        association=Association.query.get(association.id)
+        if association:
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+            if utilisateur:
+                association.membres.append({'id': utilisateur.id, 'nom_utilisateur':utilisateur.nom_utilisateur, 'role': role})
+                utilisateur.assos_actuelles[association.id] = role
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")
+    
+def remove_member(association:Association,utilisateur:Utilisateur) :
+        """
+        Retire un membre de l'association
+        Renvoie une erreur si l'utilisateur ou l'association n'existe pas
+        Ne renvoie pas d'erreur si l'utilisateur n'est pas membre de l'association
+        """
+        association=Association.query.get(association.id)
+
+        if association:
+        
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+
+            if utilisateur:
+                for membre in association.membres:
+                    if membre['id'] == utilisateur.id:
+                        association.membres.remove(membre)
+                        utilisateur.assos_actuelles.pop(association.id)
+                        break
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")
+        
+
+def update_member_role(association:Association, utilisateur:Utilisateur, role:str) :
+        """
+        Modifie le role d'un membre de l'association
+        Renvoie une erreur si l'utilisateur ou l'association n'existe pas
+        Ne renvoie pas d'erreur si l'utilisateur n'est pas membre de l'association
+        """
+        association=Association.query.get(association.id)
+        if association:
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+            if utilisateur:
+                for membre in association.membres:
+                    if membre['id'] == utilisateur.id:
+                        membre['role'] = role
+                        utilisateur.assos_actuelles[association.id] = role
+                        break
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")
+   
+
+    
+def update_members_order(association : Association, members_weights:list) :
+        """
+        Modifie l'ordre des membres de l'association en fonction de leur poids
+        """
+        association=Association.query.get(association.id)
+        if association:
+            membres=association.membres
+
+            # création d'une liste de tuples contenant le poids, le nom et l'index du membre
+            ordres=[[members_weights[i],membres[i]['nom_utilisateur'],i] for i in range(len(membres))]
+            
+            # tri des membres en fonction de leur poids puis de leur nom
+            ordres.sort(key=lambda x: (-x[0],x[1]))
+
+            # mise à jour de l'ordre des membres
+            membres=[membres[ordre[2]] for ordre in ordres]
+
+            association.membres=membres
+        else:
+            raise ValueError("L'association n'existe pas")
+
+
+def add_publication(association:Association, utilisateur:Utilisateur, titre:str, contenu:str, date:str) :
+        """
+        Ajoute une publication à l'association
+        """
+        association=Association.query.get(association.id)
+        if association:
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+            if utilisateur:
+                publication = Publication(titre=titre, contenu=contenu, auteur=utilisateur.id, date=date)
+                association.publications.append(publication)
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")
+
+
+def remove_publication(association : Association, index_publication:int) :
+        """
+        Retire une publication de l'association
+        """
+        association=Association.query.get(association.id)
+        if association:
+            del association.publications[index_publication]
+        else:
+            raise ValueError("L'association n'existe pas")
+
+def add_like(association : Association, utilisateur:Utilisateur, index_publication:int) :
+        """
+        Ajoute un like à une publication de l'association
+        """
+        association=Association.query.get(association.id)
+        if association:
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+            if utilisateur:
+                association.publications[index_publication].add_like(utilisateur.id)
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")
+    
+
+def remove_like(association : Association, utilisateur:Utilisateur, index_publication:int) :
+        """
+        Retire un like d'une publication de l'association
+        """
+        association=Association.query.get(association.id)
+        if association:
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+            if utilisateur:
+                association.publications[index_publication].remove_like(utilisateur.id)
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")  
+
+def add_comment(association : Association, auteur:Utilisateur, index_publication:int, contenu:str, date:str) :
+        """
+        Ajoute un commentaire à une publication de l'association
+        """
+        association=Association.query.get(association.id)
+        if association:
+            auteur=Utilisateur.query.get(auteur.id)
+            if auteur:
+                commentaire = Commentaire(contenu=contenu, auteur=auteur.id, date=date)
+                association.publications[index_publication].add_comment(commentaire)
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")
+    
+def remove_comment(association : Association, index_publication:int, index_comment:int) :
+        """
+        Retire un commentaire d'une publication de l'association
+        """
+        association=Association.query.get(association.id)
+        if association:
+            del association.publications[index_publication].commentaires[index_comment]
+        else:
+            raise ValueError("L'association n'existe pas")
+      
