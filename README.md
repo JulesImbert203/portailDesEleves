@@ -38,6 +38,10 @@ my_project/
 │   │   ├── images                      # TEDLT
 │   │   └── etc.
 │   │  
+│   ├── utils/             # Fichiers contenant des fonctions diverses 
+│   │   ├── decorators.py  # Contient les decorateurs personnalises, ("est_vp_sondaj", etc.)
+│   │   └── verification_format.py      # fonctions de verification pour models.py
+│   │  
 │   └── services            # ?  
 │
 ├── instance                # La base de données

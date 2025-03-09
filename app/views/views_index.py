@@ -5,6 +5,7 @@ Ce fichier contient les routes pour la page d'accueil
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import current_user # necessaire pour tester l'authentification
+from ..utils.decorators import vp_sondaj_required
 
 
 index_bp = Blueprint('index', __name__)
