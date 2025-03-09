@@ -15,8 +15,8 @@
 
 
 from app import db
-from app.models import Utilisateur
-
+from app.models import Utilisateur, Sondage, AppConfig, VoteSondageDuJour
+from collections import Counter
 
 #### Lien entre les utilisateurs
 
@@ -101,3 +101,66 @@ def supprimer_fillots(marrain:Utilisateur) :
             else :
                 raise ErreurDeLienUtilisateurs(f"le fillot d'id {fillot_id}, present dans la liste des fillots de {marrain.nom_utilisateur} n'existe pas.")
         marrain.update(fillots_dict=None)   
+
+
+#### VOTE A UN SONDAGE
+
+# ATTENTION : Aucune des fonctions suivantes concernant les sondages n'ont ete testees
+
+def creer_vote_sondage_du_jour(utilisateur:Utilisateur, vote:int) :
+    """
+    Fait voter un utilisateur a un sondage
+    Met a jour utilisateur.vote_sondaj_du_jour
+    Met a jour le nombre de votes du sondage de la reponse du sondage en question dans la table "votes_sondage_du_jour"
+    - vote doit etre 1, 2, 3 ou 4. Cette fonction ne verifie pas si le vote est possible (ex : reponse 4 alors qu'il n'y a que 3 reponses possibles)
+    """
+    utilisateur.vote_sondaj_du_jour = vote
+    utilisateur.nombre_participations_sondaj += 1
+    nouveau_vote = VoteSondageDuJour(id_utilisateur=utilisateur.id, numero_vote=vote)
+    return nouveau_vote
+    # utilisation au sein d'une route :  
+    # nouveau_vote = creer_vote_sondage_du_jour(utilisateur, numero_vote)
+    # db.session.add(nouveau_vote)
+    # db.session.commit()
+
+def valider_sondage(sondage:Sondage) :
+    """
+    Valide un sondage. Cette fonction ne pourra etre utilisee que par le vp_sondaj
+    """
+    if sondage.status :
+        print("Sondage deja valide.")
+    else :
+        sondage.status = True
+
+def renvoyer_id_sondage_du_jour_et_passer_au_suivant() :
+    """
+    Cette fonction sera appelee automatiquent chaque jour a minuit pour changer de sondage du jour
+    Les votants updateront leur nombre de victoire
+    Le sondage du jour sera mis a jour
+    Renvoie l'id du sondage du jour pour pourvoir le supprimer de la base des sondages et le mettre dans la base des anciens sondages
+    """
+    # obtention de la reponse gagnante :
+    appConfig = AppConfig.get()
+    id_sondage_du_jour = appConfig.id_sondage_du_jour
+    sondage_du_jour = Sondage.query.get(id_sondage_du_jour)
+    # comptage des votes : 
+    votes_sondage_du_jour = VoteSondageDuJour.query.all()
+    votes = [vote.numero_vote for vote in votes_sondage_du_jour]
+    compteur_votes = Counter(votes)  # Dictionnaire {vote: nombre}
+    max_votes = max(compteur_votes.values(), default=0)
+    votes_gagnants = [vote for vote, count in compteur_votes.items() if count == max_votes]
+    # mise a jour des victoires des utilisateurs 
+    for vote in votes_sondage_du_jour :
+        if vote.numero_vote in votes_gagnants :
+            utilisateur_gagnant = Utilisateur.query.get(vote.id_utilisateur)
+            utilisateur_gagnant.nombre_victoires_sondaj += 1
+    # Mise a jour : nouveau sondage du jour
+    nouveau_sondage_du_jour = (
+        Sondage.query.filter(Sondage.status == 1, Sondage.id != id_sondage_du_jour)
+        .order_by(Sondage.date_sondage)
+        .first()
+    )
+    # Mettre a jour si le sondage existe
+    if nouveau_sondage_du_jour:
+        AppConfig.set("id_sondage_du_jour", nouveau_sondage_du_jour.id)
+    return id_sondage_du_jour

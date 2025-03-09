@@ -2,75 +2,39 @@
 
 from app import db
 from sqlalchemy.ext.mutable import MutableDict
-import re
-from datetime import datetime
 from flask_login import UserMixin # pour faire le lien entre la class utilisateur et flask_login
 from werkzeug.security import generate_password_hash # Pour hacher les mdp 
+import json
 
-# ----------- FONCTIONS DE VERIFICATION DU FORMAT DES DONNEES
-#
-# Ne verifie pas leur validite / coherence
+# verification du format des donnees :
+from utils.verification_format import *
 
-def verifier_chaine_nom_utilisateur(chaine: str) -> bool:
-    # verifie le respect des criteres du nom d'utilisateur
-    return bool(re.fullmatch(r"[a-z0-9-]+", chaine))
-
-def verifier_chaine_prenom_nom(chaine: str) -> bool:
-    return bool(re.fullmatch(r"[a-zA-Zà-ÿ'\s-]+", chaine)) and all(mot[0].isupper() for mot in chaine.split())
-
-def verifier_chaine_mail(chaine: str) -> bool:
-    return bool(re.fullmatch(r"[a-z0-9._@-]+", chaine))
-
-def valider_chaine_date_naissance(chaine: str) -> bool:
-    # Verifier si la chaine est bien au format 'AAAAMMJJ'
-    if not re.fullmatch(r"\d{8}", chaine):
-        return False
-    try:
-        datetime.strptime(chaine, "%Y%m%d")
-        return True
-    except ValueError:
-        return False
-def valider_chaine_surnom(chaine: str) -> bool:
-    return bool(re.fullmatch(r"[\wÀ-ÿ!@#$%^&*()_+={}\[\]:;\"'<>,.?/\\|\-\s]+", chaine))                             
-
-def valider_chaine_telephone(chaine: str) -> bool:
-    return bool(re.fullmatch(r"(\+?\d{1,3}|00\d{1,3})?[\s.-]?\(?\d{2,4}\)?[\s.-]?\d{2,4}[\s.-]?\d{2,4}[\s.-]?\d{0,4}", chaine))
-
-def valider_chaines_de_base(chaine: str) -> bool:
+# TESTER 
+class AppConfig(db.Model):
     """
-    Accepte toutes les chaines de bases, hors emojis et caracteres d'autres langues
+    Configuration du site : contient les variables globales
     """
-    pattern = r'^[\w\s\u00C0-\u00FF\u20AC\u0021\u0022\u0023\u0024\u0025\u0026\u0027\u0028\u0029\u002A\u002B\u002C\u002D\u002E\u002F\u003A\u003B\u003C\u003D\u003E\u003F\u0040\u005B\u005D\u005E\u005F\u0060\u007B\u007C\u007D\u007E\u0021-\u007E]+$'
-    return re.match(pattern, chaine)
+    id = db.Column(db.Integer, primary_key=True)
+    id_sondage_du_jour = db.Column(db.Integer, nullable=True) # None = pas de sondage aujourd'hui
+    @staticmethod
+    def get():
+        """Retourne la configuration actuelle (la premiere ligne)"""
+        return db.session.query(AppConfig).first()
+    @staticmethod
+    def init_defaults():
+        """Cree une config par défaut si elle n'existe pas"""
+        if not db.session.query(AppConfig).first():
+            config = AppConfig()
+            db.session.add(config)
+            db.session.commit()
+    @staticmethod
+    def set(key, value):
+        """Modifie une variable globale et la sauvegarde"""
+        config = AppConfig.get()
+        if not config:
+            config = AppConfig()
+            db.session.add(config)
 
-def valider_questions_du_portail(dictionnaire: dict) -> bool:
-    for cle, contenu in dictionnaire.items():
-        if not valider_chaines_de_base(cle) or not valider_chaines_de_base(contenu):
-            return False
-    return True
-
-def valider_assos_roles(dictionnaire: dict) -> bool:
-    for cle, contenu in dictionnaire.items():
-        if not isinstance(cle, int) or not valider_chaines_de_base(contenu):
-            return False
-    return True
-
-def valider_anciennes_assos(dictionnaire: dict) -> bool :
-    for cle, contenu in dictionnaire.items():
-        if not isinstance(cle, int) or not isinstance(contenu, list) or len(contenu) != 2:
-            return False
-        if not isinstance(contenu[0], int) or not valider_chaines_de_base(contenu[1]):
-            return False
-    return True
-
-def valider_dict_fillots(dictionnaire: dict) -> bool :
-    for cle, contenu in dictionnaire.items():
-        if isinstance(cle, int) and isinstance(contenu, str) :
-            if not verifier_chaine_prenom_nom(contenu) :
-                return False
-        else : 
-            return False
-    return True
 
 class Utilisateur(db.Model, UserMixin) :
     __tablename__ = 'utilisateurs'
@@ -659,9 +623,100 @@ class Association(db.Model):
 
         db.session.commit()
 
-    
-    
-            
+# LA LOGIQUE DES SONDAGES
+# 
+# Il y a quatre elements de la BDD qui gerent les sondages :
+# - la table 'sondages_en_attente' qui contient tous les sondages non publies : valides et en attente, leurs questions, leurs reponses, 
+# - la table 'anciens_sondages' qui contient tous les sondages parrus, leurs reponses et le vote par reponse
+# - la variable globale 'id_sondage_du_jour' qui contient l'id dans 'sondage_en_attente' du sondage actuellement publie
+# - la table 'votes_sondage_du_jour' qui contient les id des utilisateurs votant et leur reponse au sondage du jour     
 
+class Sondage(db.Model):
+    """
+    Cette classe sert a stocker les nouveaux sondages, non encore publies, 
+    et le sondage du jour. 
+    L'id du sondage du jour est stocke dans la table des variables globales 
+    Les votes du jour sont stockes dans la table 'votes_sondage_du_jour'
+    Un sondage ne peut parraitre que si son tag "est_valide" est a True
+    La route pour appeler la fonction qui modifiera ca sera protegee par le decorateur @vp_sondaj_required
+   """
+    __tablename__ = 'sondages'
+    id = db.Column(db.Integer, primary_key=True)  # Clef primaire
+    question = db.Column(db.String(1000), nullable=False)
+    # reponses possibles
+    reponse1 = db.Column(db.String(500), nullable=False)
+    reponse2 = db.Column(db.String(500), nullable=False)
+    reponse3 = db.Column(db.String(500), nullable=True) # on peut avoir 2 3 ou 4 reponses
+    reponse4 = db.Column(db.String(500), nullable=True)
+    # donnees du sondage
+    propose_par_user_id = db.Column(db.Integer, nullable=False)
+    date_sondage = db.Column(db.String(20), nullable=False) # au format AAAAMMJJHHMM
+    # Autorisations
+    status = db.Column(db.Boolean, nullable=False, default=False) # False : non autorise, True : en attente de publciation ou sondage du jour
+    def __init__(self, propose_par_user_id:int, date_sondage:str, question:str, reponse1:str, reponse2:str, reponse3:str=None, reponse4:str=None) :
+        """
+        Cree un nouveau sondage
+        """
+        self.propose_par_user_id = propose_par_user_id
+        if valider_date_AAAAMMJJHHMM(date_sondage):
+            self.date_sondage = date_sondage
+        else :
+            raise ValueError("Fomat invalide de date")
+        self.question = question
+        self.reponse1 = reponse1
+        self.reponse2 = reponse2
+        self.reponse3 = reponse3
+        self.reponse4 = reponse4
+        self.status = False
+
+class AncienSondage(db.Model):
+    """
+    Table des anciens sondages : contient la date de publication, l'utilisateur 
+    ayant propose, la question, les reponses, le nombre de votes par reponse
+    """
+    __tablename__ = 'anciens_sondages'
+    id = db.Column(db.Integer, primary_key=True)  # Clef primaire
+    question = db.Column(db.String(1000), nullable=False)
+    # reponses possibles
+    reponse1 = db.Column(db.String(500), nullable=False)
+    reponse2 = db.Column(db.String(500), nullable=False)
+    reponse3 = db.Column(db.String(500), nullable=True) # on peut avoir 2 3 ou 4 reponses
+    reponse4 = db.Column(db.String(500), nullable=True)
+    # donnees du sondage
+    propose_par_user_id = db.Column(db.Integer, nullable=False)
+    date_de_publication = db.Column(db.String(20), nullable=False) # au format AAAAMMJJHHMM
+    # nombre de votes pour chaque reponse
+    votes1 = db.Column(db.Integer, nullable=False, default=0)
+    votes2 = db.Column(db.Integer, nullable=False, default=0)
+    votes3 = db.Column(db.Integer, nullable=False, default=0)
+    votes4 = db.Column(db.Integer, nullable=False, default=0)
+
+    def __init__(self, propose_par_user_id:int, date_de_publication:str, question:str, reponse1:str, reponse2:str, reponse3:str, reponse4:str, votes1:int, votes2:int, votes3:int, votes4:int) :
+        """
+        Cree un nouveau "ancien_sondage" (sera appele a partir des donnees du sondage du jour)
+        """
+        self.propose_par_user_id = propose_par_user_id
+        if valider_date_AAAAMMJJHHMM(date_de_publication):
+            self.date_de_publication = date_de_publication
+        else :
+            raise ValueError("Fomat invalide de date")
+        self.question = question
+        self.reponse1 = reponse1
+        self.reponse2 = reponse2
+        self.reponse3 = reponse3
+        self.reponse4 = reponse4
+        self.votes1 = votes1
+        self.votes2 = votes2
+        self.votes3 = votes3
+        self.votes4 = votes4
+
+class VoteSondageDuJour(db.Model):
+    """
+    Contient les utilisateurs ayant vote au sondage du jour, et leur vote
+    """
+    __tablename__ = 'votes_sondage_du_jour'
+    id = db.Column(db.Integer, primary_key=True)  # Clef primaire
+    id_utilisateur = db.Column(db.Integer, nullable=False)
+    numero_vote = db.Column(db.Integer, nullable=False)
 
 
