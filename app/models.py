@@ -5,6 +5,8 @@ from sqlalchemy.ext.mutable import MutableDict
 from flask_login import UserMixin # pour faire le lien entre la class utilisateur et flask_login
 from werkzeug.security import generate_password_hash # Pour hacher les mdp 
 import json
+import os
+import shutil
 
 # verification du format des donnees :
 from utils.verification_format import *
@@ -368,6 +370,26 @@ class Utilisateur(db.Model, UserMixin) :
         # reste a implementer la partie modif de mdp
         # pas de db.session.commit() ici
 
+# LA LOGIQUE DES ASSOCIATIONS
+# L'association fait appel également à des classes pour les publications et les commentaires
+# Les classes Publication, Association et Évènements sont réliées par les photos associées
+# À création d'une publication, un dossier est créé pour stocker les photos associées
+# À suppression d'une publication, le dossier est supprimé
+
+#À création d'un évènement, un dossier est créé pour stocker les photos associées
+#À suppression d'un évènement, le dossier est supprimé
+
+#L'architecture des dossiers est la suivante :
+#/static / associations
+
+#           		| —————— / publications
+#			|				|
+#			|				| ———————— /{publication_date}_{publication_heure}
+#			|
+#			| —————- / évènements
+#							|
+#							| ———————— /{evenement_date}_{evenement_heure}
+
 class Commentaire():
     def __init__(self, auteur:int, contenu:str, date:str) :
         """
@@ -393,16 +415,21 @@ class Commentaire():
     
 
 class Publication():
-    def __init__(self, auteur:int, contenu:str, date:str, liste_images:list) :
+
+    def __init__(self, nom_association : str, auteur:int, contenu:str, date:str,heure:str) :
         """
         Crée une nouvelle publication
         """
+        self.association = nom_association
         self.auteur = auteur
         self.contenu = contenu
         self.date = date
-        self.liste_images = liste_images
+        self.heure = heure
         self.likes = []
         self.commentaires = []
+        self.nom_dossier = re.sub(r'\W+', '', self.nom_association).lower()
+
+        self.create_publication_folder()
     
     def add_like(self, id_utilisateur:int) :
         """
@@ -428,6 +455,46 @@ class Publication():
         Retire un commentaire de la publication
         """
         del self.commentaires[index]
+    
+    def create_publication_folder(self) :
+        """
+        Crée un dossier pour la publication
+        """
+        #nettoyer le nom de l'association en ne gardant que les caractères alphanumériques en minuscule
+        os.mkdir(f"app/static/associations/{self.nom_dossier}/publications/{self.date}_{self.heure.replace(':','')}")
+
+    def remove_publication_folder(self) :
+        """
+        Supprime le dossier de la publication
+        """
+
+        shutil.rmtree(f"app/static/associations/{self.nom_dossier}/publications/{self.date}_{self.heure.replace(':','')}")
+
+    def add_img(self, file,img_order : int) :
+        """
+        Ajoute une image à la publication
+        """
+        file_path = f"app/static/associations/{self.nom_dossier}/publications/{self.date}/{img_order}_{file.filename}"
+
+        file.save(file_path)
+
+    def remove_img(self, img_order : int) :
+        """
+        Supprime une image de la publication
+        """
+        #récupérer le chemin de l'image qui correspond à l'ordre donné en regardan quel chemin commence par cet ordre
+        for file in os.listdir(f"app/static/associations/{self.nom_dossier}/publications/{self.date}"):
+            if file.startswith(f"{img_order}_"):
+                file_path = f"app/static/associations/{self.nom_dossier}/publications/{self.date}/{file}"
+                os.remove(file_path)
+                break
+        
+        #mettre à jour les ordres des images restantes
+        for file in os.listdir(f"app/static/associations/{self.nom_dossier}/publications/{self.date}"):
+            if int(file.split('_')[0]) > img_order:
+                os.rename(f"app/static/associations/{self.nom_dossier}/publications/{self.date}/{file}",
+                          f"app/static/associations/{self.nom_dossier}/publications/{self.date}/{int(file.split('_')[0])-1}_{file.split('_')[1]}")
+    
     
 
 
@@ -505,6 +572,15 @@ class Association(db.Model):
             self.nom = nom
         if description != None :
             self.description = description
+
+    def create_association_folder(self) :
+        """
+        Crée un dossier pour l'association
+        """
+        #nettoyer le nom de l'association en ne gardant que les caractères alphanumériques en minuscule
+        nom_dossier = re.sub(r'\W+', '', self.nom).lower()
+
+        os.mkdir(f"app/static/associations/{nom_dossier}")
     
     def get_members(self) :
         """
@@ -620,4 +696,158 @@ class VoteSondageDuJour(db.Model):
     id_utilisateur = db.Column(db.Integer, nullable=False)
     numero_vote = db.Column(db.Integer, nullable=False)
 
+# LA LOGIQUE DES ÉVÉNEMENTS
 
+class Évènement (db.Model):
+    __tablename__ = 'evenements'
+    #ID de l'évènement
+    id = db.Column(db.Integer, primary_key=True)
+    #ID de l'association organisatrice
+    id_association = db.Column(db.Integer, nullable=True)
+    nom_association = db.Column(db.String(1000), nullable=True)
+
+    #Éléments ajoutés à la création de l'évènement — Modifiables par les membres de l'association
+    nom = db.Column(db.String(1000), nullable=True)
+    description = db.Column(db.String(1000), nullable=True)
+    date = db.Column(db.String(100), nullable=True)
+    heure = db.Column(db.String(100), nullable=True)
+    lieu = db.Column(db.String(1000), nullable=True)
+
+    evenement_masque = db.Column(db.Boolean, nullable=True)
+
+    evenement_periodique = db.Column(db.Boolean, nullable=True)
+    periode_en_jours = db.Column(db.Integer, nullable=True)
+    date_de_fin = db.Column(db.String(100), nullable=True)
+
+
+    def __init__(self, id_association:int, nom:str, description:str, date:str, heure : str, lieu:str, evenement_periodique:bool, periode_en_jours:int, date_de_fin:str) :
+        
+        """"
+        Crée un nouvel évènement
+        """
+        self.id_association = id_association
+        self.nom_association = Association.query.get(id_association).nom
+        self.nom_dossier = re.sub(r'\W+', '', self.nom_association).lower()
+        self.nom = nom
+        self.description = description
+        self.date = date
+        self.heure = heure
+        self.lieu = lieu
+
+        self.evenement_masque = True
+        self.evenement_periodique = evenement_periodique
+        self.periode_en_jours = periode_en_jours
+
+        if date_de_fin != None :
+            self.date_de_fin = date_de_fin
+
+        else :
+            self.date_de_fin = None
+
+        self.create_evenement_folder()
+
+    def __update__(self, 
+                   nom:str=None,
+                   description:str=None,
+                   date:str=None,
+                   heure:str=None,
+                   lieu:str=None,
+                   evenement_masque:bool=None,
+                   evenement_periodique:bool=None,
+                   periode_en_jours:int=None,
+                   date_de_fin:str=None) :
+        """
+        Modifie les valeurs d'un évènement, puis met a jour la base de donnee.
+
+        Les formats a respecter sont listes si apres. Cette doumentation fait autorite
+        quant au format que doit avoir la class évènement
+
+        /!\ Sauf exceptions la table évènement n'est pas vouee a etre modifiee a la main.
+        Cette fonction sera utilisee au sein de fonctions bien precises.
+
+        ----------------------
+        - nom : str
+            Nom de l'évènement, peut contenir des accents et des caracteres speciaux.
+        - description : str
+            Description de l'évènement, peut contenir des accents et des caracteres speciaux 
+            ainsi que des sauts de ligne et des informations de mise en page HTML.
+        - date : str
+            Date de l'évènement au format AAAAMMJJ
+        - heure : str
+            Heure de l'évènement au format HH:MM
+        - lieu : str
+            Lieu de l'évènement, peut contenir des accents et des caracteres speciaux.
+        - evenement_masque : bool
+            True si l'évènement est masqué, False sinon
+        - evenement_periodique : bool
+            True si l'évènement est périodique, False sinon
+        - periode_en_jours : int
+            Période de l'évènement en jours
+        - date_de_fin : str
+            Date de fin de l'évènement au format AAAAMMJJ, None si l'évènement n'est pas périodique, le string 
+            est vide si la date de fin n'est pas renseignée
+        """
+        
+        if nom != None :
+            self.nom = nom
+        if description != None :
+            self.description = description
+        if date != None :
+            self.date = date
+        if heure != None :
+            self.heure = heure
+        if lieu != None :
+            self.lieu = lieu
+        if evenement_masque != None :
+            self.evenement_masque = evenement_masque
+        if evenement_periodique != None :
+            self.evenement_periodique = evenement_periodique
+        if periode_en_jours != None :
+            self.periode_en_jours = periode_en_jours
+        if date_de_fin != None :
+            self.date_de_fin = date_de_fin
+    
+    def create_evenement_folder(self) :
+        """
+        Crée un dossier pour l'évènement
+        """
+        #nettoyer le nom de l'association en ne gardant que les caractères alphanumériques en minuscule
+        
+
+        os.mkdir(f"app/static/associations/{self.nom_dossier}/evenements/{self.date}_{self.heure.replace(':','')}")
+    
+    def remove_evenement_folder(self) :
+        """
+        Supprime le dossier de l'évènement
+        """
+        shutil.rmtree(f"app/static/associations/{self.nom_dossier}/evenements/{self.date}_{self.heure.replace(':','')}")
+    
+    def change_visibility(self) :
+        """
+        Change la visibilité de l'évènement
+        """
+        self.evenement_masque = not self.evenement_masque
+    
+    def add_img(self, file,img_order : int) :
+        """
+        Ajoute une image à l'évènement
+        """
+        file_path = f"app/static/associations/{self.nom_dossier}/evenements/{self.date}/{img_order}_{file.filename}"
+
+        file.save(file_path)
+
+    def remove_img(self, img_order : int) :
+        """"
+        Supprime une image de l'évènement
+        """
+        for file in os.listdir(f"app/static/associations/{self.nom_dossier}/evenements/{self.date}"):
+            if file.startswith(f"{img_order}_"):
+                file_path = f"app/static/associations/{self.nom_dossier}/evenements/{self.date}/{file}"
+                os.remove(file_path)
+                break
+        
+        #mettre à jour les ordres des images restantes
+        for file in os.listdir(f"app/static/associations/{self.nom_dossier}/evenements/{self.date}"):
+            if int(file.split('_')[0]) > img_order:
+                os.rename(f"app/static/associations/{self.nom_dossier}/evenements/{self.date}/{file}",
+                          f"app/static/associations/{self.nom_dossier}/evenements/{self.date}/{int(file.split('_')[0])-1}_{file.split('_')[1]}")

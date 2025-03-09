@@ -251,7 +251,7 @@ def update_members_order(association : Association, members_weights:list) :
             raise ValueError("L'association n'existe pas")
 
 
-def add_publication(association:Association, utilisateur:Utilisateur, titre:str, contenu:str, date:str) :
+def add_publication(association:Association, utilisateur:Utilisateur, titre:str, contenu:str, date:str, heure:str) :
         """
         Ajoute une publication à l'association
         """
@@ -259,7 +259,7 @@ def add_publication(association:Association, utilisateur:Utilisateur, titre:str,
         if association:
             utilisateur=Utilisateur.query.get(utilisateur.id)
             if utilisateur:
-                publication = Publication(titre=titre, contenu=contenu, auteur=utilisateur.id, date=date)
+                publication = Publication(titre=titre, contenu=contenu, auteur=utilisateur.id, date=date, heure=heure)
                 association.publications.append(publication)
             else:
                 raise ValueError("L'utilisateur n'existe pas")
