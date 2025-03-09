@@ -16,7 +16,7 @@
 
 from app import db
 from app.models import Utilisateur,Sondage, AppConfig, VoteSondageDuJour, Association, Publication, Commentaire
-
+from collections import Counter
 
 #### Lien entre les utilisateurs
 
