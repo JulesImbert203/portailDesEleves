@@ -165,6 +165,7 @@ def renvoyer_id_sondage_du_jour_et_passer_au_suivant() :
         AppConfig.set("id_sondage_du_jour", nouveau_sondage_du_jour.id)
     return id_sondage_du_jour
 
+#### GESTION DES ASSOCIATIONS
 
 def add_member(association:Association, utilisateur:Utilisateur, role:str) :
         """
