@@ -15,7 +15,7 @@
 
 
 from app import db
-from app.models import Utilisateur,Sondage, AppConfig, VoteSondageDuJour, Association, Publication, Commentaire
+from app.models import Utilisateur,Sondage, AppConfig, VoteSondageDuJour, Association, Publication, Commentaire, Évènement
 from collections import Counter
 
 #### Lien entre les utilisateurs
@@ -330,4 +330,47 @@ def remove_comment(association : Association, index_publication:int, index_comme
             del association.publications[index_publication].commentaires[index_comment]
         else:
             raise ValueError("L'association n'existe pas")
-      
+
+### Gestion des évènements
+def change_event_visibility(association : Association, utilisateur:Utilisateur, évènement: Évènement):
+     
+        """
+        Change la visibilité d'un évènement
+        """
+        association=Association.query.get(association.id)
+
+        if association:
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+
+            if association.id in utilisateur.assos_actuelles:
+                évènement=Évènement.query.get(évènement.id)
+
+                if évènement:
+                    évènement.change_visibility()
+
+                else:
+                    raise ValueError("L'évènement n'existe pas")
+                
+            else:
+                raise ValueError("L'utilisateur doit être membre de l'association pour changer la visibilité de l'évènement")
+        
+        else:
+            raise ValueError("L'association n'existe pas")
+        
+
+def supprimer_evenement(évènement: Évènement, utilisateur:Utilisateur) :
+        "Supprime un évènement"
+        utilisateur=Utilisateur.query.get(utilisateur.id)
+        évènement=Évènement.query.get(évènement.id)
+
+        if évènement:
+             
+            if évènement.id_association in utilisateur.assos_actuelles:
+                évènement.delete_folder()
+                db.session.delete(évènement)
+
+            else:
+                raise ValueError("L'utilisateur doit être membre de l'association pour supprimer un évènement")
+        
+        else:
+            raise ValueError("L'évènement n'existe pas")
