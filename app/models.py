@@ -573,9 +573,6 @@ class Association(db.Model):
 
     #Liste des membres de l'association
     membres = db.Column(db.JSON, nullable=True)
-
-    #Liste des publications de l'association à afficher la page de l'association et sur le fil d'actualité, il s'agit d'une liste de dictionnaires
-    publications = db.Column(db.JSON, nullable=True)
     
     type_association = db.Column(db.String(1000), nullable=True)
     ordre_importance = db.Column(db.Integer, nullable=True)
@@ -591,7 +588,7 @@ class Association(db.Model):
         self.type_association = type_association
 
         # Créer un dossier pour l'association
-        self.create_association_folder()
+        #self.create_association_folder()
 
     def __repr__(self):
         """

@@ -228,7 +228,7 @@ def add_member(association:Association, utilisateur:Utilisateur, role:str) :
             utilisateur=Utilisateur.query.get(utilisateur.id)
             if utilisateur:
                 association.membres.append({'id': utilisateur.id, 'nom_utilisateur':utilisateur.nom_utilisateur, 'role': role})
-                utilisateur.assos_actuelles[association.id] = role
+                #utilisateur.assos_actuelles[association.id] = role
             else:
                 raise ValueError("L'utilisateur n'existe pas")
         else:
@@ -250,7 +250,7 @@ def remove_member(association:Association,utilisateur:Utilisateur) :
                 for membre in association.membres:
                     if membre['id'] == utilisateur.id:
                         association.membres.remove(membre)
-                        utilisateur.assos_actuelles.pop(association.id)
+                        #utilisateur.assos_actuelles.pop(association.id)
                         break
             else:
                 raise ValueError("L'utilisateur n'existe pas")
@@ -271,7 +271,7 @@ def update_member_role(association:Association, utilisateur:Utilisateur, role:st
                 for membre in association.membres:
                     if membre['id'] == utilisateur.id:
                         membre['role'] = role
-                        utilisateur.assos_actuelles[association.id] = role
+                        #utilisateur.assos_actuelles[association.id] = role
                         break
             else:
                 raise ValueError("L'utilisateur n'existe pas")
