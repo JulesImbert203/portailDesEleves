@@ -698,7 +698,7 @@ class VoteSondageDuJour(db.Model):
 
 # LA LOGIQUE DES ÉVÉNEMENTS
 
-class Évènement (db.Model):
+class Evenement (db.Model):
     __tablename__ = 'evenements'
     #ID de l'évènement
     id = db.Column(db.Integer, primary_key=True)

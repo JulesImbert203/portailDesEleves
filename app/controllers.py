@@ -15,7 +15,7 @@
 
 
 from app import db
-from app.models import Utilisateur,Sondage, AppConfig, VoteSondageDuJour, Association, Publication, Commentaire, Évènement
+from app.models import Utilisateur,Sondage, AppConfig, VoteSondageDuJour, Association, Publication, Commentaire, Evenement
 from collections import Counter
 
 #### Lien entre les utilisateurs
@@ -331,46 +331,31 @@ def remove_comment(association : Association, index_publication:int, index_comme
         else:
             raise ValueError("L'association n'existe pas")
 
+
 ### Gestion des évènements
-def change_event_visibility(association : Association, utilisateur:Utilisateur, évènement: Évènement):
+
+def change_event_visibility(evenement: Evenement):
      
         """
         Change la visibilité d'un évènement
         """
-        association=Association.query.get(association.id)
-
-        if association:
-            utilisateur=Utilisateur.query.get(utilisateur.id)
-
-            if association.id in utilisateur.assos_actuelles:
-                évènement=Évènement.query.get(évènement.id)
-
-                if évènement:
-                    évènement.change_visibility()
-
-                else:
-                    raise ValueError("L'évènement n'existe pas")
-                
-            else:
-                raise ValueError("L'utilisateur doit être membre de l'association pour changer la visibilité de l'évènement")
-        
+        evenement=Evenement.query.get(evenement.id)
+        if evenement:
+            evenement.change_visibility()
         else:
-            raise ValueError("L'association n'existe pas")
+            raise ValueError("L'évènement n'existe pas")
         
 
-def supprimer_evenement(évènement: Évènement, utilisateur:Utilisateur) :
+def supprimer_evenement(evenement: Evenement) :
+        
         "Supprime un évènement"
-        utilisateur=Utilisateur.query.get(utilisateur.id)
-        évènement=Évènement.query.get(évènement.id)
 
-        if évènement:
+        evenement=Evenement.query.get(evenement.id)
+
+        if evenement:
              
-            if évènement.id_association in utilisateur.assos_actuelles:
-                évènement.delete_folder()
-                db.session.delete(évènement)
-
-            else:
-                raise ValueError("L'utilisateur doit être membre de l'association pour supprimer un évènement")
+                evenement.delete_folder()
+                db.session.delete(evenement)
         
         else:
             raise ValueError("L'évènement n'existe pas")
