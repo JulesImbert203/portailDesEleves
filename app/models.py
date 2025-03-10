@@ -65,10 +65,10 @@ class Utilisateur(db.Model, UserMixin) :
     # Exemple = { "trash to co" : "Il pue", "Quelles assos comptes-tu faire ?" : "Le WEIIIII" }
 
     # Liste des assos - Non modifiable
-    assos_actuelles = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
+    assos_actuelles = db.Column(MutableDict.as_mutable(db.JSON), nullable=False)
     # clef : id de l'asso, contenu : role(s). Ce role sera le meme que dans la table de l'asso
     # Exemple = { 101 : "Trez, VP fraude fiscale" } 
-    anciennes_assos = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
+    anciennes_assos = db.Column(MutableDict.as_mutable(db.JSON), nullable=False)
     # clef : id de l'asso, contenu : (mandat, role(s)). Ce role sera le meme que dans la table des anciens mandats de l'asso
     # Exemple = { 101 : [23, "Trez, VP fraude fiscale"] } 
 
@@ -115,6 +115,8 @@ class Utilisateur(db.Model, UserMixin) :
         self.nombre_participations_sondaj = 0 
         self.nombre_victoires_sondaj = 0
         self.meilleur_score_2048 = 0
+        self.assos_actuelles = dict()
+        self.anciennes_assos = dict()
     
     def __repr__(self):
         """
