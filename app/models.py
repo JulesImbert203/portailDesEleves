@@ -709,18 +709,24 @@ class Evenement (db.Model):
     #Éléments ajoutés à la création de l'évènement — Modifiables par les membres de l'association
     nom = db.Column(db.String(1000), nullable=True)
     description = db.Column(db.String(1000), nullable=True)
-    date = db.Column(db.String(100), nullable=True)
+
+    date_de_debut = db.Column(db.String(100), nullable=True)
+    date_de_fin = db.Column(db.String(100), nullable=True)
+
     heure = db.Column(db.String(100), nullable=True)
     lieu = db.Column(db.String(1000), nullable=True)
 
     evenement_masque = db.Column(db.Boolean, nullable=True)
 
     evenement_periodique = db.Column(db.Boolean, nullable=True)
-    periode_en_jours = db.Column(db.Integer, nullable=True)
-    date_de_fin = db.Column(db.String(100), nullable=True)
+
+    jours_de_la_semaine = db.Column(db.String(100), nullable=True)
+
+    heure= db.Column(db.String(100), nullable=True)
+    
 
 
-    def __init__(self, id_association:int, nom:str, description:str, date:str, heure : str, lieu:str, evenement_periodique:bool, periode_en_jours:int, date_de_fin:str) :
+    def __init__(self, id_association:int, nom:str, description:str, lieu : str, evenement_periodique:bool, date_de_debut: str=None, date_de_fin : str = None, jours_de_la_semaine : list=None, heure : str = None) :
         
         """"
         Crée un nouvel évènement
@@ -730,33 +736,34 @@ class Evenement (db.Model):
         self.nom_dossier = re.sub(r'\W+', '', self.nom_association).lower()
         self.nom = nom
         self.description = description
-        self.date = date
-        self.heure = heure
+        self.date_de_debut = date_de_debut
+        self.date_de_fin = date_de_fin
         self.lieu = lieu
 
         self.evenement_masque = True
+        
         self.evenement_periodique = evenement_periodique
-        self.periode_en_jours = periode_en_jours
-
-        if date_de_fin != None :
-            self.date_de_fin = date_de_fin
-
-        else :
-            self.date_de_fin = None
+        self.jours_de_la_semaine = jours_de_la_semaine
+        self.heure = heure
 
         self.create_evenement_folder()
 
     def __update__(self, 
                    nom:str=None,
                    description:str=None,
-                   date:str=None,
-                   heure:str=None,
                    lieu:str=None,
                    evenement_masque:bool=None,
+
                    evenement_periodique:bool=None,
-                   periode_en_jours:int=None,
-                   date_de_fin:str=None) :
-        """
+
+                   date_de_debut:str=None,
+                   date_de_fin:str=None,
+                    
+                   jours_de_la_semaine : list=None,
+                   heure : str = None
+                   ) : 
+
+        """            
         Modifie les valeurs d'un évènement, puis met a jour la base de donnee.
 
         Les formats a respecter sont listes si apres. Cette doumentation fait autorite
@@ -771,41 +778,49 @@ class Evenement (db.Model):
         - description : str
             Description de l'évènement, peut contenir des accents et des caracteres speciaux 
             ainsi que des sauts de ligne et des informations de mise en page HTML.
-        - date : str
-            Date de l'évènement au format AAAAMMJJ
-        - heure : str
-            Heure de l'évènement au format HH:MM
+        - date_de_debut : str
+            Date de début de l'évènement au format AAAAMMJJHHMM
+            Il s'agit de la date de début de l'évènement s'il n'est pas périodique, None s'il est périodique
+        - date_de_fin : str
+            Date de fin de l'évènement au format AAAAMMJJHHMM s'il n'est pas périodique, None s'il est périodique
         - lieu : str
             Lieu de l'évènement, peut contenir des accents et des caracteres speciaux.
         - evenement_masque : bool
             True si l'évènement est masqué, False sinon
         - evenement_periodique : bool
             True si l'évènement est périodique, False sinon
-        - periode_en_jours : int
-            Période de l'évènement en jours
-        - date_de_fin : str
-            Date de fin de l'évènement au format AAAAMMJJ, None si l'évènement n'est pas périodique, le string 
-            est vide si la date de fin n'est pas renseignée
+        - jours_de_la_semaine : list
+            Liste des jours de la semaine où l'évènement a lieu, None s'il n'est pas périodique
+        - heure : str
+            Heure de l'évènement, au format HHMM
         """
         
         if nom != None :
             self.nom = nom
+
         if description != None :
             self.description = description
-        if date != None :
-            self.date = date
-        if heure != None :
-            self.heure = heure
-        if lieu != None :
-            self.lieu = lieu
-        if evenement_masque != None :
-            self.evenement_masque = evenement_masque
-        if evenement_periodique != None :
-            self.evenement_periodique = evenement_periodique
-        if periode_en_jours != None :
-            self.periode_en_jours = periode_en_jours
+
+        if date_de_debut != None :
+            self.date_de_debut = date_de_debut
+
         if date_de_fin != None :
             self.date_de_fin = date_de_fin
+
+        if lieu != None :
+            self.lieu = lieu
+
+        if evenement_masque != None :
+            self.evenement_masque = evenement_masque
+
+        if evenement_periodique != None :
+            self.evenement_periodique = evenement_periodique
+
+        if jours_de_la_semaine != None :
+            self.jours_de_la_semaine = jours_de_la_semaine
+        
+        if heure != None :
+            self.heure = heure
     
     def create_evenement_folder(self) :
         """
