@@ -357,31 +357,6 @@ def remove_like(association : Association, utilisateur:Utilisateur, index_public
         else:
             raise ValueError("L'association n'existe pas")  
 
-def add_comment(association : Association, auteur:Utilisateur, index_publication:int, contenu:str, date:str) :
-        """
-        Ajoute un commentaire à une publication de l'association
-        """
-        association=Association.query.get(association.id)
-        if association:
-            auteur=Utilisateur.query.get(auteur.id)
-            if auteur:
-                commentaire = Commentaire(contenu=contenu, auteur=auteur.id, date=date)
-                association.publications[index_publication].add_comment(commentaire)
-            else:
-                raise ValueError("L'utilisateur n'existe pas")
-        else:
-            raise ValueError("L'association n'existe pas")
-    
-def remove_comment(association : Association, index_publication:int, index_comment:int) :
-        """
-        Retire un commentaire d'une publication de l'association
-        """
-        association=Association.query.get(association.id)
-        if association:
-            del association.publications[index_publication].commentaires[index_comment]
-        else:
-            raise ValueError("L'association n'existe pas")
-
 
 ### Gestion des évènements
 

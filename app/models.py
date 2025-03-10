@@ -429,7 +429,7 @@ class Publication(db.Model):
 
     is_publication_interne = db.Column(db.Boolean, nullable=True)
 
-    def __init__(self, id_association:int, id_auteur : int, contenu:str, date_publication:str,is_commentable:bool, a_cacher_to_cycles:list, a_cacher_to_promos:list, is_publication_interne:bool, is_publiee_par_utilisateur:bool=False) :
+    def __init__(self, id_association:int, id_auteur : int, contenu:str, date_publication:str,is_commentable:bool, a_cacher_to_cycles:list=[], a_cacher_to_promos:list=[], is_publication_interne:bool=False, is_publiee_par_utilisateur:bool=False) :
         """
         Crée une nouvelle publication
         """
@@ -549,18 +549,41 @@ class Publication(db.Model):
         """
         self.likes.remove(id_utilisateur)
 
-    def add_comment(self, auteur:int, contenu:str, date:str) :
+    def add_comment(self, auteur:int, contenu:str, date:str):
         """
         Ajoute un commentaire à la publication
         """
-        self.commentaires.append(Commentaire(auteur, contenu, date))
+        new_comment = {
+            "auteur": auteur,
+            "contenu": contenu,
+            "date": date,
+            "likes": []
+        }
+        self.commentaires.append(new_comment)
 
-    def remove_comment(self, id_commentaire:int) :
+    def remove_comment(self, id_commentaire:int):
         """
         Retire un commentaire de la publication
         """
         del self.commentaires[id_commentaire]
 
+    def add_like_to_comment(self, id_commentaire:int, id_utilisateur:int):
+        """
+        Ajoute un like à un commentaire
+        """
+        likes = self.commentaires[id_commentaire]['likes']
+        likes.append(id_utilisateur)
+        likes = list(set(likes))
+        self.commentaires[id_commentaire]['likes'] = likes
+
+    def remove_like_from_comment(self, id_commentaire:int, id_utilisateur:int):
+        """
+        Retire un like d'un commentaire
+        """
+        likes = self.commentaires[id_commentaire]['likes']
+        likes.remove(id_utilisateur)
+        self.commentaires[id_commentaire]['likes'] = likes
+        
 
 class Association(db.Model):
     __tablename__ = 'associations'
