@@ -70,5 +70,4 @@ def valider_dict_fillots(dictionnaire: dict) -> bool :
     return True
 
 def valider_date_AAAAMMJJHHMM(date_str: str) -> bool:
-    if not re.fullmatch(r"\d{12}", date_str):
-        return False
+    return re.fullmatch(r"\d{12}", date_str)

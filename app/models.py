@@ -9,33 +9,17 @@ import os
 import shutil
 
 # verification du format des donnees :
-from utils.verification_format import *
+from .utils.verification_format import *
 
 # TESTER 
-class AppConfig(db.Model):
+class GlobalVariable(db.Model):
     """
-    Configuration du site : contient les variables globales
+    Variables globales : id|"nom_variable"|"valeur_variable
     """
     id = db.Column(db.Integer, primary_key=True)
-    id_sondage_du_jour = db.Column(db.Integer, nullable=True) # None = pas de sondage aujourd'hui
-    @staticmethod
-    def get():
-        """Retourne la configuration actuelle (la premiere ligne)"""
-        return db.session.query(AppConfig).first()
-    @staticmethod
-    def init_defaults():
-        """Cree une config par défaut si elle n'existe pas"""
-        if not db.session.query(AppConfig).first():
-            config = AppConfig()
-            db.session.add(config)
-            db.session.commit()
-    @staticmethod
-    def set(key, value):
-        """Modifie une variable globale et la sauvegarde"""
-        config = AppConfig.get()
-        if not config:
-            config = AppConfig()
-            db.session.add(config)
+    key = db.Column(db.String(50), unique=True, nullable=False)
+    value = db.Column(db.String(255), nullable=True)
+
 
 
 class Utilisateur(db.Model, UserMixin) :
@@ -708,9 +692,9 @@ class Sondage(db.Model):
     # donnees du sondage
     propose_par_user_id = db.Column(db.Integer, nullable=False)
     date_sondage = db.Column(db.String(20), nullable=False) # au format AAAAMMJJHHMM
-    # Autorisations
     status = db.Column(db.Boolean, nullable=False, default=False) # False : non autorise, True : en attente de publciation ou sondage du jour
-    def __init__(self, propose_par_user_id:int, date_sondage:str, question:str, reponse1:str, reponse2:str, reponse3:str=None, reponse4:str=None) :
+    
+    def __init__(self, propose_par_user_id:int, date_sondage:str, question:str, reponse1:str, reponse2:str, reponse3:str=None, reponse4:str=None, status:bool=False) :
         """
         Cree un nouveau sondage
         """
@@ -741,20 +725,20 @@ class AncienSondage(db.Model):
     reponse4 = db.Column(db.String(500), nullable=True)
     # donnees du sondage
     propose_par_user_id = db.Column(db.Integer, nullable=False)
-    date_de_publication = db.Column(db.String(20), nullable=False) # au format AAAAMMJJHHMM
+    date_d_archivage = db.Column(db.String(20), nullable=False) # au format AAAAMMJJHHMM
     # nombre de votes pour chaque reponse
     votes1 = db.Column(db.Integer, nullable=False, default=0)
     votes2 = db.Column(db.Integer, nullable=False, default=0)
     votes3 = db.Column(db.Integer, nullable=False, default=0)
     votes4 = db.Column(db.Integer, nullable=False, default=0)
 
-    def __init__(self, propose_par_user_id:int, date_de_publication:str, question:str, reponse1:str, reponse2:str, reponse3:str, reponse4:str, votes1:int, votes2:int, votes3:int, votes4:int) :
+    def __init__(self, propose_par_user_id:int, date_d_archivage:str, question:str, reponse1:str, reponse2:str, reponse3:str, reponse4:str, votes1:int, votes2:int, votes3:int, votes4:int) :
         """
         Cree un nouveau "ancien_sondage" (sera appele a partir des donnees du sondage du jour)
         """
         self.propose_par_user_id = propose_par_user_id
-        if valider_date_AAAAMMJJHHMM(date_de_publication):
-            self.date_de_publication = date_de_publication
+        if valider_date_AAAAMMJJHHMM(date_d_archivage):
+            self.date_d_archivage = date_d_archivage
         else :
             raise ValueError("Fomat invalide de date")
         self.question = question

@@ -15,8 +15,9 @@
 
 
 from app import db
-from app.models import Utilisateur,Sondage, AppConfig, VoteSondageDuJour, Association, Publication, Commentaire, Evenement
+from app.models import Utilisateur,Sondage, GlobalVariable, VoteSondageDuJour, Association, Publication, Commentaire, Evenement, AncienSondage
 from collections import Counter
+from datetime import datetime
 
 #### Lien entre les utilisateurs
 
@@ -103,6 +104,28 @@ def supprimer_fillots(marrain:Utilisateur) :
         marrain.update(fillots_dict=None)   
 
 
+#### VARIABLES GLOBALES
+# ICI TEMPORAIREMENT, A DEPLACER DANS AILLEURS
+# l'appel a la BDD ne se fait pas dans controllers.py normalement
+
+
+def get_global_var(key):
+    var = GlobalVariable.query.filter_by(key=key).first()
+    if var :
+        return var.value
+    else :
+        raise KeyError(f"Pas de variable globale de nom {key}")
+
+
+def set_global_var(key, value):
+    var = GlobalVariable.query.filter_by(key=key).first()
+    if var:
+        var.value = value
+    else:
+        raise KeyError(f"Pas de variable globale de nom {key}")
+        
+
+
 #### VOTE A UN SONDAGE
 
 # ATTENTION : Aucune des fonctions suivantes concernant les sondages n'ont ete testees
@@ -113,6 +136,7 @@ def creer_vote_sondage_du_jour(utilisateur:Utilisateur, vote:int) :
     Met a jour utilisateur.vote_sondaj_du_jour
     Met a jour le nombre de votes du sondage de la reponse du sondage en question dans la table "votes_sondage_du_jour"
     - vote doit etre 1, 2, 3 ou 4. Cette fonction ne verifie pas si le vote est possible (ex : reponse 4 alors qu'il n'y a que 3 reponses possibles)
+    - il faudra aussi verifier s'il y a bien un sondage aujourd'hui
     """
     utilisateur.vote_sondaj_du_jour = vote
     utilisateur.nombre_participations_sondaj += 1
@@ -132,38 +156,65 @@ def valider_sondage(sondage:Sondage) :
     else :
         sondage.status = True
 
-def renvoyer_id_sondage_du_jour_et_passer_au_suivant() :
+# Passage d'un sondage a un autre 
+# Les fonctions suivantes ne doivent etre utilisees qu'au sein d'une meme route
+def resultat_sondage_du_jour(votes_sondage_du_jour) :
     """
-    Cette fonction sera appelee automatiquent chaque jour a minuit pour changer de sondage du jour
-    Les votants updateront leur nombre de victoire
-    Le sondage du jour sera mis a jour
-    Renvoie l'id du sondage du jour pour pourvoir le supprimer de la base des sondages et le mettre dans la base des anciens sondages
+    - Prend en entree la table des votes du jour, obtenue avec VoteSondageDuJour.query.all()
+    Renvoie le resultat du sondage du jour : 
+    [0, 2, 3, 10] : toujours un tableau de longueur 4
+    Ne verifie pas si le sondage du jour existe, et que le vote a bien eu lieu
     """
-    # obtention de la reponse gagnante :
-    appConfig = AppConfig.get()
-    id_sondage_du_jour = appConfig.id_sondage_du_jour
-    sondage_du_jour = Sondage.query.get(id_sondage_du_jour)
     # comptage des votes : 
-    votes_sondage_du_jour = VoteSondageDuJour.query.all()
     votes = [vote.numero_vote for vote in votes_sondage_du_jour]
-    compteur_votes = Counter(votes)  # Dictionnaire {vote: nombre}
-    max_votes = max(compteur_votes.values(), default=0)
-    votes_gagnants = [vote for vote, count in compteur_votes.items() if count == max_votes]
-    # mise a jour des victoires des utilisateurs 
-    for vote in votes_sondage_du_jour :
-        if vote.numero_vote in votes_gagnants :
-            utilisateur_gagnant = Utilisateur.query.get(vote.id_utilisateur)
-            utilisateur_gagnant.nombre_victoires_sondaj += 1
-    # Mise a jour : nouveau sondage du jour
-    nouveau_sondage_du_jour = (
-        Sondage.query.filter(Sondage.status == 1, Sondage.id != id_sondage_du_jour)
-        .order_by(Sondage.date_sondage)
-        .first()
-    )
-    # Mettre a jour si le sondage existe
-    if nouveau_sondage_du_jour:
-        AppConfig.set("id_sondage_du_jour", nouveau_sondage_du_jour.id)
-    return id_sondage_du_jour
+    compteur_votes = [0,0,0,0]
+    for vote in votes :
+        compteur_votes[vote] += 1
+    return compteur_votes
+
+def donner_votes_gagnants(compteur_votes) :
+    """prend en entree le tableau des votes, renvoie les numeros gagnants. Ne pas appliquer s'il n'y a pas eu de sondage ce jour"""
+    gagnants = []
+    maxi = 0
+    for i in [1,2,3,4] :
+        if compteur_votes[i] > maxi :
+            maxi = compteur_votes[i]
+    for i in [1,2,3,4] :
+        if compteur_votes[i] == maxi :
+            gagnants.append(i)
+    return gagnants
+
+def update_si_win(utilisateurs, gagnants) :
+    """
+    Met a jour la ligne de l'utilisateur s'il a gagne le sondage du jour
+    - utilisateurs : tableau d'utilisateurs
+    - gagnants : tableau des votes gagnants
+    """
+    for utilisateur in utilisateurs :
+        if utilisateur.vote_sondaj_du_jour in gagnants :
+            utilisateur.nombre_victoires_sondaj += 1
+
+def archiver_sondage(sondage_du_jour:Sondage, compteur_votes) :
+    """
+    Archive un sondage qui vient de s'achever. Renvoie l'element a ajouter dans la table
+    - sondage_du_jour : le sondage d'aujourd'hui a archiver
+    - compteur vote : obtenu avec _resultat_sondage_du_jour
+    Ne pas appliquer sur du None
+    """       
+    nouveau_ancien_sondage = AncienSondage(propose_par_user_id=sondage_du_jour.propose_par_user_id,
+                                        date_d_archivage=datetime.now().strftime("%Y%m%d%H%M"),
+                                        question=sondage_du_jour.question,
+                                        reponse1=sondage_du_jour.reponse1,
+                                        reponse2=sondage_du_jour.reponse2,
+                                        reponse3=sondage_du_jour.reponse3,
+                                        reponse4=sondage_du_jour.reponse4,
+                                        votes1=compteur_votes[1],
+                                        votes2=compteur_votes[2],
+                                        votes3=compteur_votes[3],
+                                        votes4=compteur_votes[4])
+    return nouveau_ancien_sondage
+ 
+
 
 #### GESTION DES ASSOCIATIONS
 
