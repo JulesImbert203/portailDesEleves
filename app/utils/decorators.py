@@ -2,8 +2,9 @@
 # Contient les decorateurs personnalises pour s'assurer que les permissions sont respectees
 
 from functools import wraps
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash, jsonify
 from flask_login import current_user
+from app.models import *
 
 def vp_sondaj_required(f):
     @wraps(f)
@@ -25,4 +26,5 @@ def superutilisateur_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+   
 
