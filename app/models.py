@@ -555,13 +555,14 @@ class Publication(db.Model):
         """
         Ajoute un commentaire à la publication
         """
-        new_comment = {
-            "auteur": auteur,
-            "contenu": contenu,
-            "date": date,
-            "likes": []
-        }
-        self.commentaires.append(new_comment)
+        if self.is_commentable == True :
+            new_comment = {
+                "auteur": auteur,
+                "contenu": contenu,
+                "date": date,
+                "likes": []
+            }
+            self.commentaires.append(new_comment)
 
     def remove_comment(self, id_commentaire:int):
         """
@@ -806,7 +807,7 @@ class Evenement (db.Model):
 
     evenement_periodique = db.Column(db.Boolean, nullable=True)
 
-    jours_de_la_semaine = db.Column(db.String(100), nullable=True)
+    jours_de_la_semaine = db.Column(db.JSON, nullable=True)
 
     heure= db.Column(db.String(100), nullable=True)
     
@@ -832,7 +833,7 @@ class Evenement (db.Model):
         self.jours_de_la_semaine = jours_de_la_semaine
         self.heure = heure
 
-        self.create_evenement_folder()
+        #self.create_evenement_folder()
 
     def __update__(self, 
                    nom:str=None,

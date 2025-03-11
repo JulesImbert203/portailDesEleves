@@ -1,8 +1,8 @@
 # tests/test_app.py
 
 from app import create_app, db
-from app.models import Utilisateur,Association,Publication
-from app.controllers import add_member, remove_member,update_member_role, update_members_order,add_like,remove_like,add_comment,remove_comment,add_like_to_comment,remove_like_from_comment
+from app.models import Utilisateur,Association,Publication,Evenement
+from app.controllers import add_member, remove_member,update_member_role, update_members_order,change_event_visibility,supprimer_evenement
 from sqlalchemy.orm.attributes import flag_modified
 
 def test_creer_utilisateur():
@@ -46,60 +46,41 @@ def test_creer_utilisateur():
 
             print('Ajout effectué')
 
-            publication=Publication(id_association=bde.id, id_auteur=jules.id,contenu="Piche",date_publication='202503110028',is_commentable=True)
-            db.session.add(publication)
+            #id_association:int, nom:str, description:str, lieu : str, evenement_periodique:bool, date_de_debut: str=None, date_de_fin : str = None, jours_de_la_semaine : list=None, heure : str = None
+            interne=Evenement(id_association=1,nom='Interne de Noël',description='Ta plus grosse cuite de l\'année',lieu='Meuh',evenement_periodique=False,date_de_debut='202412202200',date_de_fin='202412210600')
+
+            vendome=Evenement(id_association=1,nom='Vendôme',description='Piche',lieu='Meuh',evenement_periodique=True,date_de_debut=None,date_de_fin=None,jours_de_la_semaine=[1],heure='2100')
+            
+            jours={1:'Lundi',2:'Mardi',3:'Mercredi',4:'Jeudi',5:'Vendredi',6:'Samedi',7:'Dimanche'}
+
+            db.session.add(interne)
+            db.session.add(vendome)
+
             db.session.commit()
+            print('Evenement ajouté')
+            
+            interne=Evenement.query.filter_by(nom='Interne de Noël').first()
+            vendome=Evenement.query.filter_by(nom='Vendôme').first()
 
-            print('Publication ajoutée')
+            change_event_visibility(interne)
+            change_event_visibility(vendome)
 
-            publication=Publication.query.filter_by(id_association=bde.id).first()
-            add_comment(publication,jules,"Commentaire de Jules",'202503110028')
-            flag_modified(publication, 'commentaires')
             db.session.commit()
+            print('Visibilité changée')
+            
+            interne=Evenement.query.filter_by(nom='Interne de Noël').first()
+            
+            interne.__update__(nom='Biéro',description='Ta plus grosse cuite de la semaine',lieu='Meuh',evenement_periodique=True,date_de_debut=None,date_de_fin=None,jours_de_la_semaine=[2],heure='2200')
 
-            publication=Publication.query.filter_by(id_association=bde.id).first()
+            db.session.commit()
+            print('Evenement modifié')
+
+            biero=Evenement.query.filter_by(nom='Biéro').first()
+            print(biero)
+            print(biero.jours_de_la_semaine)
             
 
-            add_like(publication,jules)
-
-            flag_modified(publication, 'likes')
-            db.session.commit()
-
-            publication=Publication.query.filter_by(id_association=bde.id).first()
-
-
-            add_like_to_comment(publication,achille,0)
-
-            flag_modified(publication, 'commentaires')
-            db.session.commit()
- 
-
-            print('Contenu :',publication.contenu)
-            print('Likes :',publication.likes)
-            print('Commentaire :',publication.commentaires)
-            print('---------------------------------')
-
-            publication=Publication.query.filter_by(id_association=bde.id).first()
-
-            remove_like_from_comment(publication,achille,0)
-
-            flag_modified(publication, 'commentaires')
-            db.session.commit()
-
-            print('Likes :',publication.commentaires[0])
-
-            publication=Publication.query.filter_by(id_association=bde.id).first()
-
-            remove_comment(publication,0)
-
-            flag_modified(publication, 'commentaires')
-            db.session.commit()
-
-            publication=Publication.query.filter_by(id_association=bde.id).first()
-            print('Commentaire :',publication.commentaires)
-            print('---------------------------------')
-
-
+            
 
         except Exception as e:
             print(f"Une erreur est survenue : {e}")
