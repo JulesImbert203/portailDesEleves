@@ -1,4 +1,4 @@
-from models_general import GlobalVariable
+from app.models import GlobalVariable
 from app import db
 
 # verification du format des donnees :
