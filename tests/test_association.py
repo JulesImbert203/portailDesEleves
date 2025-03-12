@@ -2,7 +2,8 @@
 
 from app import create_app, db
 from app.models import Utilisateur,Association
-from app.controllers import add_member, remove_member,update_member_role, update_members_order
+from app.services.services_associations import *
+from app.services.services_utilisateurs import *
 from sqlalchemy.orm.attributes import flag_modified
 
 def test_creer_utilisateur():

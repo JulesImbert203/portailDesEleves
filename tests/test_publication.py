@@ -1,8 +1,12 @@
 # tests/test_app.py
 
 from app import create_app, db
-from app.models import Utilisateur,Association,Publication
-from app.controllers import add_member, remove_member,update_member_role, update_members_order,add_like,remove_like,add_comment,remove_comment,add_like_to_comment,remove_like_from_comment
+from app.models.models_associations import Association
+from app.models.models_utilisateurs import Utilisateur
+from app.models.models_publications import Publication
+from app.services.services_publications import *
+from app.services.services_associations import *
+from app.services.services_utilisateurs import *
 from sqlalchemy.orm.attributes import flag_modified
 
 def test_creer_utilisateur():

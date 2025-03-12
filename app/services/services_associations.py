@@ -1,9 +1,17 @@
 # importer les models grace a __init__.py de models
 from app.services import db
 from app.models import *
+from sqlalchemy.orm.attributes import flag_modified
 
 
 #### GESTION DES ASSOCIATIONS
+
+def get_association(association_id) -> Association:  
+    """Renvoie un utilisateur depuis son id"""
+    if association_id:
+        return db.session.get(Association, association_id)
+    else:
+        return None
 
 def add_member(association:Association, utilisateur:Utilisateur, role:str) :
         """
@@ -20,6 +28,9 @@ def add_member(association:Association, utilisateur:Utilisateur, role:str) :
                 raise ValueError("L'utilisateur n'existe pas")
         else:
             raise ValueError("L'association n'existe pas")
+        
+        flag_modified(association, 'membres')
+        db.session.commit()
     
 def remove_member(association:Association,utilisateur:Utilisateur) :
         """
@@ -44,6 +55,9 @@ def remove_member(association:Association,utilisateur:Utilisateur) :
         else:
             raise ValueError("L'association n'existe pas")
         
+        flag_modified(association, 'membres')
+        db.session.commit()
+        
 
 def update_member_role(association:Association, utilisateur:Utilisateur, role:str) :
         """
@@ -64,6 +78,9 @@ def update_member_role(association:Association, utilisateur:Utilisateur, role:st
                 raise ValueError("L'utilisateur n'existe pas")
         else:
             raise ValueError("L'association n'existe pas")
+        
+        flag_modified(association, 'membres')
+        db.session.commit()
    
 
     
@@ -87,3 +104,6 @@ def update_members_order(association : Association, members_weights:list) :
             association.membres=membres
         else:
             raise ValueError("L'association n'existe pas")
+        
+        flag_modified(association, 'membres')
+        db.session.commit()
