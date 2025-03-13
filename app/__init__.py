@@ -40,6 +40,10 @@ def create_app():
     from .views.views_admin import admin_bp 
     from .views.views_associations import associations_bp 
     from .views.views_index import index_bp 
+
+    # Importer et enregistrer le blueprint global API
+    from app.controllers import api
+    app.register_blueprint(api, url_prefix='/api')
     
     # Enregistrer les blueprint
     app.register_blueprint(utilisateurs_bp) 

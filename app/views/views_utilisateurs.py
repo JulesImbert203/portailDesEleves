@@ -1,5 +1,5 @@
 # views_utilisateurs.py
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import current_user # necessaire pour tester l'authentification
 from flask_login import login_user, logout_user # pour connecter un utilisateur
 from werkzeug.security import check_password_hash
@@ -28,10 +28,16 @@ def connexion():
     # Verification du mot de passe
     if utilisateur and check_password_hash(utilisateur.mot_de_passe, password):
         login_user(utilisateur)  # Connecte l'utilisateur
-        return redirect(url_for('index.accueil'))  # Redirige vers la page d'accueil
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest": # Verifie si la requete vient d'un script/API
+            return jsonify({"message": "Connexion réussie"}), 200
+        else :
+            return redirect(url_for('index.accueil'))  # Si c'est un navigateur, on redirige    
     else:
-        flash('Nom d\'utilisateur ou mot de passe incorrect.')  # Message d'erreur
-        return redirect(url_for('utilisateurs.page_blanche_de_connexion'))  # Redirige vers la page de connexion
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"message": "Nom d'utilisateur ou mot de passe incorrect"}), 401
+        else :
+            flash('Nom d\'utilisateur ou mot de passe incorrect.')  # Message d'erreur
+            return redirect(url_for('utilisateurs.page_blanche_de_connexion'))  # Redirige vers la page de connexion
 
 # se deconnecter    
 @utilisateurs_bp.route('/deconnexion', methods=['POST'])
