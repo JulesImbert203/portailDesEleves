@@ -1,0 +1,60 @@
+/* src/assets/styles/layout.css */
+
+/* Styles globaux pour le layout */
+.layout {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+  }
+  
+  header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+  }
+  
+  .main-content {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .sidebar {
+    width: 25%;
+    background-color: #ddd;
+    padding: 15px;
+    margin: 0 10px;
+    border-radius: 8px;
+  }
+  
+  .content {
+    width: 50%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  /* Bloc de contenu avec fond gris */
+  .bloc-sondage, .bloc-utilisateur {
+    background-color: #e1e1e1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  /* Styles pour le header */
+  header h1 {
+    font-size: 2rem;
+    margin: 0;
+  }
+  
+  /* Styles pour les sidebars (gauche et droite) */
+  .sidebar.left {
+    background-color: #f7f7f7;
+  }
+  
+  .sidebar.right {
+    background-color: #f7f7f7;
+  }
+  
