@@ -1,0 +1,19 @@
+/* src/assets/styles/home.css */
+
+.home {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+  }
+  
+  .home h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .home p {
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
