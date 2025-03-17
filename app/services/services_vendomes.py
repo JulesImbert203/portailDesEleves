@@ -300,7 +300,7 @@ def main_vendome(folder,template_destination,output_name='output'):
     <meta charset="utf-8">
     <title>Maquette_V2</title>
     <script src="/{font_file}" type="text/javascript"></script>
-    <script src="/static/js/markers.js" type="text/javascript"></script>
+    <script src="/static/js/vendomes/markers.js" type="text/javascript"></script>
     """+"""
    
     </meta>
