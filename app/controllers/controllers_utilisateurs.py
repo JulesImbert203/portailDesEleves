@@ -12,6 +12,41 @@ controllers_utilisateurs = Blueprint('controllers_utilisateurs', __name__)
 
 # routes API :
 
+@controllers_utilisateurs.route('/obtenir_infos_profil/<int:user_id>', methods=['GET'])
+@login_required
+def obtenir_infos_profil(user_id:int) :
+    """
+    Fournit les informations affichees sur le profil d'un utilisateur
+    """
+    utilisateur = get_utilisateur(user_id)
+    if not utilisateur :
+        return jsonify({"message": "Utilisateur non trouvé"}), 404
+    else :
+        infos_utilisateur = {
+            "id": utilisateur.id,
+            "nom_utilisateur": utilisateur.nom_utilisateur,
+            "prenom": utilisateur.prenom,
+            "nom_de_famille": utilisateur.nom_de_famille,
+            "surnom": utilisateur.surnom,
+            "promotion": utilisateur.promotion,
+            "cycle": utilisateur.cycle,
+            "email": utilisateur.email,
+            "telephone": utilisateur.telephone,
+            "date_de_naissance": utilisateur.date_de_naissance,
+            "ville_origine": utilisateur.ville_origine,
+            "sports": utilisateur.sports,
+            "instruments": utilisateur.instruments,
+            "marrain_id": utilisateur.marrain_id,
+            "marrain_nom": utilisateur.marrain_nom,
+            "co_id": utilisateur.co_id,
+            "co_nom": utilisateur.co_nom,
+            "fillots_dict": utilisateur.fillots_dict,
+            "questions_reponse_du_portail": utilisateur.questions_reponses_du_portail,
+            "assos_actuelles": utilisateur.assos_actuelles,
+            "anciennes_assos": utilisateur.anciennes_assos
+        }
+        return jsonify(infos_utilisateur), 200
+
 
 @controllers_utilisateurs.route('/supprimer_co', methods=['POST'])
 @login_required
@@ -53,6 +88,7 @@ def route_selectionner_fillots(fillots_id_list) :
     Ajoute une liste de fillots a la famille. Si des fillots existent deja, une erreur est levee.
     Si l'un des fillots possede deja un marrain, une erreur est levee. 
     Ne devra etre utilisee qu'une fois, au moment d'ajouter ses fillots au parrainnage. 
+    - fillots au format "12,45,78"
     """
     # Convertir la chaîne de caractères (les IDs) en une liste d'entiers
     try:

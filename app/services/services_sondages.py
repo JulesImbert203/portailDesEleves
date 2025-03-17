@@ -1,7 +1,7 @@
 # importer les models grace a __init__.py de models
 from app.services import db
 from app.models import *
-from app.services import get_global_var, set_global_var
+from app.services.services_global import get_global_var, set_global_var
 from datetime import datetime
 
 # Erreur levee si l'une de ces fonctions echoue
@@ -10,11 +10,18 @@ class ErreurSondage(Exception):
         super().__init__(message)
 
 
-def proposer_sondage(question:str, utilisateur:Utilisateur) :
+def proposer_sondage(question:str, reponses:list, utilisateur:Utilisateur) :
     """
-    Ajouter un sondage dans la bdd
+    Ajouter un sondage dans la bdd. La liste des reponses possibles est au format ["reponse1", "reponse2", "reponse3"], de taille entre 2 et 4
     """
-    proposition =  Sondage(question=question, reponse1="reponse1", reponse2="reponse2", reponse3="reponse3", reponse4="reponse4", propose_par_user_id=utilisateur.id, date_sondage=datetime.now().strftime("%Y%m%d%H%M"), status=False)
+    if len(reponses) == 4 :
+        proposition =  Sondage(question=question, reponse1=reponses[0], reponse2=reponses[1], reponse3=[2], reponse4=reponses[3], propose_par_user_id=utilisateur.id, date_sondage=datetime.now().strftime("%Y%m%d%H%M"), status=False)
+    elif len(reponses) == 3 :
+        proposition =  Sondage(question=question, reponse1=reponses[0], reponse2=reponses[1], reponse3=[2], propose_par_user_id=utilisateur.id, date_sondage=datetime.now().strftime("%Y%m%d%H%M"), status=False)
+    elif len(reponses) == 2 : 
+        proposition =  Sondage(question=question, reponse1=reponses[0], reponse2=reponses[1], propose_par_user_id=utilisateur.id, date_sondage=datetime.now().strftime("%Y%m%d%H%M"), status=False)
+    else :
+        raise ValueError(f"reponses doit etre un tableau de taille 4, pas {reponses}")
     db.session.add(proposition)
     db.session.commit()
 
@@ -38,14 +45,18 @@ def creer_vote_sondage_du_jour(utilisateur:Utilisateur, vote:int) :
         raise ErreurSondage("Pas de sondage aujourd'hui, le vote est impossible")
 
 
-def valider_sondage(sondage:Sondage) :
+def valider_sondage(id_sondage:int) :
     """
     Valide un sondage. Cette fonction ne pourra etre utilisee que par le vp_sondaj
     """
-    if sondage.status :
-        print("Sondage deja valide.")
+    sondage = db.session.get(Sondage, id_sondage)
+    if sondage :
+        if sondage.status :
+            print("Sondage deja valide.")
+        else :
+            sondage.status = True
     else :
-        sondage.status = True
+        raise ValueError("id de sondage invalide")
 
 # Passage d'un sondage a un autre 
 # Les fonctions suivantes ne doivent etre utilisees qu'au sein d'une meme route
@@ -136,3 +147,36 @@ def sondage_suivant() :
     else :
         set_global_var("id_sondage_du_jour", None)
     db.session.commit()
+
+
+def obtenir_sondage_du_jour_et_votes():
+    """
+    Renvoie la question du sondage du jour, une liste des questions et une liste du nombre de votes pour chaque reponse.
+    La taille des tableaux de résultats est ajustee en fonction du nombre de reponses disponibles (2, 3 ou 4).
+    Si il n'y a pas de sondage aujourd'hui, renvoie None
+    """
+    id_sondage_du_jour = get_global_var("id_sondage_du_jour")
+    if id_sondage_du_jour:
+        sondage_du_jour = db.session.get(Sondage, id_sondage_du_jour)
+        question_du_jour = sondage_du_jour.question
+        reponses_brut = [
+            sondage_du_jour.reponse1,
+            sondage_du_jour.reponse2,
+            sondage_du_jour.reponse3,
+            sondage_du_jour.reponse4
+        ]
+        reponses = []
+        for reponse in reponses_brut :
+            if reponse != None :
+                reponses.append(reponse)
+
+        votes = VoteSondageDuJour.query.all()
+        compteur_votes = [0, 0, 0, 0]
+        for vote in votes:
+            if 1 <= vote.numero_vote <= 4:
+                compteur_votes[vote.numero_vote] += 1
+    
+        votes_par_question = compteur_votes[1:len(reponses) + 1]
+        return question_du_jour, reponses, votes_par_question
+    else :
+        return None

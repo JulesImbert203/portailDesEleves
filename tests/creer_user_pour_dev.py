@@ -11,6 +11,7 @@ with app.app_context():
     utilisateurs = [
         ("23imbert", "Jules", "Imbert", 23, "jules@mail.com", "ic", "1234"),
         ("23fruchard", "Achille", "Fruchard", 23, "achille@mail.com", "ic", "1234"),
+        ("23deferran", "Louise", "De Ferran", 24, "louise@mail.com", "ic", "1234"),
     ]
 
     for u in utilisateurs:

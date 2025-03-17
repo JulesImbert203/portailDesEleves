@@ -13,8 +13,7 @@ index_bp = Blueprint('index', __name__)
 # Route d'accueil
 @index_bp.route('/')
 def accueil():
-    if current_user.is_authenticated : 
-        return render_template('index.html')
-    else :
-        return redirect(url_for('utilisateurs.page_blanche_de_connexion')) # utilisateurs. car "utilisateurs" est le nom du blueprint index
-
+    if current_user.is_authenticated: 
+        return render_template('home.html', user_name=current_user.nom_utilisateur)
+    else:
+        return redirect(url_for('utilisateurs.page_blanche_de_connexion'))

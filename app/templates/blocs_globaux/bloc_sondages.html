@@ -1,0 +1,43 @@
+<!-- templates/blocs_globaux/bloc_sondages.html -->
+
+<div class="bloc_sondages">
+    <h3>Sondage du jour</h3>
+    <div id="sondage-content">
+        <!-- Le sondage du jour sera affiché ici -->
+        <p>Chargement du sondage...</p>
+    </div>
+    <!-- Ce bouton redirige vers la page pour proposer un sondage -->
+    <a href="{{ url_for('api.controllers_sondages.proposer_un_sondage') }}">
+        <button type="button">Proposer un sondage</button>
+    </a>
+</div>
+
+<script>
+    // Requête AJAX pour récupérer le sondage du jour
+    fetch('/api/sondages/sondage_du_jour', {  
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const sondageContent = document.getElementById('sondage-content');
+        
+        if (data.message) {
+            // Si le message est présent, cela signifie qu'il n'y a pas de sondage
+            sondageContent.innerHTML = `<p>${data.message}</p>`;
+        } else {
+            // Si le sondage existe, affiche la question et les réponses
+            let html = `<p><strong>${data.question}</strong></p>`;
+            // Affiche les réponses
+            Object.entries(data.reponses).forEach(([reponse, votes]) => {
+                html += `<p>${reponse}: ${votes} votes</p>`;
+            });
+            sondageContent.innerHTML = html;  // Met à jour le contenu avec les réponses
+        }
+    })
+    .catch(error => {
+        console.error('Erreur lors de la récupération du sondage:', error);
+    });
+</script>
