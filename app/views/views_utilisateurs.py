@@ -1,7 +1,7 @@
 # views_utilisateurs.py
 from flask import Blueprint, request, jsonify
 from flask_login import current_user # necessaire pour tester l'authentification
-from flask_login import login_user, logout_user # pour connecter un utilisateur
+from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash
 
 # Création du Blueprint "users"
@@ -13,7 +13,13 @@ def est_auth():
     """
     Renvoie True si l'utilisateur est connecte, False sinon
     """
-    return jsonify({"etat_connexion": current_user.is_authenticated}), 200
+    if current_user.is_authenticated : 
+        return jsonify({"etat_connexion": True,
+                        "id_utilisateur": current_user.id}), 200
+    else :
+        return jsonify({"etat_connexion": False,
+                        "id_utilisateur": None}), 200
+
 
 # route pour se connecter, executee par React
 @utilisateurs_bp.route('/connexion', methods=['POST'])
@@ -31,11 +37,12 @@ def connexion():
         return jsonify({"connecte":False}), 401
         
 
-"""# se deconnecter    
+# se deconnecter    
 @utilisateurs_bp.route('/deconnexion', methods=['POST'])
+@login_required
 def deconnexion():
-    logout_user()  # Deconnecte l'utilisateur
-    return redirect(url_for('index.accueil'))"""
+    logout_user()
+    return jsonify({'connecte':False}),200
 
 """
 # Route pour afficher la page blanche de connexion (quand on arrive sur le portail sans etre connecte)

@@ -23,7 +23,7 @@ def create_app():
     app = Flask(__name__)
 
     # Active CORS pour toutes les routes de l'application
-    CORS(app, supports_credentials=True)
+    CORS(app, origins="*", supports_credentials=True)
 
     # Chargement de la configuration
     app.config.from_object(Config)

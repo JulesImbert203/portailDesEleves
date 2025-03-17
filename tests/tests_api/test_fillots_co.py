@@ -29,13 +29,17 @@ def verifier_authentification():
     else:
         print(f"Erreur lors de la vérification de l'authentification : {response.status_code}")
 
+def se_deconnecter() :
+    response = session.post("http://127.0.0.1:5000/deconnexion")
+
 verifier_authentification()
 se_connecter("23imbert")
 verifier_authentification()
 
+se_deconnecter()
+verifier_authentification()
 
-def se_deconnecter() :
-    response = session.post("http://127.0.0.1:5000/deconnexion")
+
 
 def print_infos(id):
     response = session.get(f'http://127.0.0.1:5000/api/users/obtenir_infos_profil/{id}')

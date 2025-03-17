@@ -15,3 +15,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'une_cle_secrete_pour_developpement'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SESSION_COOKIE_SAMESITE='None'
+    SESSION_COOKIE_SECURE=False
+    #SESSION_COOKIE_SAMESITE = 'None'  # Nécessaire pour que le cookie soit envoyé dans des requêtes cross-origin
+    #SESSION_COOKIE_SECURE = False  # Important si tu utilises HTTPS, sinon mets à False pour développement local
