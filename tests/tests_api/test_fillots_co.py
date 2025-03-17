@@ -11,11 +11,28 @@ def se_connecter(username:str="23imbert"): # mdp = "1234"
         "password": "1234"
     }
     # Effectuer la requete de connexion
-    response = session.post(LOGIN_URL, data=DATA)
+    response = session.post(LOGIN_URL, json=DATA)
     if response.status_code == 200:
         print("Connexion réussie !")
     else:
         print("Échec de la connexion :", response.text)
+
+def verifier_authentification():
+    EST_AUTH_URL = "http://127.0.0.1:5000/est_auth"
+    response = session.get(EST_AUTH_URL, cookies=session.cookies)
+    if response.status_code == 200:
+        data = response.json()
+        if data.get("etat_connexion"):
+            print("L'utilisateur est connecté")
+        else:
+            print("L'utilisateur n'est pas connecté")
+    else:
+        print(f"Erreur lors de la vérification de l'authentification : {response.status_code}")
+
+verifier_authentification()
+se_connecter("23imbert")
+verifier_authentification()
+
 
 def se_deconnecter() :
     response = session.post("http://127.0.0.1:5000/deconnexion")
@@ -56,8 +73,8 @@ print_infos(2)
 print_infos(3)
 se_deconnecter()"""
 
-se_connecter("23imbert")
 
+"""
 print_infos(1)
 print_infos(2)
 print_infos(3)
@@ -78,3 +95,4 @@ print_infos(3)
 
 se_deconnecter()
 
+"""
