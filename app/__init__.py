@@ -9,6 +9,7 @@ Il est execute pour initialiser l'application.
 """
 
 from flask import Flask
+from flask_cors import CORS # permet d'accepter les requetes provenant de n'importe quelle origine
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
@@ -20,6 +21,9 @@ login_manager = LoginManager()
 def create_app():
     # Creation de l'instance de l'application Flask
     app = Flask(__name__)
+
+    # Active CORS pour toutes les routes de l'application
+    CORS(app, supports_credentials=True)
 
     # Chargement de la configuration
     app.config.from_object(Config)
