@@ -15,7 +15,7 @@ with app.app_context():
     for a in associations:
         if not Association.query.filter_by(nom=a[0]).first():
             nouvelle_association = Association(*a) # Décompresse la liste en arguments
-            print(nouvelle_association.id)
+            
             db.session.add(nouvelle_association)
 
     # Valider les ajouts dans la base
