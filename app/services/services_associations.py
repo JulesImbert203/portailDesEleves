@@ -107,3 +107,33 @@ def update_members_order(association : Association, members_weights:list) :
         
         flag_modified(association, 'membres')
         db.session.commit()
+
+
+def passation(association : Association, new_members = list, new_roles = list): #nouveaux membres et rôles dans l'ordre
+    """
+        Pour faire la passation de l'asso
+        envoie tous les anciens membres de l'asso dans anciens_membres puis ajoute tous les nouveaux
+    """
+    association=Association.query.get(association.id)
+    if association:
+        for member in association.membres:
+            user = Utilisateur.query.get(member['id'])
+            if user:
+                association.anciens_membres.append({
+                    'id': user.id,
+                    'nom_utilisateur': user.nom_utilisateur,
+                    'prenom': user.prenom,
+                    'nom_de_famille': user.nom_de_famille,
+                    'role': member['role'],
+                    'mandat' : user.promotion
+                })
+                user.anciennes_assos[association.id] = (user.promotion, member['role'])
+                flag_modified(user, 'anciennes_assos')
+
+        association.membres = [] 
+        for member, role in zip(new_members, new_roles):
+            add_member(association, member, role)   
+      
+        flag_modified(association, 'membres', 'ancien_membres')
+        db.session.commit()
+

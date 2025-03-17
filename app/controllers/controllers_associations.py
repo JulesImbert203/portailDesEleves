@@ -1,5 +1,6 @@
-from flask import Blueprint
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 
 from app.services import *
 from app.utils.decorators import * 
@@ -92,7 +93,7 @@ def route_modifier_role_membre(association_id, membre_id):
         
     return modifier_role_membre()
 
-@controllers_associations.route(('/assocations/<int:association_id>/update_members_order'), methods=['POST'])
+@controllers_associations.route(('/associations/<int:association_id>/update_members_order'), methods=['POST'])
 def route_modifier_ordre_membres(association_id):
     """
     Modifie l'ordre des membres de l'association
@@ -113,3 +114,34 @@ def route_modifier_ordre_membres(association_id):
             return jsonify({"message": f"Erreur lors de la modification de l'ordre des membres : {str(e)}"}), 500
         
     return modifier_ordre_membres()
+
+@controllers_associations.route('/asso', methods = ['GET'])
+@login_required
+def test():
+    return render_template('asso.html')
+
+
+@controllers_associations.route('/<int:association_id>/add_content', methods = ['POST'])
+def route_add_content(association_id):
+    """
+        Ajoute du contenu au dossier de l'asso
+    """
+    #@est_membre_de_asso(association_id)  #PENSER A L'ACTIVER QUAND POSSIBLE
+    def add_content(*args): #args sert à dump les arguments inutiles reçus lors de la requete 
+        
+        asso = get_association(association_id)
+        UPLOAD_FOLDER = 'app/upload/associations/' + asso.nom_dossier + '/'
+        ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'} #extensions autorisées pour l'upload de document
+        if 'file' not in request.files:
+            return str(request.files), 400
+
+        file = request.files['file']
+        if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            return render_template('asso.html')
+        return 'Error', 400
+    return add_content()    
+
+    
+

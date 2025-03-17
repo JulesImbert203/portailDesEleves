@@ -14,6 +14,7 @@ class Association(db.Model):
 
     #Éléments ajoutés à la création de l'association — Modifiables par les membres de l'association
     nom = db.Column(db.String(1000), nullable=True)
+    nom_dossier = db.Column(db.String(1000), nullable=True)
     description = db.Column(db.String(1000), nullable=True)
 
     #Liste des membres de l'association
@@ -33,7 +34,7 @@ class Association(db.Model):
         self.type_association = type_association
 
         # Créer un dossier pour l'association
-        #self.create_association_folder()
+        self.create_association_folder()
 
     def __repr__(self):
         """
@@ -85,8 +86,13 @@ class Association(db.Model):
         """
         #nettoyer le nom de l'association en ne gardant que les caractères alphanumériques en minuscule
         nom_dossier = re.sub(r'\W+', '', self.nom).lower()
-
-        os.mkdir(f"app/static/associations/{nom_dossier}")
+        self.nom_dossier = nom_dossier
+        try :
+            os.mkdir(f"app/upload/associations/{nom_dossier}")
+        except :
+            print(f"dossier {nom_dossier} déjà créé !")
+        if nom_dossier == 'bde':
+            self.id = 1
     
     def get_members(self) :
         """
