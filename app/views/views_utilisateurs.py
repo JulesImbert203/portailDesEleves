@@ -46,4 +46,3 @@ def deconnexion():
         return jsonify({'connecte':True}),500
     else :
         return jsonify({'connecte':False}),200
-

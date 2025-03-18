@@ -8,11 +8,12 @@ Il est execute pour initialiser l'application.
 
 """
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS # permet d'accepter les requetes provenant de n'importe quelle origine
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
+import os
 
 # Initialisation des extensions (sans encore les attacher à l'application)
 db = SQLAlchemy()
@@ -54,5 +55,12 @@ def create_app():
     app.register_blueprint(admin_bp) 
     app.register_blueprint(associations_bp) 
     app.register_blueprint(index_bp) 
+    
+    #permet d'avoir accès au fichier upload 
+    #ne pas supprimer
+    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'app', 'upload')
+    @app.route('/upload/<path:filename>')
+    def serve_file(filename):
+        return send_from_directory(UPLOAD_FOLDER, filename)    
     
     return app

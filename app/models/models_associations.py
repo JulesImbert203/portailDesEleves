@@ -16,6 +16,7 @@ class Association(db.Model):
     nom = db.Column(db.String(1000), nullable=True)
     nom_dossier = db.Column(db.String(1000), nullable=True)
     description = db.Column(db.String(1000), nullable=True)
+    logo_path = db.Column(db.String(1000), nullable=True)
 
     #Liste des membres de l'association
     membres = db.Column(db.JSON, nullable=True)
@@ -23,7 +24,7 @@ class Association(db.Model):
     type_association = db.Column(db.String(1000), nullable=True)
     ordre_importance = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, nom:str, description:str, type_association:str) :
+    def __init__(self, nom:str, description:str, type_association:str, logo_path:str, ordre_importance:int):
         """
         Crée une nouvelle association
         """
@@ -32,6 +33,9 @@ class Association(db.Model):
         self.membres = []  # Initialiser comme une liste
         self.publications = []
         self.type_association = type_association
+        self.logo_path = logo_path
+        self.ordre_importance = ordre_importance
+
 
         # Créer un dossier pour l'association
         self.create_association_folder()
@@ -91,8 +95,7 @@ class Association(db.Model):
             os.mkdir(f"app/upload/associations/{nom_dossier}")
         except :
             print(f"dossier {nom_dossier} déjà créé !")
-        if nom_dossier == 'bde':
-            self.id = 1
+        
     
     def get_members(self) :
         """
