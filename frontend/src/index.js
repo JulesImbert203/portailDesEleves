@@ -6,8 +6,14 @@ import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
+
+
 function Index() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // État pour stocker la connexion
+
+  function Auth(){
+    setIsAuthenticated(true);
+  }
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/est_auth', {
@@ -28,7 +34,7 @@ function Index() {
     return <p>Chargement...</p>; // Affichage en attente de la réponse
   }
 
-  return isAuthenticated ? <App /> : <Login />;
+  return isAuthenticated ? <App /> : <Login onLoginSuccess={Auth}/>;
 }
 
 root.render(<Index />);

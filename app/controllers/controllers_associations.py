@@ -141,7 +141,13 @@ def route_add_content(association_id):
             file.save(os.path.join(UPLOAD_FOLDER, filename))
             return render_template('asso.html')
         return 'Error', 400
-    return add_content()    
+    return add_content()  
+
+@controllers_associations.route('/assos', methods = ['GET'])  
+def get_assos():
+    assos = Association.query.all()
+    return jsonify([{"id": asso.id, "nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance} for asso in assos])
+    
 
     
 
