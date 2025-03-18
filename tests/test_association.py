@@ -21,7 +21,15 @@ def test_creer_utilisateur():
             bde = Association(nom="BDE", description="Bureau des élèves", type_association="loi 1901")
             bds = Association(nom="BDS", description="Bureau des sports", type_association="loi 1901")
             bda = Association(nom="BDA", description="Bureau des arts", type_association="loi 1901")
-
+            bde.ordre_importance = 1
+            bds.ordre_importance = 2
+            bda.ordre_importance = 3    
+            bde.id = 1
+            bds.id = 2          
+            bda.id = 3
+            bde.logo_path = "app/upload/associations/bde/Capture_decran_2024-08-16_162358.png"
+            bds.logo_path = "app/upload/associations/bds/logo_jump.png"
+            bda.logo_path = "app/upload/associations/bda/channels4_profile (2).jpg"
 
             db.session.add(jules)
             db.session.add(achille)
@@ -37,6 +45,7 @@ def test_creer_utilisateur():
             #
             #
             #ajout de jules au bde
+            """
             bde=Association.query.filter_by(nom="BDE").first()
             jules=Utilisateur.query.filter_by(nom_utilisateur="23imbert").first()
             
@@ -67,7 +76,7 @@ def test_creer_utilisateur():
             flag_modified(bde, 'membres')
             db.session.commit()
             bde=Association.query.filter_by(nom="BDE").first()
-            print(bde.membres)
+            print(bde.membres)"""
 
 
 

@@ -22,7 +22,7 @@ function Login({ onLoginSuccess }) {
           setError("Identifiants incorrects."); // Affiche un message d'erreur
         }
       })
-      .catch(() => setError("Erreur de connexion au serveur.")); // Gestion des erreurs réseau
+      //.catch(() => setError("Erreur de connexion au serveur.")); // Gestion des erreurs réseau
   };
 
   return (

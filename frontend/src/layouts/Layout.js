@@ -1,27 +1,49 @@
 // src/layouts/Layout.js
-import React from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
 import BlocUtilisateur from '../components/blocs/blocUtilisateur';  // Bloc d'utilisateur
 import '../assets/styles/layout.css';  // Import du CSS global du layout
 
-function Layout({ children }) {
+
+const LayoutContext = createContext();
+
+
+export function LayoutProvider({ children, defaultComponent }) {
+  const [currentComponent, setCurrentComponent] = useState(defaultComponent); // Home sera affiché par défaut
+
+  return (
+    <LayoutContext.Provider value={{ currentComponent, setCurrentComponent }}>
+      <Layout />
+      {children}
+    </LayoutContext.Provider>
+  );
+}
+
+function Layout() {
+  const { currentComponent } = useContext(LayoutContext);
+
   return (
     <div className="layout">
-      <Header /> {/* Affichage de l'en-tête */}
+      <Header />
       <div className="main-content">
         <div className="sidebar left">
-          <BlocSondage /> {/* Bloc de sondages */}
+          <BlocSondage />
         </div>
         <div className="content">
-          {children} {/* Affichage du contenu spécifique à chaque page */}
+          {currentComponent} 
         </div>
         <div className="sidebar right">
-          <BlocUtilisateur /> {/* Bloc d'utilisateurs */}
+          <BlocUtilisateur />
         </div>
       </div>
     </div>
   );
+}
+
+
+export function useLayout() {
+  return useContext(LayoutContext);
 }
 
 export default Layout;
