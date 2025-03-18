@@ -1,60 +1,34 @@
-/* src/assets/styles/layout.css */
-
-/* Styles globaux pour le layout */
+/* layout.css */
 .layout {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
-  header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
+  .header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    width: 100%;
     text-align: center;
   }
   
   .main-content {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
+    width: 80%;
+    margin-top: 20px;
   }
   
   .sidebar {
-    width: 25%;
-    background-color: #ddd;
-    padding: 15px;
-    margin: 0 10px;
-    border-radius: 8px;
+    width: 20%;
+    padding: 10px;
   }
   
   .content {
-    width: 50%;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  /* Bloc de contenu avec fond gris */
-  .bloc-sondage, .bloc-utilisateur {
-    background-color: #e1e1e1;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
-  
-  /* Styles pour le header */
-  header h1 {
-    font-size: 2rem;
-    margin: 0;
-  }
-  
-  /* Styles pour les sidebars (gauche et droite) */
-  .sidebar.left {
-    background-color: #f7f7f7;
-  }
-  
-  .sidebar.right {
-    background-color: #f7f7f7;
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #f4f4f4;
+    min-height: 300px;
   }
   

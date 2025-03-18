@@ -1,0 +1,49 @@
+import React, { useEffect, useState } from 'react';
+import '../../assets/styles/liste_assos.css'; 
+import {useLayout} from '../../layouts/Layout'; 
+import Home from './Home';
+import { useNavigate } from "react-router-dom";
+import { selectAsso } from './Asso';
+
+
+function Liste_Assos() {
+
+  const [assos, setAssos] = useState([]);
+  const { setCurrentComponent } = useLayout();
+  
+  const handleClick = (asso) => {
+    //selectAsso(asso); // Stocke les infos de l'asso sélectionnée
+    setCurrentComponent(<Home />); // Change de composant
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/associations/assos") // Récupérer les images depuis Flask
+      .then((response) => response.json())
+      .then((data) => setAssos(data))
+      .catch((error) => console.error("Erreur de chargement des images:", error));
+  }, []);
+
+    return (
+      <div className="assos">
+        <h1>Associations</h1>
+        <p>Ici tu peux retrouver toutes les associations des Mines</p>
+        <div>
+          <div className="grid-container">
+          {assos.map((asso) => (
+              <div 
+                  key={asso.id} 
+                  className="grid-item" 
+                  onClick={() => handleClick(asso.id)}
+                  >
+                  <img src={"http://127.0.0.1:5000/upload/associations/${asso.img}"} alt={asso.nom} />
+                  <p>{asso.nom}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+  export default Liste_Assos;

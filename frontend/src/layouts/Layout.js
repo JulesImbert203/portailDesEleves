@@ -2,9 +2,9 @@
 import React, { createContext, useState, useContext } from 'react';
 import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
-import BlocUtilisateur from '../components/blocs/blocUtilisateur';  // Bloc d'utilisateur
 import '../assets/styles/layout.css';  // Import du CSS global du layout
-
+import { seDeconnecter } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 const LayoutContext = createContext();
 
@@ -23,6 +23,13 @@ export function LayoutProvider({ children, defaultComponent }) {
 function Layout() {
   const { currentComponent } = useContext(LayoutContext);
 
+  const navigate = useNavigate();
+  // Fonction de déconnexion
+    async function handleLogout() {
+        await seDeconnecter();
+        navigate("/direction");  // Rediriger après déconnexion
+    }
+
   return (
     <div className="layout">
       <Header />
@@ -34,7 +41,10 @@ function Layout() {
           {currentComponent} 
         </div>
         <div className="sidebar right">
-          <BlocUtilisateur />
+          <h3>Bienvenue !</h3>
+          <button onClick={() => handleLogout()}>
+                  Se déconnecter
+            </button>
         </div>
       </div>
     </div>

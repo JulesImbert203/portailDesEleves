@@ -1,16 +1,15 @@
-// src/pages/Home.js
+// src/pages/ListeAssos.js
 import React, { useState } from "react";
 import {useLayout} from './../../layouts/Layout';  
-import Asso from './Asso'
-import '../../assets/styles/home.css'; 
- // Import des styles spécifiques à la page Home
+import ListeAssos from './ListeAssos';
+
  function Home() {
   const { setCurrentComponent } = useLayout();
 
   return (
     <div>
       <h1>Accueil</h1>
-      <button onClick={() => setCurrentComponent(<Asso />)}>
+      <button onClick={() => setCurrentComponent(<ListeAssos />)}>
         Aller vers Asso
       </button>
     </div>

@@ -1,13 +1,11 @@
-// src/components/bloc/BlocSondage.js
+// src/components/blocs/BlocSondage.jsx
 import React from 'react';
 
-function BlocSondage() {
+export default function BlocSondage() {
   return (
     <div className="bloc-sondage">
-      <h2>Sondages en construction</h2>
-      <p>Le bloc de sondages est en cours de développement.</p>
+      <h3>Sondage (en construction)</h3>
+      {/* Ajoute ici ton contenu pour le bloc de sondage */}
     </div>
   );
 }
-
-export default BlocSondage;

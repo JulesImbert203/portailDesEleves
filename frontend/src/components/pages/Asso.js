@@ -1,41 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import '../../assets/styles/asso.css'; 
+import '../../assets/styles/liste_assos.css'; 
+import {useLayout} from '../../layouts/Layout'; 
+import Home from './Home';
+import ListeAssos from './ListeAssos';
 
 
 
 function Asso() {
 
-  const [assos, setAssos] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:3000/assos") // Récupérer les images depuis Flask
+    const [currentAsso, setCurrentAsso] = useState();
+    const selectedAsso = 1;
+    const setAssos = 2;
+    
+    useEffect(() => {
+    fetch("http://localhost:5000/api/associations/assos/"+String(currentAsso)) // Récupérer les images depuis Flask
       .then((response) => response.json())
       .then((data) => setAssos(data))
       .catch((error) => console.error("Erreur de chargement des images:", error));
   }, []);
+  
+  
+  const { setCurrentComponent } = useLayout();
 
-    return (
-      <div className="assos">
-        <h1>Associations</h1>
-        <p>Ici tu peux retrouver toutes les associations des Mines</p>
-        <div>
-          <div className="grid-container">
-        {assos.map((asso) => (
-            <div key={asso.id} className="grid-item">
-              <img src={asso.img} alt={asso.nom} />
-              <p>{asso.nom}</p>
-            </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      
+  return (
+    <div>
+        <h2>{selectedAsso.nom}</h2>
+        <img src={"http://127.0.0.1:5000/upload/associations/${selectedAsso.img}"} alt={selectedAsso.nom} />
+        <p>Description : {selectedAsso.description}</p>
+    </div>
+);
+}
 
+export default Asso;
 
-
-      
-    );
-  }
-
-
-  export default Asso;
+export function selectAsso(){
+    //return setCurrentAsso();
+}
