@@ -1,8 +1,8 @@
 // src/index.js
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import App from './App';
 import Login from './components/Login';
-import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -11,30 +11,26 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 function Index() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // État pour stocker la connexion
 
-  function Auth(){
-    setIsAuthenticated(true);
-  }
-
+  // Vérifie l'état de l'utilisateur au chargement
   useEffect(() => {
     fetch('http://127.0.0.1:5000/est_auth', {
       method: 'GET',
-      credentials: 'include',
+      //credentials: 'include',
     })
       .then(response => response.json())
       .then(data => {
-        setIsAuthenticated(data.etat_connexion) ; // Maintenant isAuthentificated contient le booleen qui dit si l'utilisateur est connecte
+        setIsAuthenticated(data.etat_connexion);  // Mise à jour de l'état d'authentification
       })
-      .catch(error => {
-        console.error("Erreur lors de la vérification :", error);
-        setIsAuthenticated(false);
+      .catch(() => {
+        setIsAuthenticated(false);  // En cas d'erreur, considère que l'utilisateur n'est pas connecté
       });
   }, []);
-  // Apres la requete, charge la page en fonction du resultat
+
   if (isAuthenticated === null) {
-    return <p>Chargement...</p>; // Affichage en attente de la réponse
+    return <p>Chargement...</p>;  // Affichage en attente du résultat
   }
 
-  return isAuthenticated ? <App /> : <Login onLoginSuccess={Auth}/>;
+  return isAuthenticated ? <App /> : <Login />;
 }
 
 root.render(<Index />);
