@@ -10,7 +10,7 @@ from app.services.services_vendomes import main_vendome
 # Creer le blueprint pour les utilisateurs
 controllers_vendomes = Blueprint('controllers_vendomes', __name__)
 
-UPLOAD_VENDOME_FOLDER= 'uploads/vendomes'
+UPLOAD_VENDOME_FOLDER= 'app/uploads/vendomes'
 controllers_vendomes.config['UPLOAD_VENDOME_FOLDER'] = UPLOAD_VENDOME_FOLDER
 
 @controllers_vendomes.route('/upload', methods=['POST'])
