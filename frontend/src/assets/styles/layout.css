@@ -1,34 +1,116 @@
-/* layout.css */
+/* Déclaration des variables globales */
+:root {
+  --primary-color: #000000; /* Couleur du header (noir) */
+  --background-color: #f5f5f5; /* Fond de la page */
+  --sidebar-background: transparent; /* Sidebar invisible */
+  --content-background: #ffffff; /* Fond du contenu */
+  --bloc-background: #e0e0e0; /* Fond des blocs */
+  --text-color: #333333; /* Couleur du texte principal */
+  --border-radius: 15px; /* Border radius pour arrondir les coins */
+  --padding: 20px; /* Padding général */
+  --sidebar-width: 250px; /* Largeur des sidebars */
+  --header-height: 60px; /* Hauteur du header */
+  --footer-height: 40px; /* Hauteur du footer */
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre pour un effet moderne */
+  --margin-centrale: 20px;
+  --button-color: hsl(20, 73%, 54%);
+  --button-color-hover: hsl(20, 73%, 80%);
+}
+
+/* Styles généraux */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--background-color);
+}
+
+/* Layout global */
 .layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .main-content {
-    display: flex;
-    justify-content: space-between;
-    width: 80%;
-    margin-top: 20px;
-  }
-  
-  .sidebar {
-    width: 20%;
-    padding: 10px;
-  }
-  
-  .content {
-    flex-grow: 1;
-    padding: 10px;
-    background-color: #f4f4f4;
-    min-height: 300px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background-color: var(--primary-color);
+  color: white;
+  height: var(--header-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 2px;
+  box-shadow: var(--box-shadow);
+}
+
+/* Main content (contient les 3 zones) */
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--padding);
+  margin-top: var(--margin-centrale); /* Pour éviter que le contenu ne soit caché sous le header */
+}
+
+/* Sidebar (gauche et droite) */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-background); /* Sidebars invisibles */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--padding);
+  overflow-y: auto;
+  min-height: calc(100vh - var(--header-height)); /* Remplir toute la hauteur */
+  flex: 1;
+}
+
+/* Contenu central */
+.content {
+  flex: 4;
+  background-color: var(--content-background);
+  padding: var(--padding);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  min-height: 300px;
+  margin-left: var(--margin-centrale);
+  margin-right: var(--margin-centrale);
+}
+
+/* Bloc dans les sidebars */
+.bloc {
+  background-color: var(--bloc-background);
+  width: 100%;
+  padding: var(--padding);
+  margin-bottom: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: background-color 0.3s ease;
+}
+
+/* Styling pour le bouton dans le bloc */
+.bloc button {
+  padding: 10px 20px;
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.bloc button:hover {
+  background-color: var(--button-color-hover);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--primary-color);
+  color: white;
+  height: var(--footer-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
