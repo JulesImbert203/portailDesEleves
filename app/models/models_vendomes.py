@@ -43,7 +43,7 @@ class Vendome(db.Model):
         - nom : str
             Il s'agit du nom du vendome
         - date_parution : str
-            Il s'agit de la date de parution du vendome
+            Il s'agit de la date de parution du vendome au format AAAAMMJJ
         - cache_aux_1A : bool
             Permet de savoir si le vendome est cache aux 1A ou pas
         - edition_speciale : bool
