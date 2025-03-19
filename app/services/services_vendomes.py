@@ -4,6 +4,19 @@ from bs4 import BeautifulSoup
 import re
 import shutil
 
+from app.models.models_vendomes import Vendome
+
+from app import db
+
+def ajouter_vendome_a_bdd(nom:str, date_parution:str, cache_aux_1A:bool, edition_speciale:bool, particularite:str=None, vendome_liste:str=None):
+    """
+    Crée un nouveau vendome
+    """
+    vendome = Vendome(nom, date_parution, cache_aux_1A, edition_speciale, particularite, vendome_liste)
+    db.session.add(vendome)
+    db.session.commit()
+    return vendome
+
 def css_to_dict(css_file):
     css = cssutils.parseFile(css_file)
     css_dict = {}
