@@ -79,4 +79,8 @@ def upload_file():
 
         main_vendome(folder_path+'/','templates/',vendome_folder)
 
-        return 'Fichier téléversé et décompressé avec succès'
+        return 'Vendôme ajouté avec succès avec les fichiers InDesign'
+    
+    else:
+        return 'Venôme ajouté avec succès sans les fichiers InDesign'
+
