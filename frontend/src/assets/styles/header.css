@@ -1,0 +1,72 @@
+/* Conteneur du bandeau */
+.header {
+    background-color: #007bff;
+    padding: 10px 20px;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    position: relative;
+}
+
+.centered-container {
+    display: flex;
+    justify-content: center;   /* Centrage horizontal */
+    align-items: center;       /* Centrage vertical */             /* Utilise toute la hauteur de la fenêtre */
+    text-align: center;  
+    flex: 1;        /* Assure que le texte est centré */
+}
+
+/* Conteneur du menu déroulant */
+.dropdown {
+    position: relative;
+}
+
+.dropdown .menu {
+    display: none;  /* Cacher le menu par défaut */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 1;
+}
+
+/* Montrer le menu lorsque l'on survole */
+.dropdown:hover .menu {
+    display: block;
+}
+
+/* Boutons du menu */
+.dropdown button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    margin: 0;
+}
+
+/* Style des onglets */
+.menu button {
+    background-color: white;
+    color: #007bff;
+    padding: 10px 20px;
+    border: none;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 8px;
+}
+
+/* Effet au survol sur les onglets */
+.menu button:hover {
+    background-color: #007bff;
+    color: white;
+}

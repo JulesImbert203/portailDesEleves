@@ -3,7 +3,7 @@ import '../../assets/styles/liste_assos.css';
 import {useLayout} from '../../layouts/Layout'; 
 import Home from './Home';
 import { useNavigate } from "react-router-dom";
-import { selectAsso } from './Asso';
+import Asso from './Asso';
 
 
 function Liste_Assos() {
@@ -13,7 +13,7 @@ function Liste_Assos() {
   
   const handleClick = (asso) => {
     //selectAsso(asso); // Stocke les infos de l'asso sélectionnée
-    setCurrentComponent(<Home />); // Change de composant
+    setCurrentComponent(<Asso id = {asso}/>); // Change de composant
   };
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function Liste_Assos() {
                   className="grid-item" 
                   onClick={() => handleClick(asso.id)}
                   >
-                  <img src={"http://127.0.0.1:5000/upload/associations/${asso.img}"} alt={asso.nom} />
+                  <img src={`http://127.0.0.1:5000/upload/associations/${asso.img}`} alt={asso.nom} />
                   <p>{asso.nom}</p>
               </div>
             ))}

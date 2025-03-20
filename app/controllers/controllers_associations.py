@@ -147,6 +147,12 @@ def route_add_content(association_id):
 def get_assos():
     assos = Association.query.all()
     return jsonify([{"id": asso.id, "nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance} for asso in assos])
+
+@controllers_associations.route('/<int:association_id>', methods = ['GET'])  
+def get_asso(association_id):
+    asso = Association.query.filter_by(id=association_id).first()
+    print(asso.logo_path)
+    return jsonify({"id": asso.id, "nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance})
     
 
     
