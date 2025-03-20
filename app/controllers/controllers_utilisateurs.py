@@ -43,7 +43,8 @@ def obtenir_infos_profil(user_id:int) :
             "fillots_dict": utilisateur.fillots_dict,
             "questions_reponse_du_portail": utilisateur.questions_reponses_du_portail,
             "assos_actuelles": utilisateur.assos_actuelles,
-            "anciennes_assos": utilisateur.anciennes_assos
+            "anciennes_assos": utilisateur.anciennes_assos,
+            "vote_sondaj_du_jour" : utilisateur.vote_sondaj_du_jour,
         }
         return jsonify(infos_utilisateur), 200
 

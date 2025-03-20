@@ -1,9 +1,9 @@
 // src/layouts/Layout.js
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
 import '../assets/styles/layout.css';  // Import du CSS global du layout
-import { seDeconnecter } from '../api';
+import { seDeconnecter, obtenirIdUser, obtenirDataUser } from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const LayoutContext = createContext();
@@ -11,17 +11,37 @@ const LayoutContext = createContext();
 
 export function LayoutProvider({ children, defaultComponent }) {
   const [currentComponent, setCurrentComponent] = useState(defaultComponent); // Home sera affiché par défaut
+  const [userData, setUserData] = useState(null); // Stocker les infos utilisateur
+  const [reloadSondage, setReloadSondage] = useState(false); // État pour forcer le rechargement
 
+  const reloadBlocSondage = () => {
+    setReloadSondage(prev => !prev); // Toggle l'état pour forcer le re-render
+  };
+
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const id = await obtenirIdUser();
+        if (id) {
+          const data = await obtenirDataUser(id);
+          setUserData(data); // Stocker toutes les infos utilisateur
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données utilisateur", error);
+      }
+    }
+    fetchUserData();
+  }, []);
   return (
-    <LayoutContext.Provider value={{ currentComponent, setCurrentComponent }}>
-      <Layout />
+    <LayoutContext.Provider value={{ currentComponent, setCurrentComponent, userData, reloadBlocSondage }}>
+      <Layout reloadSondage={reloadSondage} />
       {children}
     </LayoutContext.Provider>
   );
 }
 
-function Layout() {
-  const { currentComponent } = useContext(LayoutContext);
+function Layout({ reloadSondage  }) {
+  const { currentComponent, userData } = useContext(LayoutContext);
 
   const navigate = useNavigate();
   // Fonction de déconnexion
@@ -29,22 +49,25 @@ function Layout() {
         await seDeconnecter();
         navigate("/direction");  // Rediriger après déconnexion
     }
+  
 
   return (
     <div className="layout">
       <Header />
       <div className="main-content">
         <div className="sidebar left">
-          <BlocSondage />
+          <BlocSondage reloadSondage ={reloadSondage } />
         </div>
         <div className="content">
           {currentComponent} 
         </div>
         <div className="sidebar right">
-          <h3>Bienvenue !</h3>
-          <button onClick={() => handleLogout()}>
-                  Se déconnecter
+          <div id="blocUtilisateur" className="bloc">
+            <h3>Bienvenue {userData ? userData.nom_utilisateur : "Chargement..."} !</h3>
+            <button onClick={() => handleLogout()}>
+                    Se déconnecter
             </button>
+          </div>
         </div>
       </div>
     </div>
