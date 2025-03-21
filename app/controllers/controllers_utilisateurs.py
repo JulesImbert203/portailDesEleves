@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 
 from app.services import *
@@ -10,7 +10,56 @@ from app.services.services_utilisateurs import *
 controllers_utilisateurs = Blueprint('controllers_utilisateurs', __name__)
 
 
+@controllers_utilisateurs.route('/charger_utilisateurs_par_promo/<int:promo>', methods=['GET'])
+@login_required
+def charger_utilisateurs_par_promo(promo: int):
+    """
+    Charge la liste des utilisateurs d'une promo donnée pour Soifguard
+    """
+    utilisateurs = Utilisateur.query.filter_by(promotion=promo).all()
+    if not utilisateurs:
+        return jsonify({"message": "Aucun utilisateur trouvé pour cette promo"}), 404
+    liste_utilisateurs = [
+        {
+            "id": utilisateur.id,
+            "nom_utilisateur": utilisateur.nom_utilisateur,
+            "prenom": utilisateur.prenom,
+            "nom_de_famille": utilisateur.nom_de_famille,
+            "promotion": utilisateur.promotion,
+            "solde_octo": utilisateur.solde_octo,
+            "solde_biero": utilisateur.solde_biero,
+            "est_cotisant_biero": utilisateur.est_cotisant_biero,
+            "est_cotisant_octo":utilisateur.est_cotisant_octo
+        }
+        for utilisateur in utilisateurs
+    ]
+    return jsonify(liste_utilisateurs), 200
+
+
 # routes API :
+# /!\ NON securisé. Doit être utilisé pour de l'affichage uniquement, 
+# chaque route sensible doit avoir le decorateur @superutilisateur_required
+@controllers_utilisateurs.route("/verifier_superutilisateur", methods=["GET"])
+@login_required
+def verifier_superutilisateur():
+    """
+    Vérifie si l'utilisateur connecté est un superutilisateur.
+    Retourne { "is_superuser": True } si oui, sinon { "is_superuser": False }.
+    """
+    return jsonify({"is_superuser": current_user.est_superutilisateur})
+
+@controllers_utilisateurs.route("/obtenir_id_par_nomutilisateur/<string:nom_utilisateur>", methods=["GET"])
+@login_required
+def obtenir_id_par_nomutilisateur(nom_utilisateur:str):
+    """
+    Récupère l'ID d'un utilisateur à partir de son nom d'utilisateur.
+    """
+    utilisateur = Utilisateur.query.filter_by(nom_utilisateur=nom_utilisateur).first()
+    if utilisateur:
+        return jsonify({"success": True, "id_utilisateur": utilisateur.id}), 200
+    else:
+        return jsonify({"success": False, "message": "Utilisateur introuvable"}), 404
+    
 
 @controllers_utilisateurs.route('/obtenir_infos_profil/<int:user_id>', methods=['GET'])
 @login_required

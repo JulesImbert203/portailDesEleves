@@ -66,6 +66,12 @@ class Utilisateur(db.Model, UserMixin) :
     # Apparaitra sur la page du 2048
     meilleur_score_2048 = db.Column(db.Integer, nullable=False)
 
+    # soifguard
+    solde_octo = db.Column(db.Numeric(10, 2), nullable=False, default=0)  # Arrondi à 2 décimales
+    solde_biero = db.Column(db.Numeric(10, 2), nullable=True, default=0)  # Arrondi à 2 décimales
+    est_cotisant_biero = db.Column(db.Integer, nullable=False, default=False)
+    est_cotisant_octo = db.Column(db.Integer, nullable=False, default=False)
+
     def __init__(self, nom_utilisateur:str, prenom:str, nom_de_famille:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str) :
         """
         Cree un nouvel utilisateur

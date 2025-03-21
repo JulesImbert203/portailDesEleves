@@ -38,3 +38,20 @@ def est_membre_de_asso(association_id):
         return decorated_function
     return decorator  
 
+def a_permission_soifguard_octo(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        permission = PermissionSoifguard.query.filter_by(id_utilisateur=current_user.id, asso='octo').first()
+        if not permission:
+            return jsonify({"success": False, "message": "Accès refusé : permission Octo requise"}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+def a_permission_soifguard_biero(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        permission = PermissionSoifguard.query.filter_by(id_utilisateur=current_user.id, asso='biero').first()
+        if not permission:
+            return jsonify({"success": False, "message": "Accès refusé : permission Biero requise"}), 403
+        return f(*args, **kwargs)
+    return decorated_function
