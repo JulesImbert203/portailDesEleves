@@ -1,0 +1,243 @@
+/* Conteneur principal */
+.soifguard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* HEADER */
+.soifguard-container .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+.soifguard-container .header-buttons button {
+  margin-left: 10px;
+  padding: 8px 15px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.soifguard-container .header-buttons button:hover {
+  background-color: #0056b3;
+}
+
+/* CONTENU PRINCIPAL */
+.soifguard-container .main-content {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* SECTION GAUCHE */
+.soifguard-container .left-section {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 300px;
+  background-color: #fafafa;
+}
+
+/* SECTION DROITE */
+.soifguard-container .right-section {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 300px;
+  background-color: #ffffff;
+  text-align: center;
+  transition: background 0.3s ease-in-out;
+}
+
+/* CHANGEMENT DE COULEUR SELON L'ASSO */
+.soifguard-container .right-section.octo {
+  background-color: #cce5ff; /* Bleu clair pour Octo */
+  border-color: #007bff;
+}
+
+.soifguard-container .right-section.biero {
+  background-color: #ffcccc; /* Rouge clair pour Biero */
+  border-color: #ff0000;
+}
+
+/* Message par défaut */
+.soifguard-container .default-message {
+  font-style: italic;
+  color: #888;
+  margin-top: 20px;
+}
+
+/* Bloc des consos */
+.soifguard-container .conso-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  transition: background 0.2s;
+}
+
+.soifguard-container .conso-item:hover {
+  background-color: #e9ecef;
+}
+
+/* Bouton actif (Octo sélectionné) */
+.soifguard-container .header-buttons button.octo-active {
+  background-color: #0056b3; /* Bleu plus foncé */
+}
+
+/* Bouton actif (Biero sélectionné) */
+.soifguard-container .header-buttons button.biero-active {
+  background-color: #b30000; /* Rouge plus foncé */
+}
+
+.ajout-conso-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.ajout-conso-btn:hover {
+  background-color: #218838;
+}
+
+/* Styles pour la modale */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  float: right;
+  cursor: pointer;
+}
+/* Grille pour afficher les consos et utilisateurs */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+/* Style des éléments de la grille */
+.grid-item {
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  position: relative;
+}
+
+.grid-item:hover {
+  background-color: #ddd;
+}
+
+.user-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 5px;
+  background: #f9f9f9;
+  width: 150px;
+}
+
+.cotisant-badge {
+  background-color: green;
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.btn-add {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.btn-remove {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+
+/* Bouton pour ajouter une conso avec le même style */
+.add-item {
+  background-color: #4caf50;
+  color: white;
+}
+.add-item:hover {
+  background-color: #45a049;
+}
+
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.user-header select,
+.user-header button {
+  margin-right: 10px;
+}
+
+.selected {
+  background-color: #e0f7fa;  /* Par exemple, un fond clair pour l'utilisateur sélectionné */
+  border: 2px solid #00796b;  /* Bordure pour la surbrillance */
+}

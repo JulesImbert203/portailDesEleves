@@ -13,8 +13,14 @@ app = create_app()
 with app.app_context():
     db.create_all()
     # initilaisation des variables globales
-    var = GlobalVariable(key="id_sondage_du_jour", value=None)
-    db.session.add(var)
+    id_sond_jour = GlobalVariable(key="id_sondage_du_jour", value=None)
+    max_negatif_octo = GlobalVariable(key="max_negatif_octo", value=None)
+    max_negatif_biero = GlobalVariable(key="max_negatif_biero", value=None)
+    
+    db.session.add(id_sond_jour)
+    db.session.add(max_negatif_octo)
+    db.session.add(max_negatif_biero)
+    
     db.session.commit()
 
 print("Les tables ont ete creees avec succes !")
