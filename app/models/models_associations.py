@@ -17,6 +17,7 @@ class Association(db.Model):
     nom_dossier = db.Column(db.String(1000), nullable=True)
     description = db.Column(db.String(1000), nullable=True)
     logo_path = db.Column(db.String(1000), nullable=True)
+    banniere_path = db.Column(db.String(1000), nullable=True) # banniere de l'asso
 
     #Liste des membres de l'association
     membres = db.Column(db.JSON, nullable=True)

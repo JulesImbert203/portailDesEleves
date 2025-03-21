@@ -1,20 +1,18 @@
 /* Déclaration des variables globales */
 :root {
-  --primary-color: #000000; /* Couleur du header (noir) */
-  --background-color: #f5f5f5; /* Fond de la page */
-  --sidebar-background: transparent; /* Sidebar invisible */
-  --content-background: #ffffff; /* Fond du contenu */
-  --bloc-background: #e0e0e0; /* Fond des blocs */
-  --text-color: #333333; /* Couleur du texte principal */
-  --border-radius: 15px; /* Border radius pour arrondir les coins */
-  --padding: 20px; /* Padding général */
-  --sidebar-width: 250px; /* Largeur des sidebars */
-  --header-height: 60px; /* Hauteur du header */
-  --footer-height: 40px; /* Hauteur du footer */
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre pour un effet moderne */
-  --margin-centrale: 20px;
-  --button-color: hsl(20, 73%, 54%);
-  --button-color-hover: hsl(20, 73%, 80%);
+  --global-style-primary-color: #000000; /* Couleur du header (noir) */
+  --global-style-background-color: #f5f5f5; /* Fond de la page */
+  --global-style-sidebar-background: transparent; /* Sidebar invisible */
+  --global-style-content-background: #ffffff; /* Fond du contenu */
+  --global-style-bloc-background: #e0e0e0; /* Fond des blocs */
+  --global-style-text-color: #333333; /* Couleur du texte principal */
+  --global-style-border-radius: 15px; /* Border radius pour arrondir les coins */
+  --global-style-padding: 20px; /* Padding général */
+  --global-style-sidebar-width: 250px; /* Largeur des sidebars */
+  --global-style-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre pour un effet moderne */
+  --global-style-margin-centrale: 20px;
+  --global-style-button-color: hsl(20, 73%, 54%);
+  --global-style-button-color-hover: hsl(20, 73%, 80%);
 }
 
 /* Styles généraux */
@@ -22,7 +20,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background-color: var(--background-color);
+  background-color: var(--global-style-background-color);
 }
 
 /* Layout global */
@@ -32,85 +30,64 @@ body {
   min-height: 100vh;
 }
 
-/* Header */
-.header {
-  background-color: var(--primary-color);
-  color: white;
-  height: var(--header-height);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 2px;
-  box-shadow: var(--box-shadow);
-}
+
 
 /* Main content (contient les 3 zones) */
-.main-content {
+.main-content-global {
   display: flex;
   justify-content: space-between;
-  padding: var(--padding);
-  margin-top: var(--margin-centrale); /* Pour éviter que le contenu ne soit caché sous le header */
+  padding: var(--global-style-padding);
+  margin-top: var(--global-style-margin-centrale); /* Pour éviter que le contenu ne soit caché sous le header */
+  min-height: 100vh;
 }
 
 /* Sidebar (gauche et droite) */
-.sidebar {
-  width: var(--sidebar-width);
-  background-color: var(--sidebar-background); /* Sidebars invisibles */
+.sidebar-global {
+  width: var(--global-style-sidebar-width);
+  background-color: var(--global-style-sidebar-background); /* Sidebars invisibles */
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--padding);
+  padding: var(--global-style-padding);
   overflow-y: auto;
-  min-height: calc(100vh - var(--header-height)); /* Remplir toute la hauteur */
+  min-height: calc(100vh - var(--global-style-header-height)); /* Remplir toute la hauteur */
   flex: 1;
 }
 
 /* Contenu central */
-.content {
+.content-global {
   flex: 4;
-  background-color: var(--content-background);
-  padding: var(--padding);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  min-height: 300px;
-  margin-left: var(--margin-centrale);
-  margin-right: var(--margin-centrale);
+  background-color: var(--global-style-content-background);
+  border-radius: var(--global-style-border-radius);
+  box-shadow: var(--global-style-box-shadow);
+  margin-left: var(--global-style-margin-centrale);
+  margin-right: var(--global-style-margin-centrale);
 }
 
 /* Bloc dans les sidebars */
-.bloc {
-  background-color: var(--bloc-background);
+.bloc-global {
+  background-color: var(--global-style-bloc-background);
   width: 100%;
-  padding: var(--padding);
+  padding: var(--global-style-padding);
   margin-bottom: 20px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
+  border-radius: var(--global-style-border-radius);
+  box-shadow: var(--global-style-box-shadow);
   transition: background-color 0.3s ease;
 }
 
 /* Styling pour le bouton dans le bloc */
-.bloc button {
+.bloc-global-button {
   padding: 10px 20px;
-  background-color: var(--button-color);
+  background-color: var(--global-style-button-color);
   color: white;
   border: none;
-  border-radius: var(--border-radius);
+  border-radius: var(--global-style-border-radius);
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.bloc button:hover {
-  background-color: var(--button-color-hover);
+.bloc-global-button:hover {
+  background-color: var(--global-style-button-color-hover);
 }
 
-/* Footer */
-.footer {
-  background-color: var(--primary-color);
-  color: white;
-  height: var(--footer-height);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+

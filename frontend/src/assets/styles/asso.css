@@ -1,0 +1,93 @@
+/* Déclaration des variables globales */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --background-color: white;
+    --asso-border-radius: 15px;
+    --banner-height: 200px;
+    --logo-page-asso-size: 130px;
+    --container-width: 900px;
+    --padding: 20px;
+    --asso-logo-border-size: 6px;
+}
+
+/* Conteneur principal de l'association */
+.asso-container {
+    position: relative;
+}
+
+/* Bannière */
+.asso-banner {
+    width: 100%;
+    height: var(--banner-height);
+    background-size: cover;
+    background-position: center;
+    border-top-left-radius: var(--asso-border-radius);
+    border-top-right-radius: var(--asso-border-radius);
+}
+
+/* Logo de l'association */
+.asso-logo {
+    position: absolute;
+    top: calc(var(--banner-height) - var(--logo-page-asso-size) * 0.6);
+    left: calc(var(--logo-page-asso-size) * 0.2);
+    width: var(--logo-page-asso-size);
+    height: var(--logo-page-asso-size);
+    border-radius: var(--asso-border-radius);
+    border: var(--asso-logo-border-size) solid var(--background-color);
+    background-color: var(--secondary-color);
+}
+
+/* Informations de l'association */
+.asso-nom {
+    position: absolute;
+    top: calc(var(--banner-height));
+    left: calc(var(--logo-page-asso-size) * 1.5);
+}
+
+.asso-info {
+    margin-top: calc(var(--logo-page-asso-size) / 2 + var(--padding)); /* Ajustement dynamique */
+    text-align: left;
+    padding: 0 var(--padding);
+}
+
+.asso-info h2 {
+    font-size: 28px;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+.asso-info p {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Menu de navigation */
+.asso-tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-top: var(--padding);
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.asso-tab {
+    padding: 10px var(--padding);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: color 0.3s, border-bottom 0.3s;
+}
+
+.asso-tab:hover,
+.asso-tab.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.asso-tab-content {
+    padding: var(--padding);
+}
+
