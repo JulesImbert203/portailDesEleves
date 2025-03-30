@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
@@ -117,29 +117,45 @@ def route_modifier_ordre_membres(association_id):
         
     return modifier_ordre_membres()
 
-
-@controllers_associations.route('/<int:association_id>/add_content', methods = ['POST'])
+# AJOUTER DE LA SECURITE
+@controllers_associations.route('/<int:association_id>/add_content', methods=['POST'])
 def route_add_content(association_id):
     """
-        Ajoute du contenu au dossier de l'asso
+    Ajoute du contenu au dossier de l'association
     """
-    #@est_membre_de_asso(association_id)  #PENSER A L'ACTIVER QUAND POSSIBLE
-    def add_content(*args): #args sert à dump les arguments inutiles reçus lors de la requete 
-        
-        asso = get_association(association_id)
-        UPLOAD_FOLDER = 'app/upload/associations/' + asso.nom_dossier + '/'
-        ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'} #extensions autorisées pour l'upload de document
-        if 'file' not in request.files:
-            print("DEBUG: request.files =", request.files)
-            return str(request.files), 400
+    asso = get_association(association_id)
+    if not asso:
+        return jsonify({"success": False, "message": "Association introuvable"}), 404
+    # Définition du dossier d'upload
+    UPLOAD_FOLDER = os.path.join('app', 'upload', 'associations', asso.nom_dossier)
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    # Vérifier si un fichier a été envoyé
+    if 'file' not in request.files:
+        return jsonify({"success": False, "message": "Aucun fichier reçu"}), 400
+    file = request.files['file']
+    # Vérifier si l'extension du fichier est autorisée
+    if '.' not in file.filename or file.filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
+        return jsonify({"success": False, "message": "Extension de fichier non autorisée"}), 400
+    # Vérifier si le dossier d'upload existe, sinon le créer
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    file.save(file_path)
+    return jsonify({"success": True, "message": "Fichier ajouté avec succès", "file_path": file_path}), 200 
 
-        file = request.files['file']
-        if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-            return render_template('asso.html')
-        return 'Error', 400
-    return add_content()  
+@controllers_associations.route('/route_creer_asso', methods=["POST"])
+@login_required
+@superutilisateur_required
+def route_creer_asso() :
+    try :
+        data = request.json
+        nouvelle_asso = Association(nom=data["nom"], description=data['description'], type_association=data["type_association"], ordre_importance=data["ordre_importance"], logo_path=data["logo_path"], banniere_path=data["banniere_path"])
+        db.session.add(nouvelle_asso)
+        db.session.commit()
+        return jsonify({"message": "association ajoutee avec succes"}), 201
+    except Exception as e:
+        return jsonify({"message": f"erreur lors de l'ajout de l'association : {e}"}), 500
 
 @controllers_associations.route('/assos', methods = ['GET'])  
 def get_assos():

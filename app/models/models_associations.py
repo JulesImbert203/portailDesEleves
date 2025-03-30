@@ -13,8 +13,8 @@ class Association(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     #Éléments ajoutés à la création de l'association — Modifiables par les membres de l'association
-    nom = db.Column(db.String(1000), nullable=True)
-    nom_dossier = db.Column(db.String(1000), nullable=True)
+    nom = db.Column(db.String(1000), nullable=False)
+    nom_dossier = db.Column(db.String(1000), nullable=False)
     description = db.Column(db.String(1000), nullable=True)
     logo_path = db.Column(db.String(1000), nullable=True)
     banniere_path = db.Column(db.String(1000), nullable=True) # banniere de l'asso
@@ -25,7 +25,7 @@ class Association(db.Model):
     type_association = db.Column(db.String(1000), nullable=True)
     ordre_importance = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, nom:str, description:str, type_association:str, logo_path:str, ordre_importance:int,  banniere_path:str=None,):
+    def __init__(self, nom:str, ordre_importance:int, description:str=None, type_association:str=None, logo_path:str=None,  banniere_path:str=None,):
         """
         Crée une nouvelle association
         """
@@ -98,20 +98,4 @@ class Association(db.Model):
         except :
             print(f"dossier {nom_dossier} déjà créé !")
         
-    
-    def get_members(self) :
-        """
-        Récupère les membres de l'association
-        """
-        members = []
-        for member in self.membres:
-            utilisateur = Utilisateur.query.get(member['id'])
-            if utilisateur:
-                members.append({
-                    'id': utilisateur.id,
-                    'nom_utilisateur': utilisateur.nom_utilisateur,
-                    'prenom': utilisateur.prenom,
-                    'nom_de_famille': utilisateur.nom_de_famille,
-                    'role': member['role']
-                })
-        return members
+ 

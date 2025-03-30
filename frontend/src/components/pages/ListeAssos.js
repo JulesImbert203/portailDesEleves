@@ -4,11 +4,15 @@ import {useLayout} from '../../layouts/Layout';
 import Home from './Home';
 import { useNavigate } from "react-router-dom";
 import Asso from './Asso';
+import {verifierSuperutilisateur} from "../../api";
+import AjouterAssociation from "./AjouterAssociation";
 
 function Liste_Assos() {
 
   const [assos, setAssos] = useState([]);
   const { setCurrentComponent } = useLayout();
+  const [isSuperUser, setIsSuperUser] = useState(false);
+  
   
   const handleClick = (asso) => {
     //selectAsso(asso); // Stocke les infos de l'asso sélectionnée
@@ -16,6 +20,11 @@ function Liste_Assos() {
   };
 
   useEffect(() => {
+    async function checkSuperUser() {
+      const result = await verifierSuperutilisateur();
+      setIsSuperUser(result.is_superuser);
+    }
+    checkSuperUser();
     fetch("http://localhost:5000/api/associations/assos") // Récupérer les images depuis Flask
       .then((response) => response.json())
       .then((data) => setAssos(data))
@@ -42,6 +51,10 @@ function Liste_Assos() {
               <p className="liste-assos__name">{asso.nom}</p>
             </div>
           ))}
+          {isSuperUser && <div className='liste-assos__grid-item'>
+            <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="liste-assos__image" onClick={() => setCurrentComponent(<AjouterAssociation/>)}/>
+          </div>}
+
         </div>
       </div>
     </div>

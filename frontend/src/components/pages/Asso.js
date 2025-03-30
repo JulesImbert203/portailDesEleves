@@ -31,10 +31,27 @@ function Asso({ id }) {
 
     return (
         <div className="asso-container">
-            {/* Bannière avec logo */}
-            <div className="asso-banner" style={{ backgroundImage: `url(http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.banniere_path})` }}>
-                <img className="asso-logo" src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} alt={asso.nom} />
-            </div>
+        {/* Bannière avec logo */}
+        <div
+            className="asso-banner"
+            style={{
+            backgroundImage: asso.banniere_path
+                ? `url(http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.banniere_path})`
+                : 'none', // Si la bannière n'existe pas, pas d'image de fond
+            backgroundColor: asso.banniere_path ? 'transparent' : 'var(--global-style-secondary-color)', // Si la bannière n'existe pas, couleur de fond
+            }}
+        >
+            <img
+            className="asso-logo"
+            src={
+                asso.img
+                ? `http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`
+                : '/assets/icons/group.svg'
+            }
+            alt={asso.nom}
+            />
+        </div>
+
 
             <div className='asso-infos-principales'>
                 <h2 className='asso-nom'>{asso.nom}</h2>

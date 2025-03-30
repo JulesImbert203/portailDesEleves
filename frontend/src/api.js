@@ -435,7 +435,63 @@ export async function obtenirDetteMaxi(asso) {
   return data;
 }
 
-export async function ajouterAsso(nom, description, type, img, img_path, ordre) {
+export async function ajouterAsso(nom, description, type_association, ordre_importance, logo_path, banniere_path) {
+  try {
+    const response = await fetch("http://localhost:5000/api/associations/route_creer_asso", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        nom,
+        description,
+        type_association,
+        ordre_importance,
+        logo_path,
+        banniere_path,
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Erreur lors de l'ajout de l'association");
+    }
+    return { success: true, message: data.message };
+  } catch (error) {
+    console.error("Erreur réseau :", error);
+    return { success: false, message: error.message };
+  }
+}
+
+export async function ajouterContenu(associationId, file) {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`http://localhost:5000/api/associations/${associationId}/add_content`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+      },
+      credentials: "include",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Erreur lors du téléversement du fichier");
+    }
+
+    return { success: true, message: data.message, filePath: data.file_path };
+  } catch (error) {
+    console.error("Erreur réseau :", error);
+    return { success: false, message: error.message };
+  }
+}
+
+
+export async function ANCIENajouterAsso(nom, description, type, img, img_path, ordre) {
   try {
     const response = await fetch("http://localhost:5000/api/associations/createasso", {
       method: "POST",
