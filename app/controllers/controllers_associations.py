@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
@@ -117,11 +117,6 @@ def route_modifier_ordre_membres(association_id):
         
     return modifier_ordre_membres()
 
-@controllers_associations.route('/asso', methods = ['GET'])
-@login_required
-def test():
-    return render_template('asso.html')
-
 
 @controllers_associations.route('/<int:association_id>/add_content', methods = ['POST'])
 def route_add_content(association_id):
@@ -155,8 +150,14 @@ def get_assos():
 def get_asso(association_id):
     asso = Association.query.filter_by(id=association_id).first()
     print(asso.logo_path)
-    return jsonify({"id": asso.id, "nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance})
+    return jsonify({"id": asso.id, "nom_dossier": asso.nom_dossier,"nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance, "banniere_path": asso.banniere_path})
     
-
-    
-
+@controllers_associations.route("route_est_membre_de_asso/<int:id_association>", methods=["GET"])
+@login_required
+def route_est_membre_de_asso(id_association:int):
+    try : 
+        is_membre = id_association in current_user.assos_actuelles.keys()
+        autorise = is_membre or current_user.est_superutilisateur
+        return jsonify({"is_membre" : is_membre, "autorise" : autorise}), 200
+    except Exception as e:
+        return jsonify({f"Erreur : {e}"}), 400

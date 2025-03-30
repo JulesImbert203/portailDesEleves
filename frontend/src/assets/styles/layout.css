@@ -1,6 +1,7 @@
 /* Déclaration des variables globales */
 :root {
   --global-style-primary-color: #000000; /* Couleur du header (noir) */
+  --global-style-secondary-color: #035BA2;
   --global-style-background-color: #f5f5f5; /* Fond de la page */
   --global-style-sidebar-background: transparent; /* Sidebar invisible */
   --global-style-content-background: #ffffff; /* Fond du contenu */

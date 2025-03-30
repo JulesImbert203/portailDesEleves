@@ -29,15 +29,11 @@ function Asso({ id }) {
     
     if (asso===null || isMembreDansAsso===null) return <p>Chargement...</p>;
 
-     return (
+    return (
         <div className="asso-container">
-        <h2>{asso.nom}</h2>
-        <img src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} alt={asso.nom} />
-
-        {/* Onglets */}
-        <div className="tabs-container">
-            <div className={`tab ${activeTab === "info" ? "active" : ""}`} onClick={() => setActiveTab("info")}>
-                <i className="fas fa-info-circle"></i> Infos
+            {/* Bannière avec logo */}
+            <div className="asso-banner" style={{ backgroundImage: `url(http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.banniere_path})` }}>
+                <img className="asso-logo" src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} alt={asso.nom} />
             </div>
 
             <div className='asso-infos-principales'>
@@ -74,9 +70,7 @@ function Asso({ id }) {
                 {activeTab === "posts" && <p>Publications ici...</p>}
             </div>
         </div>
-        </div>
-        
-    )
-};
+    );
+}
 
 export default Asso;

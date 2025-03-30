@@ -1,0 +1,154 @@
+/* Déclaration des variables globales */
+:root {
+    --user-border-radius: 15px;
+    --container-width: 900px;
+    --user-padding: 20px;
+    --user-banner-height: 170px;
+    --user-profilpic-size: calc(var(--user-banner-height) * 0.75);
+    --user-profilpic-radius: 10px;
+    --user-profilpic-border-size: 5px;
+
+    /* Variables de taille */
+    --user-text-contact-size: 16px;  /* Taille du texte */
+    --user-icon-size: calc(var(--user-text-contact-size) * 1.3); /* Taille des icônes */
+    --user-contact-gap: calc(var(--user-text-contact-size) * 0.35); /* Espacement entre les éléments dans .user-contact */
+    --user-icon-margin-right: 1px; /* Espacement entre l'icône et le texte */
+    --user-between-contact-margin: 6px;
+
+    --copy-button-padding: 3px;
+    --copy-button-border-radius: 4px
+}
+
+
+
+.user-container {
+    position: relative;
+}
+
+/* Bannière */
+.user-banner {
+    width: 100%;
+    height: var(--user-banner-height);
+    background-size: cover;
+    background-position: center;
+    border-top-left-radius: var(--user-border-radius);
+    border-top-right-radius: var(--user-border-radius);
+}
+
+.user-pic {
+    position: absolute;
+    top: calc(var(--banner-height) * 0.2);
+    right: calc(var(--banner-height) * 0.2);
+    width: var(--user-profilpic-size);
+    height: auto;
+    border-radius: var(--user-profilpic-radius);
+    border: var(--user-profilpic-border-size) solid white;
+    background-color: var(--secondary-color);
+    object-fit: cover;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+
+.user-dessous-banniere {
+    padding-right: var(--global-style-padding);
+    padding-left: var(--global-style-padding);
+}
+
+/* Infos principales */
+
+.user-info-contact {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-donnee-contact {
+    margin: var(--user-between-contact-margin);
+    font-size: var(--user-text-contact-size);
+
+}
+
+/* Conteneur pour les informations de contact */
+.user-contact {
+    display: flex;
+    align-items: center; /* Alignement vertical des éléments */
+    gap: var(--user-contact-gap); /* Espacement entre les éléments */
+}
+
+/* Icônes de contact */
+.user-icon {
+    width: var(--user-icon-size); /* Taille de l'icône */
+    height: var(--user-icon-size); /* Assure que l'icône est carrée */
+    margin-right: var(--user-icon-margin-right); /* Espacement entre l'icône et le texte */
+}
+
+.copyButton {
+    display: flex;
+    cursor: pointer;
+    align-items: center;  /* Aligne l'icône et le texte horizontalement */
+    padding: var(--copy-button-padding);
+    background-color: var(--global-style-secondary-color);
+    border-radius: var(--copy-button-border-radius);
+    color: white; /* Texte en blanc */
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.copyButton #texteCopier {
+    margin: 0;
+    font-size: calc(var(--user-text-contact-size) * 0.8);
+
+}
+
+.copyButton .user-icon {
+    width: calc(var(--user-icon-size) * 0.7) ;
+    margin-right: var(--copy-button-padding); /* Espacement entre l'icône et le texte */
+    filter: brightness(0) invert(1); /* Applique un filtre pour rendre l'icône blanche */
+}
+
+
+.copyButton:hover {
+    background-color: var(--global-style-primary-color); /* Change la couleur de fond au survol */
+    transform: scale(1.05); /* Effet de zoom au survol */
+}
+
+.copyButton:active {
+    transform: scale(0.95); /* Effet de clic, l'élément se rétrécit un peu */
+}
+
+/* Texte de contact (numéro de téléphone ou email) */
+.user-donnee-contact {
+    font-weight: bold;
+    font-size: var(--user-text-contact-size); /* Taille du texte */
+    white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+    overflow: hidden; /* Masque tout texte qui dépasse */
+    text-overflow: ellipsis; /* Affiche "..." si le texte dépasse */
+}
+
+
+
+/* Menu de navigation 
+.user-tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-top: var(--user-padding);
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.user-tab {
+    padding: 10px var(--user-padding);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: color 0.3s, border-bottom 0.3s;
+}
+
+.user-tab:hover,
+.user-tab.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.user-tab-content {
+    position: relative;
+    padding: var(--padding);
+} */

@@ -435,7 +435,6 @@ export async function obtenirDetteMaxi(asso) {
   return data;
 }
 
-<<<<<<< HEAD
 export async function ajouterAsso(nom, description, type, img, img_path, ordre) {
   try {
     const response = await fetch("http://localhost:5000/api/associations/createasso", {
@@ -479,7 +478,6 @@ export async function uploadContenu(content, assoid) {
     return { success: false, message: "Erreur lors de l'upload du contenu" };
   }
 }
-=======
 export async function estUtilisateurDansAsso(asso_id) {
   // renvoie True aussi pour le superutilisateur
   const res = await fetch(`http://localhost:5000/api/associations/route_est_membre_de_asso/${asso_id}`, 
@@ -516,4 +514,3 @@ export async function obtenirListeDesUtilisateurs(promo, cycles) {
 
 
 
->>>>>>> 29e065a5eb8f7ed9665730e0713c9b3d3cd2bc47
