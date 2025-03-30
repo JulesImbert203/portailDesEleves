@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLayout } from './../../layouts/Layout';  
 import { obtenirListeDesUtilisateurs } from '../../api';
 import Trombi from './Trombi';
+import PageUtilisateur from './PageUtilisateur';
 
 function TrombiPromo({ promo }) {
     const { setCurrentComponent } = useLayout();
@@ -50,7 +51,7 @@ function TrombiPromo({ promo }) {
                 <div className='liste_utilisateurs_grid'>
                     <div className='liste_utilisateurs_grid_container'>
                         {utilisateurs.map(user => (
-                            <div className='liste_utilisateurs_grid_item' key={user.id}>
+                            <div className='liste_utilisateurs_grid_item' key={user.id} onClick={() => setCurrentComponent(<PageUtilisateur id={user.id} />)}>
                                 {user.prenom} {user.surnom ? `'${user.surnom}'` : ''} {user.nom_de_famille}
                                 <br />
                                 {user.cycle} {user.promotion}
