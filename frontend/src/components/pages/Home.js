@@ -1,4 +1,4 @@
-// src/pages/ListeAssos.js
+// src/pages/Home.js
 import React, { useState, useEffect } from "react";
 import {useLayout} from './../../layouts/Layout';  
 import ListeAssos from './ListeAssos';

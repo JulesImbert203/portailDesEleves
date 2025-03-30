@@ -1,0 +1,78 @@
+:root {
+    --trombinoscope-bg-color: #f5f5f5;
+    --trombinoscope-text-color: #333;
+    --trombinoscope-hover-color: #007bff;
+    --trombinoscope-hover-bg: #e0e0e0;
+    --trombinoscope-border-radius: 8px;
+    --trombinoscope-padding: 10px;
+    --trombinoscope-margin: 5px 0;
+    --trombinoscope-font-size: 18px;
+    --trombinoscope-transition: 0.3s ease-in-out;
+    --trombinoscope-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    --trombinoscope-item-hover-scale: 1.05;
+    --trombinoscope-grid-gap: 15px;
+}
+
+.trombinoscope {
+    background: var(--trombinoscope-bg-color);
+    padding: 20px;
+    border-radius: var(--trombinoscope-border-radius);
+}
+
+.liste_promos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.promo_dans_liste {
+    background: white;
+    color: var(--trombinoscope-text-color);
+    padding: var(--trombinoscope-padding);
+    border-radius: var(--trombinoscope-border-radius);
+    font-size: var(--trombinoscope-font-size);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--trombinoscope-transition);
+    user-select: none;
+}
+
+.promo_dans_liste:hover {
+    background: var(--trombinoscope-hover-bg);
+    color: var(--trombinoscope-hover-color);
+}
+
+/* Grille pour afficher les utilisateurs */
+.liste_utilisateurs_grid {
+    background: var(--trombinoscope-bg-color);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajuste le nombre de colonnes */
+    gap: var(--trombinoscope-grid-gap);
+    padding: var(--trombinoscope-grid-gap);
+    justify-content: center;
+}
+
+.liste_utilisateurs_grid_container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--trombinoscope-grid-gap);
+    justify-content: center;
+}
+
+/* Style des items utilisateurs */
+.liste_utilisateurs_grid_item {
+    background: white;
+    color: var(--trombinoscope-text-color);
+    padding: var(--trombinoscope-padding);
+    border-radius: var(--trombinoscope-border-radius);
+    box-shadow: var(--trombinoscope-shadow);
+    font-size: var(--trombinoscope-font-size);
+    text-align: center;
+    transition: transform var(--trombinoscope-transition), box-shadow var(--trombinoscope-transition);
+    cursor: pointer;
+}
+
+.liste_utilisateurs_grid_item:hover {
+    transform: scale(var(--trombinoscope-item-hover-scale));
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
+}
