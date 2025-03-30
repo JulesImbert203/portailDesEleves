@@ -1,82 +1,110 @@
-/* Appliquer un fond léger à toute la page */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 0;
+/* Déclaration des variables globales */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --background-color: white;
+    --asso-border-radius: 15px;
+    --banner-height: 200px;
+    --logo-page-asso-size: 130px;
+    --container-width: 900px;
+    --asso-padding: 20px;
+    --asso-logo-border-size: 6px;
+    --asso-margin-button-admin: 10px;
 }
 
-/* Conteneur principal */
+/* Conteneur principal de l'association */
 .asso-container {
-    max-width: 800px;  /* Largeur du contenu */
-    margin: 20px auto; /* Centre le contenu */
-    padding: 20px;
-    text-align: center;
+    position: relative;
 }
 
-/* Titre */
-.asso-container h2 {
-    color: #333;
+/* Bannière */
+.asso-banner {
+    width: 100%;
+    height: var(--banner-height);
+    background-size: cover;
+    background-position: center;
+    border-top-left-radius: var(--asso-border-radius);
+    border-top-right-radius: var(--asso-border-radius);
+}
+
+/* Logo de l'association */
+.asso-logo {
+    position: absolute;
+    top: calc(var(--banner-height) - var(--logo-page-asso-size) * 0.6);
+    left: calc(var(--logo-page-asso-size) * 0.2);
+    width: var(--logo-page-asso-size);
+    height: var(--logo-page-asso-size);
+    border-radius: var(--asso-border-radius);
+    border: var(--asso-logo-border-size) solid var(--background-color);
+    background-color: var(--secondary-color);
+}
+
+
+
+/* Infos principales */
+
+
+.asso-nom {
+    position: absolute;
+    top: calc(var(--banner-height));
+    left: calc(var(--logo-page-asso-size) * 1.5);
+}
+
+.asso-admin {
+    position: absolute;
+    top: calc(var(--banner-height));
+    right: 0;
+    padding: var(--asso-padding);
+    gap: var(--asso-padding);
+    display: flex;
+}
+
+
+/* description, etc */
+
+
+.asso-info {
+    margin-top: calc(var(--logo-page-asso-size) / 2 + var(--asso-padding)); /* Ajustement dynamique */
+    text-align: left;
+    padding: 0 var(--asso-padding);
+}
+
+.asso-info h2 {
     font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 15px;
+    color: var(--text-color);
+    margin-bottom: 10px;
 }
 
-/* Image bien centrée */
-.asso-container img {
-    display: block;       /* Pour éviter l’espace blanc autour */
-    margin: 0 auto;       /* Centre l'image horizontalement */
-    max-width: 200px;      /* Empêche l'image de dépasser le conteneur */
-    height: auto;         /* Garde le ratio de l'image */
-    border-radius: 8px;
-}
-
-/* Texte de description */
-.asso-container p {
+.asso-info p {
     color: #555;
-    font-size: 18px;
-    margin-top: 15px;
+    font-size: 16px;
     line-height: 1.6;
 }
 
-/* Conteneur des onglets */
-.tabs-container {
+/* Menu de navigation */
+.asso-tabs {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
+    justify-content: space-around;
+    margin-top: var(--asso-padding);
+    border-bottom: 2px solid var(--secondary-color);
 }
 
-/* Boutons d'onglet */
-.tab {
-    background: #eee;
-    padding: 10px 20px;
-    border-radius: 8px;
+.asso-tab {
+    padding: 10px var(--asso-padding);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
     font-size: 16px;
-    transition: background 0.3s;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: color 0.3s, border-bottom 0.3s;
 }
 
-.tab:hover,
-.tab.active {
-    background: #007bff;
-    color: white;
+.asso-tab:hover,
+.asso-tab.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
 }
 
-/* Icônes */
-.tab i {
-    font-size: 20px;
-}
-
-/* Contenu des onglets */
-.tab-content {
-    background: white;
-    padding: 20px;
-    margin-top: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.asso-tab-content {
+    padding: var(--padding);
 }

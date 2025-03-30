@@ -235,7 +235,7 @@ export default function SoifGuard() {
         {/* SECTION GAUCHE - Utilisateurs */}
         <div className="left-section">
           {/* Sous-header du bloc utilisateurs */}
-          <div className="user-header">
+          <div className="soifguard-user-header">
             {!gestionCotisations && (
               <select onChange={(e) => setPromo(e.target.value)} value={promo}>
                 <option value="">Sélectionner Promo</option>
@@ -252,24 +252,24 @@ export default function SoifGuard() {
           </div>
 
           <h2>Utilisateurs {promo && `(Promo ${promo})`}</h2>
-          <div className="grid-container">
+          <div className="soifguard-grid-container">
             {utilisateurs.length > 0 ? (
               utilisateurs.map((user) => (
                 <div
                   key={user.id}
-                  className={`grid-item ${selectedUser === user.id ? "selected" : ""}`}  // Appliquer la classe de surbrillance
+                  className={`soifguard-grid-item ${selectedUser === user.id ? "soifguard-selected" : ""}`}  // Appliquer la classe de surbrillance
                   onClick={() => handleSelectUser(user.id)}  // Clic pour sélectionner/désélectionner
                 >
                   <strong>{user.prenom} {user.nom_de_famille}</strong>
                   <br />
                   {categorie === "octo" && <span>Solde Octo : {user.solde_octo}€</span>}
                   {categorie === "biero" && <span>Solde Biero : {user.solde_biero}€</span>}
-                  {user[`est_cotisant_${categorie}`] ? <span className="cotisant-badge">Cotisant</span> : null}
+                  {user[`est_cotisant_${categorie}`] ? <span className="soifguard-cotisant-badge">Cotisant</span> : null}
 
                   {/* Gestion des cotisations */}
                   {gestionCotisations && (
                     <button
-                      className={user[`est_cotisant_${categorie}`] ? "btn-remove" : "btn-add"}
+                      className={user[`est_cotisant_${categorie}`] ? "soifguard-btn-remove" : "soifguard-btn-add"}
                       onClick={(e) => {
                         e.stopPropagation();  // Empêcher le clic sur le bouton de sélectionner l'utilisateur
                         toggleCotisation(user.id, user[`est_cotisant_${categorie}`]);
@@ -303,12 +303,12 @@ export default function SoifGuard() {
           {categorie === "" ? (
             <p className="default-message">Veuillez sélectionner Octo ou Biero</p>
           ) : (
-            <div className="grid-container">
+            <div className="soifguard-grid-container">
               {consos.length > 0 ? (
                 consos.map((conso) => (
                   <div
                     key={conso.id}
-                    className={`grid-item ${selectedConso === conso.id ? "selected" : ""}`}  // Appliquer la classe de surbrillance
+                    className={`soifguard-grid-item ${selectedConso === conso.id ? "soifguard-selected" : ""}`}  // Appliquer la classe de surbrillance
                     onClick={() => handleSelectConso(conso.id)}  // Clic pour sélectionner/désélectionner
                   >
                     <strong>{conso.nom_conso}</strong> - {parseFloat(conso.prix).toFixed(2)}€
@@ -318,7 +318,7 @@ export default function SoifGuard() {
                     {gestionConsos && (
                       <>
                         <button 
-                          className="btn-remove" 
+                          className="soifguard-btn-remove" 
                           onClick={(e) => {
                             e.stopPropagation();  // Empêcher le clic sur le bouton de sélectionner la conso
                             supprimerConso(conso.id);
@@ -333,7 +333,7 @@ export default function SoifGuard() {
               ) : (
                 <p>Aucune consommation disponible.</p>
               )}
-              <div className="grid-item add-item" onClick={() => setIsModalOpen(true)}>+ Ajouter</div>
+              <div className="soifguard-grid-item soifguard-add-item" onClick={() => setIsModalOpen(true)}>+ Ajouter</div>
             </div>
           )}
         </div>
@@ -344,9 +344,9 @@ export default function SoifGuard() {
 
       {/* MODAL D'AJOUT DE CONSO */}
       {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-btn" onClick={() => setIsModalOpen(false)}>X</button>
+        <div className="soifguard-modal">
+          <div className="soifguard-modal-content">
+            <button className="soifguard-close-btn" onClick={() => setIsModalOpen(false)}>X</button>
             <h2>Ajouter une consommation</h2>
             <label>Nom de la conso :</label>
             <input type="text" value={nomConso} onChange={(e) => setNomConso(e.target.value)} />

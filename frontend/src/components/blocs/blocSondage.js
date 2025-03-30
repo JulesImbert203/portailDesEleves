@@ -47,7 +47,7 @@ export default function BlocSondage({ reloadSondage }) {
   if (sondage.is_sondage) {
     if (voteUser === null) {
       return (
-        <div className="bloc">
+        <div className="bloc-global">
           <h3>Sondage du jour</h3>
           <p>{sondage.question}</p>
           <div>
@@ -67,7 +67,7 @@ export default function BlocSondage({ reloadSondage }) {
       );
     } else {
       return (
-        <div className="bloc">
+        <div className="bloc-global">
           <h3>Sondage du jour</h3>
           <p>{sondage.question}</p>
           <div>
@@ -88,12 +88,12 @@ export default function BlocSondage({ reloadSondage }) {
     }
   } else {
     return (
-      <div className="bloc">
+      <div className="bloc-global">
         <h3>Pas de sondage Aujourd'hui </h3>
-        <button onClick={() => setCurrentComponent(<ProposerSondage />)}>
+        <button className="bloc-global-button" onClick={() => setCurrentComponent(<ProposerSondage />)}>
           Proposer un sondage
         </button>
-        <button onClick={() => setCurrentComponent(<GererSondages />)}>
+        <button className="bloc-global-button" onClick={() => setCurrentComponent(<GererSondages />)}>
           Gerer les sondages
         </button>
       </div>

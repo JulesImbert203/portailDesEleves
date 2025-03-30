@@ -5,7 +5,6 @@ import Home from './Home';
 import { useNavigate } from "react-router-dom";
 import Asso from './Asso';
 
-
 function Liste_Assos() {
 
   const [assos, setAssos] = useState([]);
@@ -23,27 +22,30 @@ function Liste_Assos() {
       .catch((error) => console.error("Erreur de chargement des images:", error));
   }, []);
 
-    return (
-      <div className="assos">
-        <h1>Associations</h1>
-        <p>Ici tu peux retrouver toutes les associations des Mines</p>
-        <div>
-          <div className="grid-container">
+  return (
+    <div className="liste-assos">
+      <h1 className="liste-assos__title">Associations</h1>
+      <p className="liste-assos__description">Ici tu peux retrouver toutes les associations des Mines</p>
+      <div className="liste-assos__grid">
+        <div className="liste-assos__grid-container">
           {assos.map((asso) => (
-              <div 
-                  key={asso.id} 
-                  className="grid-item" 
-                  onClick={() => handleClick(asso.id)}
-                  >
-                  <img src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} alt={asso.nom} />
-                  <p>{asso.nom}</p>
-              </div>
-            ))}
-          </div>
+            <div 
+              key={asso.id} 
+              className="liste-assos__grid-item" 
+              onClick={() => handleClick(asso.id)}
+            >
+              <img 
+                src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} 
+                alt={asso.nom} 
+                className="liste-assos__image"
+              />
+              <p className="liste-assos__name">{asso.nom}</p>
+            </div>
+          ))}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-
-  export default Liste_Assos;
+export default Liste_Assos;

@@ -53,24 +53,25 @@ function Layout({ reloadSondage  }) {
 
   return (
     <div className="layout">
-      <Header />
-      <div className="main-content">
-        <div className="sidebar left">
-          <BlocSondage reloadSondage ={reloadSondage } />
+      <Header className="header-global" />
+      <div className="main-content-global">
+        <div className="sidebar-global left">
+          <BlocSondage reloadSondage={reloadSondage} />
         </div>
-        <div className="content">
-          {currentComponent} 
+        <div className="content-global">
+          {currentComponent}
         </div>
-        <div className="sidebar right">
-          <div id="blocUtilisateur" className="bloc">
+        <div className="sidebar-global right">
+          <div id="blocUtilisateur" className="bloc-global">
             <h3>Bienvenue {userData ? userData.nom_utilisateur : "Chargement..."} !</h3>
-            <button onClick={() => handleLogout()}>
-                    Se déconnecter
+            <button onClick={() => handleLogout()} className="bloc-global-button">
+              Se déconnecter
             </button>
           </div>
         </div>
       </div>
     </div>
+
   );
 }
 

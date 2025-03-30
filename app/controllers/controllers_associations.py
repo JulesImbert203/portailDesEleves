@@ -155,18 +155,8 @@ def get_assos():
 def get_asso(association_id):
     asso = Association.query.filter_by(id=association_id).first()
     print(asso.logo_path)
-    return jsonify({"id": asso.id, "nom": asso.nom, "nom_dossier" : asso.nom_dossier, "img" :asso.logo_path, "ordre" : asso.ordre_importance})
+    return jsonify({"id": asso.id, "nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance})
+    
 
-@superutilisateur_required
-@controllers_associations.route('/createasso', methods = ['POST'])
-def create_asso():
-   
-    nom = request.json.get('nom')
-    description = request.json.get('description')
-    type_association = request.json.get('type_association')
-    ordre_importance = request.json.get('ordre')
-    logo_path = request.json.get('logo_path')
-    id = create_association(nom, description, type_association, logo_path, ordre_importance)
-    return jsonify({"message": "Association créée avec succès", 'id' : id}), 200
     
 

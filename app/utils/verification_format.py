@@ -13,7 +13,7 @@ def verifier_chaine_nom_utilisateur(chaine: str) -> bool:
     return bool(re.fullmatch(r"[a-z0-9-]+", chaine))
 
 def verifier_chaine_prenom_nom(chaine: str) -> bool:
-    return bool(re.fullmatch(r"[a-zA-Zà-ÿ'\s-]+", chaine)) and all(mot[0].isupper() for mot in chaine.split())
+    return bool(re.fullmatch(r"[a-zA-ZÀ-Ÿà-ÿ'\s-]+", chaine)) and all(mot[0].isupper() for mot in chaine.split())
 
 def verifier_chaine_mail(chaine: str) -> bool:
     return bool(re.fullmatch(r"[a-z0-9._@-]+", chaine))

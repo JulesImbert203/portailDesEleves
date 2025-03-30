@@ -435,6 +435,7 @@ export async function obtenirDetteMaxi(asso) {
   return data;
 }
 
+<<<<<<< HEAD
 export async function ajouterAsso(nom, description, type, img, img_path, ordre) {
   try {
     const response = await fetch("http://localhost:5000/api/associations/createasso", {
@@ -478,3 +479,41 @@ export async function uploadContenu(content, assoid) {
     return { success: false, message: "Erreur lors de l'upload du contenu" };
   }
 }
+=======
+export async function estUtilisateurDansAsso(asso_id) {
+  // renvoie True aussi pour le superutilisateur
+  const res = await fetch(`http://localhost:5000/api/associations/route_est_membre_de_asso/${asso_id}`, 
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data;
+}
+
+export async function chargerAsso(asso_id) {
+  const res = await fetch(`http://localhost:5000/api/associations/${asso_id}`, 
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data;
+}
+
+export async function obtenirListeDesPromos() {
+  const res = await fetch(`http://localhost:5000/api/users/obtenir_liste_des_promos`, 
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data;
+}
+
+export async function obtenirListeDesUtilisateurs(promo, cycles) {
+  let url = `http://localhost:5000/api/users/obtenir_liste_utilisateurs/${promo}`;
+  url += `/${cycles.join(",")}`;
+  const res = await fetch(url, { credentials: "include" });
+  const data = await res.json();
+  return data;
+}
+
+
+
+
+>>>>>>> 29e065a5eb8f7ed9665730e0713c9b3d3cd2bc47
