@@ -35,7 +35,7 @@ function Liste_Assos() {
                   className="grid-item" 
                   onClick={() => handleClick(asso.id)}
                   >
-                  <img src={`http://127.0.0.1:5000/upload/associations/${asso.img}`} alt={asso.nom} />
+                  <img src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} alt={asso.nom} />
                   <p>{asso.nom}</p>
               </div>
             ))}

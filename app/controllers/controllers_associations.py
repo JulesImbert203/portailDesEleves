@@ -6,6 +6,8 @@ from app.services import *
 from app.utils.decorators import * 
 from app.services.services_utilisateurs import *
 from app.services.services_associations import *
+from app.models import *
+
 
 import requests
 import json
@@ -133,6 +135,7 @@ def route_add_content(association_id):
         UPLOAD_FOLDER = 'app/upload/associations/' + asso.nom_dossier + '/'
         ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'} #extensions autorisées pour l'upload de document
         if 'file' not in request.files:
+            print("DEBUG: request.files =", request.files)
             return str(request.files), 400
 
         file = request.files['file']
@@ -146,14 +149,24 @@ def route_add_content(association_id):
 @controllers_associations.route('/assos', methods = ['GET'])  
 def get_assos():
     assos = Association.query.all()
-    return jsonify([{"id": asso.id, "nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance} for asso in assos])
+    return jsonify([{"id": asso.id, "nom": asso.nom, "nom_dossier" : asso.nom_dossier,"img" :asso.logo_path, "ordre" : asso.ordre_importance} for asso in assos])
 
 @controllers_associations.route('/<int:association_id>', methods = ['GET'])  
 def get_asso(association_id):
     asso = Association.query.filter_by(id=association_id).first()
     print(asso.logo_path)
-    return jsonify({"id": asso.id, "nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance})
-    
+    return jsonify({"id": asso.id, "nom": asso.nom, "nom_dossier" : asso.nom_dossier, "img" :asso.logo_path, "ordre" : asso.ordre_importance})
 
+@superutilisateur_required
+@controllers_associations.route('/createasso', methods = ['POST'])
+def create_asso():
+   
+    nom = request.json.get('nom')
+    description = request.json.get('description')
+    type_association = request.json.get('type_association')
+    ordre_importance = request.json.get('ordre')
+    logo_path = request.json.get('logo_path')
+    id = create_association(nom, description, type_association, logo_path, ordre_importance)
+    return jsonify({"message": "Association créée avec succès", 'id' : id}), 200
     
 

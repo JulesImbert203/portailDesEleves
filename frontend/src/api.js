@@ -435,3 +435,46 @@ export async function obtenirDetteMaxi(asso) {
   return data;
 }
 
+export async function ajouterAsso(nom, description, type, img, img_path, ordre) {
+  try {
+    const response = await fetch("http://localhost:5000/api/associations/createasso", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({'nom': nom, 'description': description, 
+        'type_association' : type, 'logo_path': img_path, 'ordre' :ordre }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      console.error("Erreur lors de l'ajout de la permission :", data.message);
+      return { success: false, message: data.message};
+    }
+    const id = data.id;
+    const imgresponse = await fetch(`http://localhost:5000/api/associations/${id}/add_content`, {
+      method: "POST",
+      credentials: "include",
+      body: img,
+    });
+    return { success: true, message: data.message, imgresponse: imgresponse.message };
+  } catch (error) {
+    console.error("Erreur réseau :", error);
+    return { success: false, message: "Erreur réseau" };
+  }
+}
+
+export async function uploadContenu(content, assoid) {
+  const formData = new FormData();
+  formData.append("content", content);
+  try {
+    const response = await fetch(`http://localhost:5000/api/association/${assoid}`, {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erreur lors de l'upload du contenu :", error);
+    return { success: false, message: "Erreur lors de l'upload du contenu" };
+  }
+}

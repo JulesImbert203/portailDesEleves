@@ -26,7 +26,7 @@ function Asso({id}) {
   return (
     <div className="asso-container">
         <h2>{asso.nom}</h2>
-        <img src={`http://127.0.0.1:5000/upload/associations/${asso.img}`} alt={asso.nom} />
+        <img src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} alt={asso.nom} />
 
         {/* Onglets */}
         <div className="tabs-container">

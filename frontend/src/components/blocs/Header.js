@@ -2,12 +2,15 @@
 import React, { useState } from "react";
 import '../../assets/styles/header.css';
 import {useLayout} from '../../layouts/Layout'; 
+import Home from "../pages/Home";
+import Liste_Assos from "../pages/ListeAssos";
 
 const Header = () => {
     const [activeTab, setActiveTab] = useState(null);
+    const {setCurrentComponent} = useLayout();
 
     const handleTabClick = (tab) => {
-        setActiveTab(tab);  // Change l'onglet actif lorsqu'on clique
+        setCurrentComponent(tab);  // Change l'onglet actif lorsqu'on clique
     };
 
     return (
@@ -18,22 +21,17 @@ const Header = () => {
             <div className="dropdown">
                 <button className="dropdown-btn">Menu</button>
                 <div className="menu">
-                    <button onClick={() => handleTabClick("home")}>
+                    <button onClick={() => handleTabClick(<Home />)}>
                         Accueil
                     </button>
-                    <button onClick={() => handleTabClick("about")}>
-                        À propos
+                    <button onClick={() => handleTabClick(<Liste_Assos />)}>
+                        Assos
                     </button>
-                    <button onClick={() => handleTabClick("contact")}>
-                        Contact
-                    </button>
-                    <button onClick={() => handleTabClick("services")}>
-                        Services
-                    </button>
+                    
                 </div>
             </div>
             <div class="centered-container">
-              <h1 class='centered-container'>Portail des élèves</h1>
+              <h1>Portail des élèves</h1>
             </div>
 
             

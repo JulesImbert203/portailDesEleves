@@ -5,6 +5,15 @@ from sqlalchemy.orm.attributes import flag_modified
 
 
 #### GESTION DES ASSOCIATIONS
+def create_association(nom:str, description:str, type_association:str, logo_path:str, ordre_importance:int) -> Association:
+    """
+    Crée une nouvelle association
+    """
+    association = Association(nom, description, type_association, logo_path, ordre_importance)
+    db.session.add(association)
+    db.session.commit()
+    return association.id
+
 
 def get_association(association_id) -> Association:  
     """Renvoie un utilisateur depuis son id"""
