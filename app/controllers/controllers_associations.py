@@ -156,4 +156,12 @@ def get_asso(association_id):
     
 
     
-
+@controllers_associations.route("route_est_membre_de_asso/<int:id_association>", methods=["GET"])
+@login_required
+def route_est_membre_de_asso(id_association:int):
+    try : 
+        is_membre = id_association in current_user.assos_actuelles.keys()
+        autorise = is_membre or current_user.est_superutilisateur
+        return jsonify({"is_membre" : is_membre, "autorise" : autorise}), 200
+    except Exception as e:
+        return jsonify({f"Erreur : {e}"}), 400

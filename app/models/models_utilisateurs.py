@@ -80,15 +80,15 @@ class Utilisateur(db.Model, UserMixin) :
         if verifier_chaine_nom_utilisateur(nom_utilisateur) :
             self.nom_utilisateur = nom_utilisateur
         else :
-            raise ValueError("Nom d'utilisateur invalide")
+            raise ValueError(f"Nom d'utilisateur invalide : {nom_utilisateur}")
         if verifier_chaine_prenom_nom(prenom) : 
             self.prenom = prenom
         else :
-            raise ValueError("Prenom invalide")
+            raise ValueError(f"Prenom invalide : {prenom}")
         if verifier_chaine_prenom_nom(nom_de_famille) :
             self.nom_de_famille = nom_de_famille
         else :
-            raise ValueError("Nom de famille invalide")
+            raise ValueError(f"Nom de famille invalide : {nom_de_famille}")
         self.promotion = promotion
         if cycle in {'ic', 'ast', 'vs', 'isup', 'ev', 'de'} :
             self.cycle = cycle 

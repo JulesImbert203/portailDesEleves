@@ -9,6 +9,57 @@ from app.services.services_utilisateurs import *
 # Creer le blueprint pour les utilisateurs
 controllers_utilisateurs = Blueprint('controllers_utilisateurs', __name__)
 
+@controllers_utilisateurs.route('/obtenir_liste_utilisateurs/<int:promo>/<string:cycles>', methods=['GET'])
+@login_required
+def obtenir_liste_utilisateurs(promo:int, cycles:str):
+    """
+    Renvoie la liste des utilisateurs par cycle et par promotion
+    - cycles est une liste en string de la forme "ic,ast"
+    - Ne fonctionne pas pour renvoyer la de
+    """
+    str_cycles = cycles.split(",")
+    valid_cycles = {'ic', 'ast', 'vs', 'ev', 'isup'}
+    # Vérification des cycles
+    for cycle in str_cycles:
+        if cycle not in valid_cycles:
+            return jsonify({"message": f"Erreur : cycle invalide '{cycle}'. Valeurs autorisées: {valid_cycles}"}), 400
+    # Récupération des utilisateurs avec seulement les champs nécessaires
+    utilisateurs = Utilisateur.query.with_entities(
+        Utilisateur.id, 
+        Utilisateur.nom_utilisateur, 
+        Utilisateur.prenom, 
+        Utilisateur.surnom, 
+        Utilisateur.nom_de_famille, 
+        Utilisateur.promotion, 
+        Utilisateur.cycle
+    ).filter(
+        Utilisateur.promotion == str(promo),
+        Utilisateur.cycle.in_(str_cycles)
+    ).all()
+    # Conversion en JSON
+    liste_utilisateurs = [
+        {
+            "id": u.id,
+            "nom_utilisateur": u.nom_utilisateur,
+            "prenom": u.prenom,
+            "surnom": u.surnom,
+            "nom_de_famille": u.nom_de_famille,
+            "promotion": u.promotion,
+            "cycle": u.cycle
+        }
+        for u in utilisateurs
+    ]
+    return jsonify(liste_utilisateurs), 200
+
+
+
+@controllers_utilisateurs.route('/obtenir_liste_des_promos', methods=["GET"])
+@login_required
+def obtenir_liste_des_promos():
+    """Renvoie la liste des promotions au format JSON"""
+    promotions = db.session.query(Utilisateur.promotion).distinct().all()
+    promotions_list = [promo[0] for promo in promotions if promo[0] is not None]  # Exclure les None
+    return jsonify(promotions_list)
 
 @controllers_utilisateurs.route('/charger_utilisateurs_par_promo/<int:promo>', methods=['GET'])
 @login_required

@@ -25,7 +25,7 @@ class Association(db.Model):
     type_association = db.Column(db.String(1000), nullable=True)
     ordre_importance = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, nom:str, description:str, type_association:str, logo_path:str, ordre_importance:int):
+    def __init__(self, nom:str, description:str, type_association:str, logo_path:str, ordre_importance:int,  banniere_path:str=None,):
         """
         Crée une nouvelle association
         """
@@ -36,6 +36,7 @@ class Association(db.Model):
         self.type_association = type_association
         self.logo_path = logo_path
         self.ordre_importance = ordre_importance
+        self.banniere_path = banniere_path
 
 
         # Créer un dossier pour l'association
