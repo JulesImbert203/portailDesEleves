@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../../assets/styles/asso.css'; 
-import { useLayout } from '../../layouts/Layout';
-import { chargerAsso, estUtilisateurDansAsso } from './../../api'; 
+import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto} from './../../api';
+import {useLayout} from '../../layouts/Layout'; 
+
 
 function Asso({ id }) {
     const [asso, setAsso] = useState(null);
@@ -9,8 +10,40 @@ function Asso({ id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(null);
 
     const [activeTab, setActiveTab] = useState("info");
-    const { setCurrentComponent } = useLayout();
     
+    const [isBannerDarkened, setIsBannerDarkened] = useState(false);
+    const [isPhotoDarkened, setIsPhotoDarkened] = useState(false);
+    const {setCurrentComponent} = useLayout() ;
+
+    const changerPhotoLogoOuBanniere = (type_photo) => {
+        document.getElementById('file-upload').setAttribute("data-type", type_photo);
+        document.getElementById('file-upload').click();
+    };
+    
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0]; // Récupère le fichier sélectionné directement
+        const type_photo = event.target.getAttribute("data-type"); 
+    
+        if (file) {
+            console.log(`Fichier sélectionné (${type_photo}) :`, file.name);
+            try {
+                await ajouterContenu(id, file); // Téléversement 
+                try {
+                    await changerPhoto(id, type_photo, file.name) ;
+                    setCurrentComponent(null);
+                    setTimeout(() => {
+                        setCurrentComponent(<Asso key={Date.now()} id={id} />);
+                    }, 0);
+                } catch (error) {
+                    console.error(`Erreur : ${error}`) ;
+                }
+            } catch (error) {
+                alert(`Erreur lors du téléversement : ${error.message}`);
+            }
+        }
+    };
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -31,6 +64,17 @@ function Asso({ id }) {
 
     return (
         <div className="asso-container">
+        
+        {/* Champ de fichier caché */}
+        <input
+                type="file"
+                id="file-upload"
+                style={{ display: 'none' }} // Caché
+                onChange={handleFileChange} // Téléverse automatiquement après sélection
+            />
+        
+
+
         {/* Bannière avec logo */}
         <div
             className="asso-banner"
@@ -40,16 +84,43 @@ function Asso({ id }) {
                 : 'none', // Si la bannière n'existe pas, pas d'image de fond
             backgroundColor: asso.banniere_path ? 'transparent' : 'var(--global-style-secondary-color)', // Si la bannière n'existe pas, couleur de fond
             }}
-        >
+        >   
+            {/*Accessible pour modifier les photos de l'asso*/}
+            {isMembreAutorise && (
+                <>
+                    {/* Overlay qui s'affiche uniquement si isDarkened est true */}
+                    {isBannerDarkened && <div className="asso-overlay-banner"></div>}
+                    <img id='asso-add-photo-banner' src='/assets/icons/add_photo.svg'
+                        onMouseEnter={() => setIsBannerDarkened(true)} 
+                        onMouseLeave={() => setIsBannerDarkened(false)}
+                        onClick={() => changerPhotoLogoOuBanniere('banniere')}
+                    />
+                </>
+            )}
+
             <img
-            className="asso-logo"
-            src={
-                asso.img
-                ? `http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`
-                : '/assets/icons/group.svg'
-            }
-            alt={asso.nom}
+                className="asso-logo"
+                src={
+                    asso.img
+                    ? `http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`
+                    : '/assets/icons/group.svg'
+                }
+                alt={asso.nom}
             />
+
+            {/*Accessible pour modifier les photos de l'asso*/}
+            {isMembreAutorise && (
+                <>
+                    {isPhotoDarkened && <div className="asso-overlay-profilpic"></div>}
+                    <img id='asso-add-photo-profilpic' src='/assets/icons/add_photo.svg'
+                        onMouseEnter={() => setIsPhotoDarkened(true)} 
+                        onMouseLeave={() => setIsPhotoDarkened(false)}
+                        onClick={() => changerPhotoLogoOuBanniere('logo')}
+                        alt="Modifier photo"
+                    />
+                </>
+            )}
+            
         </div>
 
 

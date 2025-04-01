@@ -11,6 +11,9 @@
     --asso-padding: 20px;
     --asso-logo-border-size: 6px;
     --asso-margin-button-admin: 10px;
+
+    /*icon photo modifier*/
+    --asso-margin-photo-modifier: calc(var(--banner-height) * 0.05)
 }
 
 /* Conteneur principal de l'association */
@@ -26,6 +29,32 @@
     background-position: center;
     border-top-left-radius: var(--asso-border-radius);
     border-top-right-radius: var(--asso-border-radius);
+    overflow: hidden; /* Empêche l'overlay de dépasser */
+}
+.asso-overlay-banner {
+    position: absolute;
+    height: var(--banner-height);
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-top-left-radius: var(--asso-border-radius);
+    border-top-right-radius: var(--asso-border-radius);
+}
+
+#asso-add-photo-banner{
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: var(--asso-margin-photo-modifier);
+    z-index: 1;
+    height: calc(var(--banner-height) * 0.3);
+    cursor: pointer;
+}
+
+#asso-add-photo-banner:hover{
+    opacity: 1;  
 }
 
 /* Logo de l'association */
@@ -38,8 +67,33 @@
     border-radius: var(--asso-border-radius);
     border: var(--asso-logo-border-size) solid var(--background-color);
     background-color: var(--secondary-color);
+    object-fit: cover
+}
+.asso-overlay-profilpic {
+    position: absolute;
+    top: calc(var(--banner-height) - var(--logo-page-asso-size) * 0.6);
+    left: calc(var(--logo-page-asso-size) * 0.2);
+    width: var(--logo-page-asso-size);
+    height: var(--logo-page-asso-size);
+    border-radius: var(--asso-border-radius);
+    border: var(--asso-logo-border-size) solid var(--background-color);
+    background-color: rgba(0, 0, 0, 0.5);
+    
 }
 
+#asso-add-photo-profilpic {
+    position: absolute;
+    top: calc(var(--logo-page-asso-size)/3.6 + var(--banner-height) - var(--logo-page-asso-size) * 0.6);
+    left: calc(var(--logo-page-asso-size)/3.3 + var(--logo-page-asso-size) * 0.2);
+    width: calc(var(--logo-page-asso-size) * 0.5);
+    height: calc(var(--logo-page-asso-size) * 0.5);
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+#asso-add-photo-profilpic:hover {
+    opacity: 1;  
+}
 
 
 /* Infos principales */

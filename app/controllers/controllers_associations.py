@@ -117,6 +117,23 @@ def route_modifier_ordre_membres(association_id):
         
     return modifier_ordre_membres()
 
+
+@controllers_associations.route('/<int:association_id>/modifier_logo_banniere/<string:logo_banniere>/<string:new_path>', methods=['POST'])
+def route_modifier_logo_banniere(association_id:int, logo_banniere:str, new_path:str):
+    association = db.session.get(Association, association_id)
+    if logo_banniere == 'logo' :
+        association.logo_path = new_path
+        db.session.commit()
+        return jsonify({"message": "logo modifie avec succes"}), 200
+    elif logo_banniere == 'banniere' :
+        association.banniere_path = new_path
+        db.session.commit()
+        return jsonify({"message": "banniere modifie avec succes"}), 200
+    else :
+        return jsonify({"message": "erreur : veulliez entrer logo/new_logo_path ou banner/new_banner_path"}), 404
+
+
+
 # AJOUTER DE LA SECURITE
 @controllers_associations.route('/<int:association_id>/add_content', methods=['POST'])
 def route_add_content(association_id):
@@ -151,6 +168,7 @@ def route_creer_asso() :
     try :
         data = request.json
         nouvelle_asso = Association(nom=data["nom"], description=data['description'], type_association=data["type_association"], ordre_importance=data["ordre_importance"], logo_path=data["logo_path"], banniere_path=data["banniere_path"])
+        nouvelle_asso.create_association_folder()
         db.session.add(nouvelle_asso)
         db.session.commit()
         return jsonify({"message": "association ajoutee avec succes"}), 201
