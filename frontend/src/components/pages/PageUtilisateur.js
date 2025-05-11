@@ -46,7 +46,7 @@ function PageUtilisateur({ id }) {
                         {/* Section Téléphone */}
                         <div className="user-contact">
                             <img src="/assets/icons/phone.svg" alt="Phone" className="user-icon"/>
-                            <div className='copyButton'>
+                            <div className='asso-button'>
                                 <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon" onClick={() => copyToClipboard(donneesUtilisateur.telephone || '01 23 45 67 89')}/> 
                                 <p id="texteCopier">copier</p>
                             </div>

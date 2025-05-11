@@ -463,6 +463,21 @@ export async function ajouterAsso(nom, description, type_association, ordre_impo
   }
 }
 
+export async function modifier_description_asso(asso_id, new_desc) {
+  try {
+    await fetch(`http://localhost:5000/api/associations//assocations/${asso_id}/editer_description`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({new_desc})
+    });
+  } catch (error) {
+    console.error("Erreur lors de la modification de la description : ", error) ;
+  }
+}
+
 export async function ajouterContenu(associationId, file) {
   try {
     const formData = new FormData();

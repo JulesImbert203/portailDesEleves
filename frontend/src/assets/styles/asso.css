@@ -8,12 +8,20 @@
     --banner-height: 200px;
     --logo-page-asso-size: 130px;
     --container-width: 900px;
-    --asso-padding: 20px;
+    --asso-padding: 25px;
     --asso-logo-border-size: 6px;
     --asso-margin-button-admin: 10px;
 
     /*icon photo modifier*/
-    --asso-margin-photo-modifier: calc(var(--banner-height) * 0.05)
+    --asso-margin-photo-modifier: calc(var(--banner-height) * 0.05);
+
+    /**/
+    --asso-bloc-background: hsl(0, 0%, 100%);
+    --asso-bloc-radius: 15px;
+    --asso-bloc-shadow:  0 0px 6px rgba(0, 0, 0, 0.2);
+    --asso-bloc-border: 0px solid var(--global-style-secondary-color);
+
+
 }
 
 /* Conteneur principal de l'association */
@@ -160,5 +168,54 @@
 }
 
 .asso-tab-content {
-    padding: var(--padding);
+    padding-top: calc(var(--asso-padding)/2) ;
+    padding-left: var(--asso-padding);
+    padding-bottom: var(--asso-padding);
+    padding-right: var(--asso-padding);
+}
+
+.asso-bloc-interne {
+    padding: var(--asso-padding);
+    background-color: var(--asso-bloc-background);
+    border-radius: var(--asso-bloc-radius);
+    box-shadow: var(--asso-bloc-shadow);
+    border: var(--asso-bloc-border);
+
+}
+
+/* contenu de la page */
+/* boutton */
+.asso-button {
+    --asso-button-text-size: 15px;
+    font-size: var(--asso-button-text-size);
+    border-radius: 4px;
+    padding: 8px;
+    gap:3px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.2s;
+    color: white;
+    background-color: var(--global-style-secondary-color);
+}
+.asso-button:hover{
+    background-color: var(--global-style-primary-color); /* Change la couleur de fond au survol */
+    transform: scale(1.05);
+}
+.asso-button p {
+    margin: 0;
+}
+.asso-button-icon{
+    width: var(--asso-button-text-size);
+}
+
+/* description */
+.asso-titre-description {
+    display: flex;
+    align-items: center;
+}
+#asso-description-button {
+    position: absolute;
+    right: 0;
+    margin-right: var(--asso-padding);
 }

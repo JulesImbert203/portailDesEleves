@@ -12,11 +12,30 @@ from app.models import *
 import requests
 import json
 
+# TO DO :
+#
+# - Uniformiser la mise a jour avec le .update
+# - Ajouter des verifications de format dans cette fonction
+# - Ajouter de la securite
 
 # Creer le blueprint pour les utilisateurs
 controllers_associations = Blueprint('controllers_associations', __name__)
 
-# routes API :
+# routes API : /!\ AVANT DEPLOIEMENT : ajouter la securite
+
+@controllers_associations.route("/assocations/<int:association_id>/editer_description", methods=['POST'])
+def editer_description(association_id:int) :
+    """
+    Modifie la description d'une asso
+    """
+    try :
+        new_desc = request.json.get("new_desc")
+        asso = db.session.get(Association, association_id)
+        asso.update(description=new_desc)
+        db.session.commit()
+        return jsonify({"message" : "description modifiee avec succes"}), 200
+    except Exception as e :
+        return jsonify({"message" : f"echec dans la modification de la description : {e}"}), 500
 
 @controllers_associations.route('/assocations/<int:association_id>/ajouter_membre/<int:nouveau_membre_id>', methods=['POST'])
 def route_ajouter_membre(association_id, nouveau_membre_id):

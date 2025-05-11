@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../../assets/styles/asso.css'; 
-import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto} from './../../api';
+import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, editer_description, modifier_description_asso} from './../../api';
 import {useLayout} from '../../layouts/Layout'; 
 
 
@@ -13,7 +13,20 @@ function Asso({ id }) {
     
     const [isBannerDarkened, setIsBannerDarkened] = useState(false);
     const [isPhotoDarkened, setIsPhotoDarkened] = useState(false);
+
+    const [nouvelleDescription, setNouvelleDescription] = useState(null);
     const {setCurrentComponent} = useLayout() ;
+
+    const handleModifierDescription= () => {
+        if (nouvelleDescription !== null) {
+            modifier_description_asso(id, nouvelleDescription) ;
+            setActiveTab("info") ;
+        }
+    } ;
+    const annulerModifierDescription = () => {
+        setNouvelleDescription(null) ;
+        setActiveTab("info") ;
+    } ;
 
     const changerPhotoLogoOuBanniere = (type_photo) => {
         document.getElementById('file-upload').setAttribute("data-type", type_photo);
@@ -137,10 +150,6 @@ function Asso({ id }) {
             </div>
             
 
-            {/* Infos */}
-            <div className="asso-info">
-                <p>{asso.description}</p>
-            </div>
             
             {/* Menu */}
             <div className="asso-tabs">
@@ -152,10 +161,32 @@ function Asso({ id }) {
             
             {/* Contenu des onglets */}
             <div className="asso-tab-content">
-                {activeTab === "info" && <p>{asso.description}</p>}
-                {activeTab === "events" && <p>Liste des événements ici...</p>}
+                {activeTab === "info" && 
+                    <div className='asso-info-section'>
+                        <div className='asso-titre-description'>
+                            <h2>Description de l'association</h2>
+                            <div className='asso-button' id="asso-description-button" onClick={() => setActiveTab("edit-desc")}>
+                                <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon"/> 
+                                <p id="texteCopier">Éditer</p>
+                            </div>
+                        </div>
+                    <p>{asso.description}</p>
+                        
+                        
+                    </div>
+                }
+                {activeTab === "events" && <div className='asso-bloc-interne'><p>Liste des événements ici...</p></div>}
                 {activeTab === "members" && <p>Liste des membres ici...</p>}
                 {activeTab === "posts" && <p>Publications ici...</p>}
+                
+                {/* Modifier la description */}
+                {activeTab ==="edit-desc" && <div>  
+                   
+                    <label>Nouvelle description :</label>
+                    <input type="text" value={asso.description} onChange={(e) => setNouvelleDescription(e.target.value)}/>
+                    <button onClick={handleModifierDescription}>Valider</button>
+                    <button onClick={annulerModifierDescription}>Annuler</button>
+                </div>}
             </div>
         </div>
     );
