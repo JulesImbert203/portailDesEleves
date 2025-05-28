@@ -44,60 +44,88 @@ export default function BlocSondage({ reloadSondage }) {
     return <div>Chargement...</div>;
   }
 
+  let content;
+
   if (sondage.is_sondage) {
     if (voteUser === null) {
-      return (
-        <div className="bloc-global">
-          <h3>Sondage du jour</h3>
-          <p>{sondage.question}</p>
-          <div>
+      content = (
+        <>
+          <h3 className='sondage_titre'>Sondage du jour</h3>
+          <p className='sondage_question'>{sondage.question}</p>
+          <div className='sondage_reponses_container'>
             {sondage.reponses.map((reponse, index) => (
-              <button key={index} onClick={() => voterEtReload(index + 1)}>
+              <button className='sondage_reponse' key={index} onClick={() => voterEtReload(index + 1)}>
                 {reponse}
               </button>
             ))}
           </div>
-          <button onClick={() => setCurrentComponent(<ProposerSondage />)}>
-            Proposer un sondage
-          </button>
-          <button onClick={() => setCurrentComponent(<GererSondages />)}>
-            Gerer les sondages
-          </button>
-        </div>
+        </>
       );
     } else {
-      return (
-        <div className="bloc-global">
-          <h3>Sondage du jour</h3>
-          <p>{sondage.question}</p>
+      content = (
+        <>
+          <h3 className='sondage_titre'>Sondage du jour</h3>
+          <p className='sondage_question'>{sondage.question}</p>
           <div>
-            {sondage.reponses.map((reponse, index) => (
-              <p key={index}>
-                {reponse} - {sondage.votes[index]} votes
-              </p>
-            ))}
+            {(() => {
+              const totalVotes = sondage.votes.reduce((sum, v) => sum + v, 0);
+              return sondage.reponses.map((reponse, index) => {
+                const votes = sondage.votes[index];
+                const percent = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
+                const isUserVote = voteUser === index + 1;
+                return (
+                  <div key={index}>
+                    <div className='sondage_question_stats_container'>
+                      <p className='sondage_question_post_vote'>{reponse}</p>
+                      <p className='sondage_stats_question'> {votes} votes ({percent.toFixed(1)}%)</p>
+                    </div>
+                    <div className='sondage_progress_bar_empty'>
+                      <div style={{
+                        background: '#035BA2',
+                        width: `${percent}%`,
+                        height: '100%',
+                        borderRadius: '4px'
+                      }} />
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+
           </div>
-          <button onClick={() => setCurrentComponent(<ProposerSondage />)}>
-            Proposer un sondage
-          </button>
-          <button onClick={() => setCurrentComponent(<GererSondages />)}>
-            Gerer les sondages
-          </button>
-        </div>
+        </>
       );
     }
   } else {
-    return (
-      <div className="bloc-global">
-        <h3>Pas de sondage Aujourd'hui </h3>
-        <button className="bloc-global-button" onClick={() => setCurrentComponent(<ProposerSondage />)}>
-          Proposer un sondage
-        </button>
-        <button className="bloc-global-button" onClick={() => setCurrentComponent(<GererSondages />)}>
-          Gerer les sondages
-        </button>
-      </div>
+    content = (
+      <>
+        <h3 className='sondage_question'>Pas de sondage aujourd'hui</h3>
+        <div className='sondage_gros_plus_container' onClick={() => setCurrentComponent(<ProposerSondage />)}>
+          <img className='sondage_gros_plus' src="assets/icons/plus.svg" />
+        </div>
+      </>
     );
   }
+
+  return (
+    <div className="bloc-global">
+      {content}
+      <div className="gestion_sondage_container">
+        <button
+          className="gestion_sondage_button"
+          onClick={() => setCurrentComponent(<ProposerSondage />)}
+        >
+          <img src="assets/icons/plus.svg" className='sondage_icon_button'/>
+        </button>
+        <button
+          className="gestion_sondage_button"
+          onClick={() => setCurrentComponent(<GererSondages />)}
+        >
+          <img src="assets/icons/manage.svg" className='sondage_icon_button'/>
+        </button>
+      </div>
+    </div>
+  );
+
   
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLayout } from './../../layouts/Layout';  
 import { requeteProposerSondage } from './../../api';  // Importation de la fonction proposerSondage
 import Home from './Home';
+import '../../assets/styles/proposer_sondage.css';  // Import du CSS global du layout
 
 function ProposerSondage() {
   const { setCurrentComponent } = useLayout();
@@ -56,10 +57,10 @@ function ProposerSondage() {
   };
 
   return (
-    <div>
-      <h1>Proposer un sondage</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <div className="proposer_sondage_container">
+      <h1 className="proposer_sondage_title">Proposer un sondage</h1>
+      <form onSubmit={handleSubmit} className="proposer_sondage_form">
+        <div className="proposer_sondage_field">
           <label htmlFor="question">Question :</label>
           <input
             type="text"
@@ -67,40 +68,62 @@ function ProposerSondage() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             required
+            className="proposer_sondage_input"
           />
         </div>
 
-        <div>
+        <div className="proposer_sondage_field">
           <label>Réponses :</label>
           {reponses.map((reponse, index) => (
-            <div key={index}>
+            <div key={index} className="proposer_sondage_reponse_group">
               <input
                 type="text"
                 value={reponse}
                 onChange={(e) => handleReponseChange(index, e.target.value)}
                 required
+                className="proposer_sondage_input"
               />
               {reponses.length > 2 && (
-                <button type="button" onClick={() => removeReponse(index)}>
-                  Retirer
+                <button
+                  type="button"
+                  onClick={() => removeReponse(index)}
+                  className="proposer_sondage_button"
+                  title="Retirer"
+                >
+                  <img src="assets/icons/delete.svg" />
                 </button>
               )}
             </div>
           ))}
-          <button type="button" onClick={addReponse}>Ajouter une réponse</button>
+          <button
+            type="button"
+            onClick={addReponse}
+            className="proposer_sondage_button"
+            title="Ajouter une réponse"
+          >
+            <img src="assets/icons/plus.svg"/> 
+          </button>
         </div>
 
-        <button type="submit">Soumettre le sondage</button>
+        <button type="submit" className="proposer_sondage_submit">
+          Soumettre
+        </button>
       </form>
+
       {message && (
-        <div>
-          <p>{message}</p> {/* Affiche le message de succès ou d'erreur */}
+        <div className="proposer_sondage_message">
+          <p>{message}</p>
         </div>
       )}
-      <button onClick={() => setCurrentComponent(<Home />)}>
+
+      <button
+        onClick={() => setCurrentComponent(<Home />)}
+        className="proposer_sondage_retour"
+      >
         Retour
       </button>
     </div>
+
   );
 }
 
