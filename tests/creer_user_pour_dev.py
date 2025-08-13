@@ -17,6 +17,11 @@ with app.app_context():
     for u in utilisateurs:
         nouvel_utilisateur = Utilisateur(*u)  # Décompresse la liste en arguments
         db.session.add(nouvel_utilisateur)
+    
+    # Ajouter un super utilisateur
+    super_user = Utilisateur("admin", "Admin", "Dev", 23, "admin@mail.com", "ic", "1234")
+    super_user.est_superutilisateur = True
+    db.session.add(super_user)
 
     # Valider les ajouts dans la base
     db.session.commit()

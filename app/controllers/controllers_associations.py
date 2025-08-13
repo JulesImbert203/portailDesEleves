@@ -17,13 +17,14 @@ import json
 # - Uniformiser la mise a jour avec le .update
 # - Ajouter des verifications de format dans cette fonction
 # - Ajouter de la securite
+# - enlèver association en debut de requetes et changer api.js
 
 # Creer le blueprint pour les utilisateurs
 controllers_associations = Blueprint('controllers_associations', __name__)
 
 # routes API : /!\ AVANT DEPLOIEMENT : ajouter la securite
 
-@controllers_associations.route("/assocations/<int:association_id>/editer_description", methods=['POST'])
+@controllers_associations.route("/<int:association_id>/editer_description", methods=['POST'])
 def editer_description(association_id:int) :
     """
     Modifie la description d'une asso
@@ -37,7 +38,7 @@ def editer_description(association_id:int) :
     except Exception as e :
         return jsonify({"message" : f"echec dans la modification de la description : {e}"}), 500
 
-@controllers_associations.route('/assocations/<int:association_id>/ajouter_membre/<int:nouveau_membre_id>', methods=['POST'])
+@controllers_associations.route('/associations/<int:association_id>/ajouter_membre/<int:nouveau_membre_id>', methods=['POST'])
 def route_ajouter_membre(association_id, nouveau_membre_id):
     """
     Ajoute un membre a l'association
@@ -203,7 +204,7 @@ def get_assos():
 def get_asso(association_id):
     asso = Association.query.filter_by(id=association_id).first()
     print(asso.logo_path)
-    return jsonify({"id": asso.id, "nom_dossier": asso.nom_dossier,"nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance, "banniere_path": asso.banniere_path})
+    return jsonify({"id": asso.id, "nom_dossier": asso.nom_dossier,"nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance, "banniere_path": asso.banniere_path, "description" : asso.description})
     
 @controllers_associations.route("route_est_membre_de_asso/<int:id_association>", methods=["GET"])
 @login_required
