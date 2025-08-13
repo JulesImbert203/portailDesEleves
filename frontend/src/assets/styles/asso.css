@@ -105,19 +105,17 @@
 
 
 /* Infos principales */
-
+.asso-infos-principales {
+    display: flex;
+    align-items: center;
+}
 
 .asso-nom {
-    position: absolute;
-    top: calc(var(--banner-height));
-    left: calc(var(--logo-page-asso-size) * 1.5);
+    margin-left: calc(var(--logo-page-asso-size) * 1.5);
+    margin-right: calc(var(--logo-page-asso-size) * 0.5);
 }
 
 .asso-admin {
-    position: absolute;
-    top: calc(var(--banner-height));
-    right: 0;
-    padding: var(--asso-padding);
     gap: var(--asso-padding);
     display: flex;
 }
@@ -145,10 +143,10 @@
 }
 
 /* Menu de navigation */
+
 .asso-tabs {
     display: flex;
     justify-content: space-around;
-    margin-top: var(--asso-padding);
     border-bottom: 2px solid var(--secondary-color);
 }
 
