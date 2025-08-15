@@ -29,12 +29,14 @@ def superutilisateur_required(f):
 
 def est_membre_de_asso(f):
     """
-    l'id de l'asso doit apparaitre dans la data de la requete sous le tag "id_association"
+    l'id de l'asso doit apparaitre dans l'URL sous le nom <association_id>"
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        id_association = request.json.get("id_association")        
-        if current_user.est_superutilisateur or (id_association in current_user.assos_actuelles.keys()):
+        association_id = kwargs.get("association_id")
+        if not association_id:
+            return jsonify({"message": "Association ID is missing from the URL."}), 400      
+        if current_user.est_superutilisateur or (association_id in current_user.assos_actuelles.keys()):
             return f(*args, **kwargs)
         return jsonify({"message": "Vous n'avez pas les permissions pour effectuer cette action"}), 403
     return decorated_function

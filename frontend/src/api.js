@@ -474,7 +474,56 @@ export async function modifier_description_asso(asso_id, new_desc) {
       body: JSON.stringify({new_desc})
     });
   } catch (error) {
-    console.error("Erreur lors de la modification de la description : ", error) ;
+    console.error("Erreur lors de la modification de la description : ", error);
+  }
+}
+
+export async function ajouterMembre(associationId, membreId) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/ajouter_membre/${membreId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    })
+    handleResponse(res);
+  }
+  catch (error) {
+    console.error("Erreur réseau :", error);
+  }
+}
+
+export async function retirerMembre(associationId, membreId) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/retirer_membre/${membreId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    })
+    handleResponse(res);
+  }
+  catch (error) {
+    console.error("Erreur réseau :", error);
+  }
+}
+
+export async function modifierRoleMembre(associationId, membreId, role) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/modifier_role_membre/${membreId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({role})
+    })
+    handleResponse(res);
+  }
+  catch (error) {
+    console.error("Erreur réseau :", error);
   }
 }
 
@@ -514,8 +563,6 @@ export async function changerPhoto(asso_id, photo_type, new_name) {
   }
 }
 
-
-
 export async function estUtilisateurDansAsso(asso_id) {
   // renvoie True aussi pour le superutilisateur
   const res = await fetch(`http://localhost:5000/api/associations/route_est_membre_de_asso/${asso_id}`, 
@@ -548,7 +595,3 @@ export async function obtenirListeDesUtilisateurs(promo, cycles) {
   const data = await res.json();
   return data;
 }
-
-
-
-

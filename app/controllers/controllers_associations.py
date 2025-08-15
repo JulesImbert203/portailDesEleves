@@ -8,7 +8,6 @@ from app.services.services_utilisateurs import *
 from app.services.services_associations import *
 from app.models import *
 
-
 import requests
 import json
 
@@ -25,6 +24,8 @@ controllers_associations = Blueprint('controllers_associations', __name__)
 # routes API : /!\ AVANT DEPLOIEMENT : ajouter la securite
 
 @controllers_associations.route("/<int:association_id>/editer_description", methods=['POST'])
+@login_required
+@est_membre_de_asso
 def editer_description(association_id:int) :
     """
     Modifie la description d'une asso
@@ -38,108 +39,103 @@ def editer_description(association_id:int) :
     except Exception as e :
         return jsonify({"message" : f"echec dans la modification de la description : {e}"}), 500
 
-@controllers_associations.route('/associations/<int:association_id>/ajouter_membre/<int:nouveau_membre_id>', methods=['POST'])
+@controllers_associations.route('/<int:association_id>/ajouter_membre/<int:nouveau_membre_id>', methods=['POST'])
+@login_required
+@est_membre_de_asso
 def route_ajouter_membre(association_id, nouveau_membre_id):
     """
     Ajoute un membre a l'association
     """
-    @est_membre_de_asso(association_id)
-    def ajouter_membre():
-        association=get_association(association_id)
+    association=get_association(association_id)
 
-        if not association:
-            return jsonify({"message": "Association non trouvee"}), 404
-        
-        nouveau_membre = get_utilisateur(nouveau_membre_id)
-        if not nouveau_membre:
-            return jsonify({"message": "Utilisateur non trouve"}), 404
-        
-        try:
-            add_member(association, nouveau_membre, "membre")  
-            return jsonify({"message": "Membre ajoute avec succes"}), 200
-        
-        except Exception as e:
-            return jsonify({"message": f"Erreur lors de l'ajout du membre : {str(e)}"}), 500
-        
-    return ajouter_membre()
+    if not association:
+        return jsonify({"message": "Association non trouvee"}), 404
+    
+    nouveau_membre = get_utilisateur(nouveau_membre_id)
+    if not nouveau_membre:
+        return jsonify({"message": "Utilisateur non trouve"}), 404
+    
+    try:
+        add_member(association, nouveau_membre, "membre")  
+        return jsonify({"message": "Membre ajoute avec succes"}), 200
+    
+    except Exception as e:
+        return jsonify({"message": f"Erreur lors de l'ajout du membre : {str(e)}"}), 500
 
-@controllers_associations.route('/assocations/<int:association_id>/retirer_membre/<int:membre_id>', methods=['POST'])
+@controllers_associations.route('/<int:association_id>/retirer_membre/<int:membre_id>', methods=['POST'])
+@login_required
+@est_membre_de_asso
 def route_retirer_membre(association_id, membre_id):
     """
-    Retire un membre de l'association"
+    Retire un membre de l'association
     """
+    association=get_association(association_id)
 
-    @est_membre_de_asso(association_id)
-    def retirer_membre():
-        association=get_association(association_id)
+    if not association:
+        return jsonify({"message": "Association non trouvee"}), 404
+    
+    membre = get_utilisateur(membre_id)
+    if not membre:
+        return jsonify({"message": "Utilisateur non trouve"}), 404
+    
+    try:
+        remove_member(association, membre)  
+        return jsonify({"message": "Membre retire avec succes"}), 200
+    
+    except Exception as e:
+        return jsonify({"message": f"Erreur lors du retrait du membre : {str(e)}"}), 500
 
-        if not association:
-            return jsonify({"message": "Association non trouvee"}), 404
-        
-        membre = get_utilisateur(membre_id)
-        if not membre:
-            return jsonify({"message": "Utilisateur non trouve"}), 404
-        
-        try:
-            remove_member(association, membre)  
-            return jsonify({"message": "Membre retire avec succes"}), 200
-        
-        except Exception as e:
-            return jsonify({"message": f"Erreur lors du retrait du membre : {str(e)}"}), 500
-        
-    return retirer_membre()
-
-@controllers_associations.route('/assocations/<int:association_id>/modifier_role_membre/<int:membre_id>', methods=['POST'])
+@controllers_associations.route('/<int:association_id>/modifier_role_membre/<int:membre_id>', methods=['POST'])
+@login_required
+@est_membre_de_asso
 def route_modifier_role_membre(association_id, membre_id):
     """
     Modifie le role d'un membre de l'association
     """
-    @est_membre_de_asso(association_id)
-    def modifier_role_membre():
-        association=get_association(association_id)
+    association=get_association(association_id)
 
-        if not association:
-            return jsonify({"message": "Association non trouvee"}), 404
-        
-        membre = get_utilisateur(membre_id)
-        if not membre:
-            return jsonify({"message": "Utilisateur non trouve"}), 404
-        
-        try:
-            role = requests.json.get('role')
-            update_member_role(association, membre, role)  
-            return jsonify({"message": "Role du membre modifie avec succes"}), 200
-        
-        except Exception as e:
-            return jsonify({"message": f"Erreur lors de la modification du role du membre : {str(e)}"}), 500
-        
-    return modifier_role_membre()
+    if not association:
+        return jsonify({"message": "Association non trouvee"}), 404
+    
+    membre = get_utilisateur(membre_id)
+    if not membre:
+        return jsonify({"message": "Utilisateur non trouve"}), 404
+    
+    try:
+        role = requests.json.get('role')
+        update_member_role(association, membre, role)  
+        return jsonify({"message": "Role du membre modifie avec succes"}), 200
+    
+    except Exception as e:
+        return jsonify({"message": f"Erreur lors de la modification du role du membre : {str(e)}"}), 500
 
 @controllers_associations.route(('/associations/<int:association_id>/update_members_order'), methods=['POST'])
+@login_required
+@est_membre_de_asso
 def route_modifier_ordre_membres(association_id):
     """
     Modifie l'ordre des membres de l'association
     """
-    @est_membre_de_asso(association_id)
-    def modifier_ordre_membres():
-        association=get_association(association_id)
+    association=get_association(association_id)
 
-        if not association:
-            return jsonify({"message": "Association non trouvee"}), 404
-        
-        try:
-            members_weights = requests.json.get('members_weights')
-            update_members_order(association, members_weights)  
-            return jsonify({"message": "Ordre des membres modifie avec succes"}), 200
-        
-        except Exception as e:
-            return jsonify({"message": f"Erreur lors de la modification de l'ordre des membres : {str(e)}"}), 500
-        
-    return modifier_ordre_membres()
-
+    if not association:
+        return jsonify({"message": "Association non trouvee"}), 404
+    
+    try:
+        members_weights = requests.json.get('members_weights')
+        update_members_order(association, members_weights)  
+        return jsonify({"message": "Ordre des membres modifie avec succes"}), 200
+    
+    except Exception as e:
+        return jsonify({"message": f"Erreur lors de la modification de l'ordre des membres : {str(e)}"}), 500
 
 @controllers_associations.route('/<int:association_id>/modifier_logo_banniere/<string:logo_banniere>/<string:new_path>', methods=['POST'])
+@login_required
+@est_membre_de_asso
 def route_modifier_logo_banniere(association_id:int, logo_banniere:str, new_path:str):
+    """
+    Modifie la bannière de l'association
+    """
     association = db.session.get(Association, association_id)
     if logo_banniere == 'logo' :
         association.logo_path = new_path
@@ -153,9 +149,10 @@ def route_modifier_logo_banniere(association_id:int, logo_banniere:str, new_path
         return jsonify({"message": "erreur : veulliez entrer logo/new_logo_path ou banner/new_banner_path"}), 404
 
 
-
 # AJOUTER DE LA SECURITE
 @controllers_associations.route('/<int:association_id>/add_content', methods=['POST'])
+@login_required
+@est_membre_de_asso
 def route_add_content(association_id):
     """
     Ajoute du contenu au dossier de l'association
@@ -196,15 +193,17 @@ def route_creer_asso() :
         return jsonify({"message": f"erreur lors de l'ajout de l'association : {e}"}), 500
 
 @controllers_associations.route('/assos', methods = ['GET'])  
+@login_required
 def get_assos():
     assos = Association.query.all()
     return jsonify([{"id": asso.id, "nom": asso.nom, "nom_dossier" : asso.nom_dossier,"img" :asso.logo_path, "ordre" : asso.ordre_importance} for asso in assos])
 
-@controllers_associations.route('/<int:association_id>', methods = ['GET'])  
+@controllers_associations.route('/<int:association_id>', methods = ['GET']) 
+@login_required 
 def get_asso(association_id):
     asso = Association.query.filter_by(id=association_id).first()
     print(asso.logo_path)
-    return jsonify({"id": asso.id, "nom_dossier": asso.nom_dossier,"nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance, "banniere_path": asso.banniere_path, "description" : asso.description})
+    return jsonify({"id": asso.id, "nom_dossier": asso.nom_dossier,"nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance, "banniere_path": asso.banniere_path, "description" : asso.description, "membres" : asso.membres})
     
 @controllers_associations.route("route_est_membre_de_asso/<int:id_association>", methods=["GET"])
 @login_required
