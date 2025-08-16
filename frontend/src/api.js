@@ -465,7 +465,7 @@ export async function ajouterAsso(nom, description, type_association, ordre_impo
 
 export async function modifier_description_asso(asso_id, new_desc) {
   try {
-    await fetch(`http://localhost:5000/api/associations/${asso_id}/editer_description`, {
+    const res = await fetch(`http://localhost:5000/api/associations/${asso_id}/editer_description`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -473,8 +473,10 @@ export async function modifier_description_asso(asso_id, new_desc) {
       credentials: "include",
       body: JSON.stringify({new_desc})
     });
+    return handleResponse(res);
   } catch (error) {
     console.error("Erreur lors de la modification de la description : ", error);
+    throw error;
   }
 }
 
@@ -487,10 +489,11 @@ export async function ajouterMembre(associationId, membreId) {
       },
       credentials: "include"
     })
-    handleResponse(res);
+    return handleResponse(res);
   }
   catch (error) {
     console.error("Erreur réseau :", error);
+    throw error;
   }
 }
 
@@ -503,10 +506,11 @@ export async function retirerMembre(associationId, membreId) {
       },
       credentials: "include"
     })
-    handleResponse(res);
+    return handleResponse(res);
   }
   catch (error) {
     console.error("Erreur réseau :", error);
+    throw error;
   }
 }
 
@@ -520,10 +524,11 @@ export async function modifierRoleMembre(associationId, membreId, role) {
       credentials: "include",
       body: JSON.stringify({role})
     })
-    handleResponse(res);
+    return handleResponse(res);
   }
   catch (error) {
     console.error("Erreur réseau :", error);
+    throw error;
   }
 }
 
@@ -560,6 +565,7 @@ export async function changerPhoto(asso_id, photo_type, new_name) {
     });
   } catch (error) {
     console.error("Erreur lors du changement de photo :", error);
+    throw error;
   }
 }
 
@@ -578,6 +584,17 @@ export async function chargerAsso(asso_id) {
   );
   const data = await res.json();
   return data;
+}
+
+export async function chargerListeAssos() {
+  try {
+  const res = await fetch(`http://localhost:5000/api/associations/assos`,
+    { credentials : "include" }
+  );
+  return handleResponse(res);
+  } catch (error) {
+    console.error("Erreur réseau :", error);
+  }
 }
 
 export async function obtenirListeDesPromos() {

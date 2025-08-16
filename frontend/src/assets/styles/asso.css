@@ -21,6 +21,12 @@
     --asso-bloc-shadow:  0 0px 6px rgba(0, 0, 0, 0.2);
     --asso-bloc-border: 0px solid var(--global-style-secondary-color);
 
+    /*membres de l'asso*/
+    --asso-members-transition-duration: 0.2s;
+    --asso-members-scale-factor: 1.05;
+    --asso-members-spacing-medium: 20px;
+    --asso-members-spacing-small: 10px;
+    --asso-members-spacing-extra-small: 5px;
 
 }
 
@@ -179,6 +185,118 @@
     box-shadow: var(--asso-bloc-shadow);
     border: var(--asso-bloc-border);
 
+}
+
+/* menu des membres */
+
+.asso-membres {
+    display: flex;
+    flex-direction: column;
+}
+
+.asso-membres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+    gap: var(--asso-members-spacing-medium);
+    justify-content: center;
+}
+
+.asso-membres-item {
+    background-color: var(--secondary-color);
+    border-radius: var(--asso-border-radius);
+    text-align: center;
+    box-shadow: var(--asso-bloc-shadow);
+    transition: transform var(--asso-members-transition-duration) ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    padding: var(--asso-members-spacing-small);
+}
+
+.asso-membres-item:hover {
+    transform: scale(var(--asso-members-scale-factor)); 
+}
+
+.asso-membres-photo {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.asso-membres-name {
+    font-weight: bold;
+    margin: 0;
+}
+
+.asso-membres-role {
+    color: var(--text-color);
+    font-style: italic;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.asso-membres-role-input {
+    color: var(--text-color);
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 0;
+    margin-bottom: var(--asso-members-spacing-extra-small);
+    max-width: 100%;
+}
+
+.button-gestion-membres {
+    margin-bottom: calc(var(--asso-padding)/2);
+    align-self: flex-end;
+    --asso-button-text-size: 15px;
+    font-size: var(--asso-button-text-size);
+    border-radius: 4px;
+    padding: 8px;
+    gap:3px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.2s;
+    color: white;
+    background-color: var(--global-style-secondary-color);
+}
+
+.button-gestion-membres p {
+    margin: 0;
+}
+
+.button-gestion-membres:hover{
+    background-color: var(--global-style-primary-color); /* Change la couleur de fond au survol */
+    transform: scale(1.05);
+}
+
+.member-image-holder {
+    position: relative;
+}
+
+.button-suppression-membre {
+    display: flex;
+    position: absolute;
+    right: 0;
+    padding: 2px;
+    background-color: darkgray;
+    border-radius: 4px;
+}
+
+.button-suppression-membre:hover {
+    background-color: gray;
+}
+
+.button-modification-role {
+    display: flex;
+    position: absolute;
+    left: 0;
+    padding: 2px;
+    background-color: darkgray;
+    border-radius: 4px;
+}
+
+.button-modification-role:hover {
+    background-color: gray;
 }
 
 /* contenu de la page */

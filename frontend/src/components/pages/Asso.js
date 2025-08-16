@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import '../../assets/styles/asso.css';
-import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, editer_description, modifier_description_asso } from './../../api';
+import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre } from './../../api';
 import { useLayout } from '../../layouts/Layout';
+import PageUtilisateur from './PageUtilisateur';
 
 
 function Asso({ id }) {
@@ -15,23 +16,67 @@ function Asso({ id }) {
     const [isPhotoDarkened, setIsPhotoDarkened] = useState(false);
 
     const [nouvelleDescription, setNouvelleDescription] = useState(null);
+    const [nouveauRole, setNouveauRole] = useState(null);
     const { setCurrentComponent } = useLayout();
 
-    const handleModifierDescription = () => {
+    const [isGestionMembres, setIsGestionMembres] = useState(false);
+    const [idMembreModifier, setIdMembreModifier] = useState(null);
+
+    const handleModifierDescription = async () => {
         if (nouvelleDescription !== null) {
-            modifier_description_asso(id, nouvelleDescription);
-            // Met a jour la description qui est affichée sur la page
-            setAsso(prevAsso => ({
-                ...prevAsso,
-                description: nouvelleDescription,
-            }));
+            try {
+                await modifier_description_asso(id, nouvelleDescription);
+                // Met a jour la description qui est affichée sur la page
+                setAsso(prevAsso => ({
+                    ...prevAsso,
+                    description: nouvelleDescription,
+                }));
+            } catch (error) {
+                console.log(error);
+            }
             setActiveTab("info");
         }
     };
+
     const annulerModifierDescription = () => {
         setNouvelleDescription(asso.description);
         setActiveTab("info");
     };
+
+    const handleRetirerMembre = async (assoId, membreId) => {
+        try {
+            await retirerMembre(assoId, membreId);
+            setAsso(prevAsso => ({
+                ...prevAsso,
+                membres: prevAsso.membres.filter(membre => membre.id !== membreId),
+            }));
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleRoleChange = async (membreId) => {
+        if (nouveauRole !== "") {
+            try {
+                await modifierRoleMembre(id, membreId, nouveauRole);
+                setAsso(prevAsso => ({
+                    ...prevAsso,
+                    membres: prevAsso.membres.map(membre => {
+                        if (membre.id === membreId) {
+                            return {
+                                ...membre,
+                                role: nouveauRole
+                            };
+                        }
+                        return membre;
+                    }),
+                }));
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        setIdMembreModifier(null);
+    }
 
     const changerPhotoLogoOuBanniere = (type_photo) => {
         document.getElementById('file-upload').setAttribute("data-type", type_photo);
@@ -68,9 +113,9 @@ function Asso({ id }) {
                 const assoData = await chargerAsso(id);
                 const membreData = await estUtilisateurDansAsso(id);
                 setAsso(assoData);
-                setNouvelleDescription(assoData.description)
+                setNouvelleDescription(assoData.description);
                 setIsMembreDansAsso(membreData.is_membre);
-                setIsMembreAutorise(membreData.autorise)
+                setIsMembreAutorise(membreData.autorise);
             } catch (error) {
                 console.error("Erreur lors du chargement des données:", error);
             }
@@ -149,7 +194,6 @@ function Asso({ id }) {
                 {isMembreAutorise &&
                     <div className='asso-admin'>
                         {isMembreDansAsso && <div className='badge_est_dans_asso'><p>Vous êtes dans l'asso</p></div>}
-                        <button className='button_asso' id="button_asso_gerer_membres">Gerer Membres</button>
                         <button className='button_asso' id="button_asso_gerer_evenements">Gerer Événements</button>
                         <button className='button_asso' id="button_asso_gerer_publications">Gerer Publications</button>
                     </div>}
@@ -177,12 +221,55 @@ function Asso({ id }) {
                             </div>
                         </div>
                         <p>{asso.description}</p>
+                    </div>}
 
 
+                {activeTab === "events" && <div className='asso-bloc-interne'>
+                    <p>Liste des événements ici...</p>
+                </div>}
+
+
+                {activeTab === "members" && (
+                    <div className="asso-membres">
+                        {isMembreAutorise &&
+                            <div className='button-gestion-membres' onClick={() => { setIsGestionMembres(!isGestionMembres); setIdMembreModifier(null) }}>
+                                <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
+                                <p>Éditer</p>
+                            </div>}
+                        <div className="asso-membres-grid">
+                            {asso.membres.map((user) => (
+                                <div className="asso-membres-item" key={user.id}>
+                                    <div className='member-image-holder'>
+                                        {isGestionMembres && (<div className='button-suppression-membre' title='supprimer le membre' onClick={() => handleRetirerMembre(id, user.id)}>
+                                            <img src="/assets/icons/delete.svg" alt="suppression du membre" />
+                                        </div>)}
+                                        {isGestionMembres && (<div className='button-modification-role' title='modifier le rôle' onClick={() => { setNouveauRole(user.role); idMembreModifier === user.id ? setIdMembreModifier(null) : setIdMembreModifier(user.id) }}>
+                                            <img src="/assets/icons/edit.svg" alt="modification de rôle" />
+                                        </div>)}
+                                        <img
+                                            src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg"
+                                            alt={`Photo de ${user.nom_utilisateur}`}
+                                            className="asso-membres-photo"
+                                            onClick={() => setCurrentComponent(<PageUtilisateur id={user.id}/>)}
+                                        />
+                                    </div>
+                                    <p className="asso-membres-name">{user.nom_utilisateur}</p>
+                                    {idMembreModifier !== user.id && <p className="asso-membres-role">{user.role}</p>}
+                                    {idMembreModifier === user.id && <>
+                                        <input value={nouveauRole} className='asso-membres-role-input' onChange={(e) => setNouveauRole(e.target.value)}></input>
+                                        <button onClick={() => handleRoleChange(user.id, user.role)}>Valider</button>
+                                    </>}
+                                </div>
+                            ))}
+                            {isMembreAutorise && isGestionMembres && (<div className='asso-membres-item'>
+                                <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="asso-membres-photo" onClick={() => setCurrentComponent()} />
+                                <p className="asso-membres-name">Ajouter un membre</p>
+                            </div>)}
+                        </div>
                     </div>
-                }
-                {activeTab === "events" && <div className='asso-bloc-interne'><p>Liste des événements ici...</p></div>}
-                {activeTab === "members" && <p>Liste des membres ici...</p>}
+                )}
+
+
                 {activeTab === "posts" && <p>Publications ici...</p>}
 
                 {/* Modifier la description */}

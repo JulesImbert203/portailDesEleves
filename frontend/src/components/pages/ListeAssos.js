@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../../assets/styles/liste_assos.css'; 
 import {useLayout} from '../../layouts/Layout'; 
-import Home from './Home';
-import { useNavigate } from "react-router-dom";
 import Asso from './Asso';
-import {verifierSuperutilisateur} from "../../api";
+import {chargerListeAssos, verifierSuperutilisateur} from "../../api";
 import AjouterAssociation from "./AjouterAssociation";
 
 function Liste_Assos() {
@@ -20,15 +18,13 @@ function Liste_Assos() {
   };
 
   useEffect(() => {
-    async function checkSuperUser() {
+    async function loadData() {
       const result = await verifierSuperutilisateur();
       setIsSuperUser(result.is_superuser);
+      const data = await chargerListeAssos(); // Récupérer les images depuis Flask
+      setAssos(data);
     }
-    checkSuperUser();
-    fetch("http://localhost:5000/api/associations/assos") // Récupérer les images depuis Flask
-      .then((response) => response.json())
-      .then((data) => setAssos(data))
-      .catch((error) => console.error("Erreur de chargement des images:", error));
+    loadData();
   }, []);
 
   return (

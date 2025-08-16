@@ -102,7 +102,7 @@ def route_modifier_role_membre(association_id, membre_id):
         return jsonify({"message": "Utilisateur non trouve"}), 404
     
     try:
-        role = requests.json.get('role')
+        role = request.json.get('role')
         update_member_role(association, membre, role)  
         return jsonify({"message": "Role du membre modifie avec succes"}), 200
     
@@ -122,7 +122,7 @@ def route_modifier_ordre_membres(association_id):
         return jsonify({"message": "Association non trouvee"}), 404
     
     try:
-        members_weights = requests.json.get('members_weights')
+        members_weights = request.json.get('members_weights')
         update_members_order(association, members_weights)  
         return jsonify({"message": "Ordre des membres modifie avec succes"}), 200
     
