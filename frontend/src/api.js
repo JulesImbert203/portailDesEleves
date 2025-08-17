@@ -2,124 +2,125 @@
 // aide a interagir avec le backend flask
 
 export async function estAuthentifie() {
-    const res = await fetch("http://localhost:5000/est_auth", { credentials: "include" });
-    const data = await res.json();
-    return data.etat_connexion; // Flask renvoie { "etat_connexion": true/false }
-  }
+  const res = await fetch("http://localhost:5000/est_auth", { credentials: "include" });
+  const data = await res.json();
+  return data.etat_connexion; // Flask renvoie { "etat_connexion": true/false }
+}
 
 export async function obtenirIdUser() {
-    const res = await fetch("http://localhost:5000/current_user_id", { credentials: "include" });
-    const data = await res.json();
-    return data.id_utilisateur; // Flask renvoie { "id_utilisateur": int ou None si on connecte, ...}
-  }
+  const res = await fetch("http://localhost:5000/current_user_id", { credentials: "include" });
+  const data = await res.json();
+  return data.id_utilisateur; // Flask renvoie { "id_utilisateur": int ou None si on connecte, ...}
+}
 
 export async function obtenirDataUser(id_utilisateur) {
-    const res = await fetch(`http://localhost:5000/api/users/obtenir_infos_profil/${id_utilisateur}`,
-      {credentials: "include"}
-    );
-    const data = await res.json();
-    return data; // au format JSON 
-  }
-  
+  const res = await fetch(`http://localhost:5000/api/users/obtenir_infos_profil/${id_utilisateur}`,
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data; // au format JSON 
+}
+
 export async function seDeconnecter() {
-    await fetch("http://localhost:5000/deconnexion", { 
-        method: "POST",
-        credentials: "include" });
-  }
-  
+  await fetch("http://localhost:5000/deconnexion", {
+    method: "POST",
+    credentials: "include"
+  });
+}
+
 export async function seConnecter(username, password) {
-    const res = await fetch("http://localhost:5000/connexion", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // Important pour gérer les cookies de session
-      body: JSON.stringify({ username, password }),
-    });
-  
-    const data = await res.json();
-    return data.connecte; // Flask renvoie { "connecte": true/false }
-  }
-  
-  export async function obtenirSondageDuJour() {
-    const res = await fetch(`http://localhost:5000/api/sondages/sondage_du_jour`,
-      {credentials: "include"}
-    );
-    const data = await res.json();
-    return data; // au format JSON 
-  }
+  const res = await fetch("http://localhost:5000/connexion", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // Important pour gérer les cookies de session
+    body: JSON.stringify({ username, password }),
+  });
 
-  
-  export async function requeteProposerSondage(question, reponses) {
-    const res = await fetch("http://localhost:5000/api/sondages/route_proposer_sondage", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // Si tu utilises des cookies de session
-      body: JSON.stringify({ question, reponses })
-    });
-  
-    const data = await res.json(); // Récupère la réponse JSON de l'API
-    return data ;
-  }
-  
-  export async function obtenirSondagesEnAttente() {
-    const res = await fetch(`http://localhost:5000/api/sondages/route_obtenir_sondages_en_attente`,
-      {credentials: "include"}
-    );
-    const data = await res.json();
-    return data; // au format JSON 
-  }
+  const data = await res.json();
+  return data.connecte; // Flask renvoie { "connecte": true/false }
+}
 
-  export async function validerSondage(id_sondage) {
-    await fetch(`http://localhost:5000/api/sondages/route_valider_sondage/${id_sondage}`, {
+export async function obtenirSondageDuJour() {
+  const res = await fetch(`http://localhost:5000/api/sondages/sondage_du_jour`,
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data; // au format JSON 
+}
+
+
+export async function requeteProposerSondage(question, reponses) {
+  const res = await fetch("http://localhost:5000/api/sondages/route_proposer_sondage", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // Si tu utilises des cookies de session
+    body: JSON.stringify({ question, reponses })
+  });
+
+  const data = await res.json(); // Récupère la réponse JSON de l'API
+  return data;
+}
+
+export async function obtenirSondagesEnAttente() {
+  const res = await fetch(`http://localhost:5000/api/sondages/route_obtenir_sondages_en_attente`,
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data; // au format JSON 
+}
+
+export async function validerSondage(id_sondage) {
+  await fetch(`http://localhost:5000/api/sondages/route_valider_sondage/${id_sondage}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include"
+  });
+}
+
+export async function supprimerSondage(id_sondage) {
+  await fetch(`http://localhost:5000/api/sondages/route_supprimer_sondage/${id_sondage}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include"
+  });
+}
+
+export async function sondageSuivant() {
+  try {
+    const response = await fetch(`http://localhost:5000/api/sondages/sondage_suivant`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include"
     });
-  }
 
-  export async function supprimerSondage(id_sondage) {
-    await fetch(`http://localhost:5000/api/sondages/route_supprimer_sondage/${id_sondage}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include"
-    });
-  }
-
-  export async function sondageSuivant() {
-    try {
-      const response = await fetch(`http://localhost:5000/api/sondages/sondage_suivant`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include"
-      });
-  
-      if (!response.ok) { // Si la réponse n'est pas 200, c'est une erreur
-        const errorData = await response.json();
-        console.error("Erreur :", errorData.message);
-        // Afficher l'erreur dans l'interface utilisateur si nécessaire
-        alert(`Erreur : ${errorData.message}`);
-      } else {
-        const data = await response.json();
-        console.log("Sondage suivant :", data.message);  // Affiche "success" si ça fonctionne
-      }
-    } catch (error) {
-      console.error("Erreur réseau :", error);
+    if (!response.ok) { // Si la réponse n'est pas 200, c'est une erreur
+      const errorData = await response.json();
+      console.error("Erreur :", errorData.message);
       // Afficher l'erreur dans l'interface utilisateur si nécessaire
-      alert(`Erreur réseau : ${error.message}`);
+      alert(`Erreur : ${errorData.message}`);
+    } else {
+      const data = await response.json();
+      console.log("Sondage suivant :", data.message);  // Affiche "success" si ça fonctionne
     }
+  } catch (error) {
+    console.error("Erreur réseau :", error);
+    // Afficher l'erreur dans l'interface utilisateur si nécessaire
+    alert(`Erreur réseau : ${error.message}`);
   }
-  
+}
 
-  export async function voterSondage(id_vote) {
-    await fetch(`http://localhost:5000/api/sondages/route_voter_sondage/${id_vote}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include"
-    });
-  }
 
-  // SOIFGUARD :
+export async function voterSondage(id_vote) {
+  await fetch(`http://localhost:5000/api/sondages/route_voter_sondage/${id_vote}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include"
+  });
+}
 
-  const SOIFGUARD_BASE_URL = "http://localhost:5000/api/soifguard";
+// SOIFGUARD :
+
+const SOIFGUARD_BASE_URL = "http://localhost:5000/api/soifguard";
 
 async function handleResponse(response) {
   if (!response.ok) {
@@ -298,7 +299,7 @@ export async function modifierPrixConsoBiero(id_conso, nouveau_prix, nouveau_pri
   }
 }
 
- 
+
 export async function getListeConsos(asso = "octo") {
   try {
     const response = await fetch(`http://localhost:5000/api/soifguard/liste_consos/${asso}`, {
@@ -389,14 +390,14 @@ export async function verifierSuperutilisateur() {
 
 export async function obtenirIdUserParNom(nom_utilisateur) {
   const res = await fetch(`http://localhost:5000/api/users/obtenir_id_par_nomutilisateur/${nom_utilisateur}`,
-    {credentials: "include"}
+    { credentials: "include" }
   );
   const data = await res.json();
   return data; // au format JSON 
 }
 
 export async function chargerUtilisateursParPromo(promo) {
-  const res = await fetch(`http://localhost:5000/api/users/charger_utilisateurs_par_promo/${promo}`, 
+  const res = await fetch(`http://localhost:5000/api/users/charger_utilisateurs_par_promo/${promo}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -428,7 +429,7 @@ export async function switchCotisationBiero(idUtilisateur) {
 }
 
 export async function obtenirDetteMaxi(asso) {
-  const res = await fetch(`http://localhost:5000/api/soifguard/get_negatif_max/${asso}`, 
+  const res = await fetch(`http://localhost:5000/api/soifguard/get_negatif_max/${asso}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -471,7 +472,7 @@ export async function modifier_description_asso(asso_id, new_desc) {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({new_desc})
+      body: JSON.stringify({ new_desc })
     });
     return handleResponse(res);
   } catch (error) {
@@ -522,13 +523,46 @@ export async function modifierRoleMembre(associationId, membreId, role) {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({role})
+      body: JSON.stringify({ role })
     })
     return handleResponse(res);
   }
   catch (error) {
     console.error("Erreur réseau :", error);
     throw error;
+  }
+}
+
+export async function modifierPositionMembre(associationId, membreId, position) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/modifier_position_membre/${membreId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ position })
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
+
+export async function updateMembersOrder(associationId) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/update_members_order`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur)
+    throw erreur;
   }
 }
 
@@ -571,7 +605,7 @@ export async function changerPhoto(asso_id, photo_type, new_name) {
 
 export async function estUtilisateurDansAsso(asso_id) {
   // renvoie True aussi pour le superutilisateur
-  const res = await fetch(`http://localhost:5000/api/associations/route_est_membre_de_asso/${asso_id}`, 
+  const res = await fetch(`http://localhost:5000/api/associations/route_est_membre_de_asso/${asso_id}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -579,7 +613,7 @@ export async function estUtilisateurDansAsso(asso_id) {
 }
 
 export async function chargerAsso(asso_id) {
-  const res = await fetch(`http://localhost:5000/api/associations/${asso_id}`, 
+  const res = await fetch(`http://localhost:5000/api/associations/${asso_id}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -588,17 +622,17 @@ export async function chargerAsso(asso_id) {
 
 export async function chargerListeAssos() {
   try {
-  const res = await fetch(`http://localhost:5000/api/associations/assos`,
-    { credentials : "include" }
-  );
-  return handleResponse(res);
+    const res = await fetch(`http://localhost:5000/api/associations/assos`,
+      { credentials: "include" }
+    );
+    return handleResponse(res);
   } catch (error) {
     console.error("Erreur réseau :", error);
   }
 }
 
 export async function obtenirListeDesPromos() {
-  const res = await fetch(`http://localhost:5000/api/users/obtenir_liste_des_promos`, 
+  const res = await fetch(`http://localhost:5000/api/users/obtenir_liste_des_promos`,
     { credentials: "include" }
   );
   const data = await res.json();

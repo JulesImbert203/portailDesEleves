@@ -109,7 +109,30 @@ def route_modifier_role_membre(association_id, membre_id):
     except Exception as e:
         return jsonify({"message": f"Erreur lors de la modification du role du membre : {str(e)}"}), 500
 
-@controllers_associations.route(('/associations/<int:association_id>/update_members_order'), methods=['POST'])
+@controllers_associations.route('/<int:association_id>/modifier_position_membre/<int:membre_id>', methods=['POST'])
+@login_required
+@est_membre_de_asso
+def route_modifier_position_membre(association_id, membre_id):
+    """
+    Modifie la position d'affichage du membre
+    """
+    association = get_association(association_id)
+    if not association:
+        return jsonify({"message": "Association non trouvee"}), 404
+    
+    membre = get_utilisateur(membre_id)
+    if not membre:
+        return jsonify({"message": "Utilisateur non trouve"}), 404
+        
+    try:
+        new_position = request.json.get('position')
+        update_member_position(association, membre, new_position)
+        return jsonify({"message": "Position du membre modifie avec succes"}), 200
+        
+    except Exception as e:
+        return jsonify({"message": f"Erreur lors de la modification de la position du membre : {str(e)}"}), 500
+
+@controllers_associations.route(('/<int:association_id>/update_members_order'), methods=['GET'])
 @login_required
 @est_membre_de_asso
 def route_modifier_ordre_membres(association_id):
@@ -122,8 +145,7 @@ def route_modifier_ordre_membres(association_id):
         return jsonify({"message": "Association non trouvee"}), 404
     
     try:
-        members_weights = request.json.get('members_weights')
-        update_members_order(association, members_weights)  
+        update_members_order(association)  
         return jsonify({"message": "Ordre des membres modifie avec succes"}), 200
     
     except Exception as e:

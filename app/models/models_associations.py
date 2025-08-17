@@ -67,10 +67,10 @@ class Association(db.Model):
         - description : str
             Description de l'association, peut contenir des accents et des caracteres speciaux 
             ainsi que des sauts de ligne et des informations de mise en page HTML.
-        - membres : dict
-            Liste des membres de l'association au format {id_utilisateur : role}.
+        - membres : json
+            Liste des membres de l'association au format {id : int, nom_utilisateur : str, role : str, position : int}.
             role est une chaine de caracteres, peut contenir des accents et des caracteres speciaux.
-            exemple : { 1 : "Trez, VP fraude fiscale" }
+            exemple : { "id": 1, "nom_utilisateur": "24lefort", "role": "membre", "position" : 0},
         - publications : liste d'objets Publication
             Liste des publications de l'association
         

@@ -18,7 +18,7 @@
     /**/
     --asso-bloc-background: hsl(0, 0%, 100%);
     --asso-bloc-radius: 15px;
-    --asso-bloc-shadow:  0 0px 6px rgba(0, 0, 0, 0.2);
+    --asso-bloc-shadow: 0 0px 6px rgba(0, 0, 0, 0.2);
     --asso-bloc-border: 0px solid var(--global-style-secondary-color);
 
     /*membres de l'asso*/
@@ -43,8 +43,10 @@
     background-position: center;
     border-top-left-radius: var(--asso-border-radius);
     border-top-right-radius: var(--asso-border-radius);
-    overflow: hidden; /* Empêche l'overlay de dépasser */
+    overflow: hidden;
+    /* Empêche l'overlay de dépasser */
 }
+
 .asso-overlay-banner {
     position: absolute;
     height: var(--banner-height);
@@ -56,7 +58,7 @@
     border-top-right-radius: var(--asso-border-radius);
 }
 
-#asso-add-photo-banner{
+#asso-add-photo-banner {
     opacity: 0.6;
     position: absolute;
     top: 0;
@@ -67,8 +69,8 @@
     cursor: pointer;
 }
 
-#asso-add-photo-banner:hover{
-    opacity: 1;  
+#asso-add-photo-banner:hover {
+    opacity: 1;
 }
 
 /* Logo de l'association */
@@ -83,6 +85,7 @@
     background-color: var(--secondary-color);
     object-fit: cover
 }
+
 .asso-overlay-profilpic {
     position: absolute;
     top: calc(var(--banner-height) - var(--logo-page-asso-size) * 0.6);
@@ -92,7 +95,7 @@
     border-radius: var(--asso-border-radius);
     border: var(--asso-logo-border-size) solid var(--background-color);
     background-color: rgba(0, 0, 0, 0.5);
-    
+
 }
 
 #asso-add-photo-profilpic {
@@ -106,7 +109,7 @@
 }
 
 #asso-add-photo-profilpic:hover {
-    opacity: 1;  
+    opacity: 1;
 }
 
 
@@ -131,7 +134,8 @@
 
 
 .asso-info {
-    margin-top: calc(var(--logo-page-asso-size) / 2 + var(--asso-padding)); /* Ajustement dynamique */
+    margin-top: calc(var(--logo-page-asso-size) / 2 + var(--asso-padding));
+    /* Ajustement dynamique */
     text-align: left;
     padding: 0 var(--asso-padding);
 }
@@ -172,7 +176,7 @@
 }
 
 .asso-tab-content {
-    padding-top: calc(var(--asso-padding)/2) ;
+    padding-top: calc(var(--asso-padding)/2);
     padding-left: var(--asso-padding);
     padding-bottom: var(--asso-padding);
     padding-right: var(--asso-padding);
@@ -196,7 +200,7 @@
 
 .asso-membres-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: var(--asso-members-spacing-medium);
     justify-content: center;
 }
@@ -215,12 +219,14 @@
 }
 
 .asso-membres-item:hover {
-    transform: scale(var(--asso-members-scale-factor)); 
+    transform: scale(var(--asso-members-scale-factor));
 }
 
 .asso-membres-photo {
     width: 100%;
+    max-width: 150px;
     object-fit: contain;
+    cursor: pointer;
 }
 
 .asso-membres-name {
@@ -228,7 +234,7 @@
     margin: 0;
 }
 
-.asso-members-label {
+.asso-membres-label {
     color: var(--text-color);
     font-size: 0.9em;
     margin-bottom: 5px;
@@ -245,7 +251,7 @@
     margin: 0;
 }
 
-.asso-membres-role-input {
+.asso-membres-input {
     color: var(--text-color);
     font-style: italic;
     font-size: 0.9em;
@@ -261,7 +267,7 @@
     font-size: var(--asso-button-text-size);
     border-radius: 4px;
     padding: 8px;
-    gap:3px;
+    gap: 3px;
     display: flex;
     cursor: pointer;
     align-items: center;
@@ -274,8 +280,9 @@
     margin: 0;
 }
 
-.button-gestion-membres:hover{
-    background-color: var(--global-style-primary-color); /* Change la couleur de fond au survol */
+.button-gestion-membres:hover {
+    background-color: var(--global-style-primary-color);
+    /* Change la couleur de fond au survol */
     transform: scale(1.05);
 }
 
@@ -316,7 +323,7 @@
     font-size: var(--asso-button-text-size);
     border-radius: 4px;
     padding: 8px;
-    gap:3px;
+    gap: 3px;
     display: flex;
     cursor: pointer;
     align-items: center;
@@ -324,14 +331,18 @@
     color: white;
     background-color: var(--global-style-secondary-color);
 }
-.asso-button:hover{
-    background-color: var(--global-style-primary-color); /* Change la couleur de fond au survol */
+
+.asso-button:hover {
+    background-color: var(--global-style-primary-color);
+    /* Change la couleur de fond au survol */
     transform: scale(1.05);
 }
+
 .asso-button p {
     margin: 0;
 }
-.asso-button-icon{
+
+.asso-button-icon {
     width: var(--asso-button-text-size);
 }
 
@@ -340,6 +351,7 @@
     display: flex;
     align-items: center;
 }
+
 #asso-description-button {
     position: absolute;
     right: 0;
