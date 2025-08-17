@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import '../../assets/styles/asso.css';
-import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre } from './../../api';
+import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, ajouterMembre } from './../../api';
 import { useLayout } from '../../layouts/Layout';
 import PageUtilisateur from './PageUtilisateur';
 
@@ -20,7 +20,19 @@ function Asso({ id }) {
     const { setCurrentComponent } = useLayout();
 
     const [isGestionMembres, setIsGestionMembres] = useState(false);
-    const [idMembreModifier, setIdMembreModifier] = useState(null);
+
+    const [isAjoutMembre, setIsAjoutMembre] = useState(false);
+    const [listePromos, setListePromos] = useState(null);
+    const [listeNouveauxMembres, setListeNouveauxMembres] = useState([]);
+    const [promoAjoutMembre, setPromoAjoutMembre] = useState("");
+    const [idAjoutMembre, setIdAjoutMembre] = useState("");
+
+    const [idRoleModifier, setIdRoleModifier] = useState(null);
+
+    const handleSetActiveTab = (newTab) => {
+        handleSetIsGestionMembres(false);
+        setActiveTab(newTab);
+    }
 
     const handleModifierDescription = async () => {
         if (nouvelleDescription !== null) {
@@ -34,48 +46,74 @@ function Asso({ id }) {
             } catch (error) {
                 console.log(error);
             }
-            setActiveTab("info");
+            handleSetActiveTab("info");
         }
     };
 
     const annulerModifierDescription = () => {
         setNouvelleDescription(asso.description);
-        setActiveTab("info");
+        handleSetActiveTab("info");
     };
+
+    const handleSetIsGestionMembres = (newState) => {
+        if (!newState) {
+            setIdRoleModifier(null);
+            setPromoAjoutMembre("");
+            setIdAjoutMembre("");
+        }
+        setIsGestionMembres(newState);
+    }
 
     const handleRetirerMembre = async (assoId, membreId) => {
         try {
             await retirerMembre(assoId, membreId);
-            setAsso(prevAsso => ({
-                ...prevAsso,
-                membres: prevAsso.membres.filter(membre => membre.id !== membreId),
-            }));
+            const assoData = await chargerAsso(id);
+            setAsso(assoData);
         } catch (error) {
             console.log(error);
         }
     };
 
     const handleRoleChange = async (membreId) => {
-        if (nouveauRole !== "") {
+        if (nouveauRole != null) {
             try {
                 await modifierRoleMembre(id, membreId, nouveauRole);
-                setAsso(prevAsso => ({
-                    ...prevAsso,
-                    membres: prevAsso.membres.map(membre => {
-                        if (membre.id === membreId) {
-                            return {
-                                ...membre,
-                                role: nouveauRole
-                            };
-                        }
-                        return membre;
-                    }),
-                }));
+                const assoData = await chargerAsso(id);
+                setAsso(assoData);
             } catch (error) {
                 console.log(error);
             }
         }
-        setIdMembreModifier(null);
+        setIdRoleModifier(null);
+    }
+
+    const handleSetPromoAjoutMembre = async (promo) => {
+        if (promo != null) {
+            try {
+                const listeMembres = await obtenirListeDesUtilisateursParPromo(promo);
+                setListeNouveauxMembres(listeMembres);
+                setPromoAjoutMembre(promo);
+            } catch (erreur) {
+                console.log(erreur);
+            }
+        }
+        else {
+            setPromoAjoutMembre(promo);
+            setIdAjoutMembre("");
+        }
+    }
+
+    const handleAjoutMembre = async (userId) => {
+        if (idAjoutMembre != null) {
+            try {
+                await ajouterMembre(id, userId);
+                setIsAjoutMembre(false);
+                const assoData = await chargerAsso(id);
+                setAsso(assoData);
+            } catch (erreur) {
+                console.log(erreur);
+            }
+        }
     }
 
     const changerPhotoLogoOuBanniere = (type_photo) => {
@@ -112,10 +150,12 @@ function Asso({ id }) {
             try {
                 const assoData = await chargerAsso(id);
                 const membreData = await estUtilisateurDansAsso(id);
+                const promos = await obtenirListeDesPromos();
                 setAsso(assoData);
                 setNouvelleDescription(assoData.description);
                 setIsMembreDansAsso(membreData.is_membre);
                 setIsMembreAutorise(membreData.autorise);
+                setListePromos(promos);
             } catch (error) {
                 console.error("Erreur lors du chargement des données:", error);
             }
@@ -203,10 +243,10 @@ function Asso({ id }) {
 
             {/* Menu */}
             <div className="asso-tabs">
-                <div className={`asso-tab ${activeTab === "info" ? "active" : ""}`} onClick={() => setActiveTab("info")}>Infos</div>
-                <div className={`asso-tab ${activeTab === "events" ? "active" : ""}`} onClick={() => setActiveTab("events")}>Événements</div>
-                <div className={`asso-tab ${activeTab === "members" ? "active" : ""}`} onClick={() => setActiveTab("members")}>Membres</div>
-                <div className={`asso-tab ${activeTab === "posts" ? "active" : ""}`} onClick={() => setActiveTab("posts")}>Publications</div>
+                <div className={`asso-tab ${activeTab === "info" ? "active" : ""}`} onClick={() => handleSetActiveTab("info")}>Infos</div>
+                <div className={`asso-tab ${activeTab === "events" ? "active" : ""}`} onClick={() => handleSetActiveTab("events")}>Événements</div>
+                <div className={`asso-tab ${activeTab === "members" ? "active" : ""}`} onClick={() => handleSetActiveTab("members")}>Membres</div>
+                <div className={`asso-tab ${activeTab === "posts" ? "active" : ""}`} onClick={() => handleSetActiveTab("posts")}>Publications</div>
             </div>
 
             {/* Contenu des onglets */}
@@ -215,7 +255,7 @@ function Asso({ id }) {
                     <div className='asso-info-section'>
                         <div className='asso-titre-description'>
                             <h2>Description de l'association</h2>
-                            <div className='asso-button' id="asso-description-button" onClick={() => setActiveTab("edit-desc")}>
+                            <div className='asso-button' id="asso-description-button" onClick={() => handleSetActiveTab("edit-desc")}>
                                 <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
                                 <p id="texteCopier">Éditer</p>
                             </div>
@@ -232,7 +272,7 @@ function Asso({ id }) {
                 {activeTab === "members" && (
                     <div className="asso-membres">
                         {isMembreAutorise &&
-                            <div className='button-gestion-membres' onClick={() => { setIsGestionMembres(!isGestionMembres); setIdMembreModifier(null) }}>
+                            <div className='button-gestion-membres' onClick={() => { handleSetIsGestionMembres(!isGestionMembres) }}>
                                 <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
                                 <p>Éditer</p>
                             </div>}
@@ -240,31 +280,44 @@ function Asso({ id }) {
                             {asso.membres.map((user) => (
                                 <div className="asso-membres-item" key={user.id}>
                                     <div className='member-image-holder'>
-                                        {isGestionMembres && (<div className='button-suppression-membre' title='supprimer le membre' onClick={() => handleRetirerMembre(id, user.id)}>
+                                        {isGestionMembres && (<div className='button-suppression-membre' title='Supprimer ce membre' onClick={() => handleRetirerMembre(id, user.id)}>
                                             <img src="/assets/icons/delete.svg" alt="suppression du membre" />
                                         </div>)}
-                                        {isGestionMembres && (<div className='button-modification-role' title='modifier le rôle' onClick={() => { setNouveauRole(user.role); idMembreModifier === user.id ? setIdMembreModifier(null) : setIdMembreModifier(user.id) }}>
+                                        {isGestionMembres && (<div className='button-modification-role' title='Modifier le rôle' onClick={() => { setNouveauRole(user.role); idRoleModifier === user.id ? setIdRoleModifier(null) : setIdRoleModifier(user.id) }}>
                                             <img src="/assets/icons/edit.svg" alt="modification de rôle" />
                                         </div>)}
                                         <img
                                             src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg"
                                             alt={`Photo de ${user.nom_utilisateur}`}
                                             className="asso-membres-photo"
-                                            onClick={() => setCurrentComponent(<PageUtilisateur id={user.id}/>)}
+                                            onClick={() => setCurrentComponent(<PageUtilisateur id={user.id} />)}
                                         />
                                     </div>
                                     <p className="asso-membres-name">{user.nom_utilisateur}</p>
-                                    {idMembreModifier !== user.id && <p className="asso-membres-role">{user.role}</p>}
-                                    {idMembreModifier === user.id && <>
+                                    {idRoleModifier !== user.id && <p className="asso-membres-role">{user.role}</p>}
+                                    {idRoleModifier === user.id && <>
                                         <input value={nouveauRole} className='asso-membres-role-input' onChange={(e) => setNouveauRole(e.target.value)}></input>
                                         <button onClick={() => handleRoleChange(user.id, user.role)}>Valider</button>
                                     </>}
                                 </div>
                             ))}
-                            {isMembreAutorise && isGestionMembres && (<div className='asso-membres-item'>
-                                <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="asso-membres-photo" onClick={() => setCurrentComponent()} />
-                                <p className="asso-membres-name">Ajouter un membre</p>
-                            </div>)}
+                            {isMembreAutorise && isGestionMembres && <div className='asso-membres-item'>
+                                <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="asso-membres-photo" onClick={() => setIsAjoutMembre(!isAjoutMembre)} />
+                                {!isAjoutMembre && <p className="asso-membres-name">Ajouter un membre</p>}
+                                {isAjoutMembre && <>
+                                    <label htmlFor='promo-select' className='asso-members-label'>Promotion :</label>
+                                    <select id='promo-select' className='asso-newmember-selector' value={promoAjoutMembre} onChange={(e) => handleSetPromoAjoutMembre(e.target.value)}>
+                                        <option value="">---</option>
+                                        {listePromos.map((promoId) => <option key={promoId}>{promoId}</option>)}
+                                    </select>
+                                    <label htmlFor='membre-select' className='asso-members-label'>Nom :</label>
+                                    <select id='membre-select' className='asso-newmember-selector' value={idAjoutMembre} onChange={(e) => setIdAjoutMembre(e.target.value)}>
+                                        <option value="">---</option>
+                                        {listeNouveauxMembres.map((user) => <option key={user.id} value={user.id}>{user.nom_utilisateur}</option>)}
+                                    </select>
+                                    <button onClick={() => handleAjoutMembre(idAjoutMembre)}>Ajouter</button>
+                                </>}
+                            </div>}
                         </div>
                     </div>
                 )}

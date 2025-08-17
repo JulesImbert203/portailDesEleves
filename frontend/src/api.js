@@ -612,3 +612,10 @@ export async function obtenirListeDesUtilisateurs(promo, cycles) {
   const data = await res.json();
   return data;
 }
+
+export async function obtenirListeDesUtilisateursParPromo(promo) {
+  let url = `http://localhost:5000/api/users/charger_utilisateurs_par_promo/${promo}`;
+  const res = await fetch(url, { credentials: "include" });
+  const data = await res.json();
+  return data;
+}

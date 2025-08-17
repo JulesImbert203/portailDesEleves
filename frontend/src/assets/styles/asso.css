@@ -219,13 +219,23 @@
 }
 
 .asso-membres-photo {
-    max-width: 100%;
+    width: 100%;
     object-fit: contain;
 }
 
 .asso-membres-name {
     font-weight: bold;
     margin: 0;
+}
+
+.asso-members-label {
+    color: var(--text-color);
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.asso-newmember-selector {
+    margin-bottom: 5px;
 }
 
 .asso-membres-role {
