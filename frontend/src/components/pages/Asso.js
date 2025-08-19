@@ -3,6 +3,7 @@ import '../../assets/styles/asso.css';
 import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, ajouterMembre, modifierPositionMembre, updateMembersOrder } from './../../api';
 import { useLayout } from '../../layouts/Layout';
 import PageUtilisateur from './PageUtilisateur';
+import RichEditor, { RichTextDisplay } from '../blocs/RichEditor';
 
 
 function Asso({ id }) {
@@ -286,8 +287,19 @@ function Asso({ id }) {
                                 <p id="texteCopier">Éditer</p>
                             </div>
                         </div>
-                        <p>{asso.description}</p>
+                        <div className='asso-description'>
+                            <RichTextDisplay content={asso.description}></RichTextDisplay>
+                        </div>
                     </div>}
+
+                {/* Modifier la description */}
+                {activeTab === "edit-desc" && <div>
+
+                    <h2>Nouvelle description :</h2>
+                    <RichEditor value={nouvelleDescription} onChange={setNouvelleDescription} />
+                    <button onClick={handleModifierDescription}>Valider</button>
+                    <button onClick={annulerModifierDescription}>Annuler</button>
+                </div>}
 
 
                 {activeTab === "events" && <div className='asso-bloc-interne'>
@@ -367,15 +379,6 @@ function Asso({ id }) {
 
 
                 {activeTab === "posts" && <p>Publications ici...</p>}
-
-                {/* Modifier la description */}
-                {activeTab === "edit-desc" && <div>
-
-                    <label>Nouvelle description :</label>
-                    <textarea value={nouvelleDescription} onChange={(e) => setNouvelleDescription(e.target.value)} />
-                    <button onClick={handleModifierDescription}>Valider</button>
-                    <button onClick={annulerModifierDescription}>Annuler</button>
-                </div>}
             </div>
         </div>
     );
