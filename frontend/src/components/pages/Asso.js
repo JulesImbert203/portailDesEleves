@@ -295,10 +295,18 @@ function Asso({ id }) {
                 {/* Modifier la description */}
                 {activeTab === "edit-desc" && <div>
 
-                    <h2>Nouvelle description :</h2>
+                    <h2>Nouvelle description</h2>
                     <RichEditor value={nouvelleDescription} onChange={setNouvelleDescription} />
-                    <button onClick={handleModifierDescription}>Valider</button>
-                    <button onClick={annulerModifierDescription}>Annuler</button>
+                    <div className='valider-holder'>
+                        <div className='valider-button' onClick={handleModifierDescription}>
+                            <img src="/assets/icons/check-mark.svg" alt="Valider" />
+                            <p>Valider</p>
+                        </div>
+                        <div className='annuler-button' onClick={annulerModifierDescription}>
+                            <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
+                            <p>Annuler</p>
+                        </div>
+                    </div>
                 </div>}
 
 
@@ -310,7 +318,7 @@ function Asso({ id }) {
                 {activeTab === "members" && (
                     <div className="asso-membres">
                         {isMembreAutorise &&
-                            <div className='button-gestion-membres' onClick={() => { handleSetIsGestionMembres(!isGestionMembres) }}>
+                            <div className='button-gestion-membres' onClick={() => handleSetIsGestionMembres(!isGestionMembres)}>
                                 <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
                                 <p>Éditer</p>
                             </div>}
@@ -357,7 +365,7 @@ function Asso({ id }) {
 
                             {/* Bouton pour rajouter un nouveau membre */}
                             {isMembreAutorise && isGestionMembres && <div className='asso-membres-item'>
-                                <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="asso-membres-photo" onClick={() => setIsAjoutMembre(!isAjoutMembre)} />
+                                <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="asso-membres-photo-plus" onClick={() => setIsAjoutMembre(!isAjoutMembre)} />
                                 {!isAjoutMembre && <p className="asso-membres-name">Ajouter un membre</p>}
                                 {isAjoutMembre && <>
                                     <label htmlFor='promo-select' className='asso-membres-label'>Promotion</label>

@@ -2,6 +2,10 @@
 :root {
     --primary-color: #007bff;
     --secondary-color: #f8f9fa;
+    --valider-color: #28a745;
+    --valider-hover-color: #218838;
+    --annuler-color: #dc3545;
+    --annuler-hover-color: #c82333;
     --text-color: #333;
     --background-color: white;
     --asso-border-radius: 15px;
@@ -223,8 +227,14 @@
 }
 
 .asso-membres-photo {
-    width: 100%;
-    max-width: 150px;
+    max-width: 100%;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.asso-membres-photo-plus {
+    height: 100%;
+    max-width: 100%;
     object-fit: contain;
     cursor: pointer;
 }
@@ -356,4 +366,67 @@
     position: absolute;
     right: 0;
     margin-right: var(--asso-padding);
+}
+
+.valider-holder {
+    margin-top: var(--asso-members-spacing-medium);
+    display: flex;
+    gap: 15px;
+}
+
+.valider-button {
+    --button-text-size: 15px;
+    font-size: var(--button-text-size);
+    border-radius: 4px;
+    padding: 8px;
+    gap: 3px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.2s;
+    color: white;
+    background-color: var(--valider-color);
+}
+
+.valider-button:hover {
+    background-color: var(--valider-hover-color);
+    /* Change la couleur de fond au survol */
+    transform: scale(1.05);
+}
+
+.valider-button p {
+    margin: 0;
+}
+
+.valider-button img {
+    width: var(--button-text-size);
+}
+
+
+.annuler-button {
+    --button-text-size: 15px;
+    font-size: var(--button-text-size);
+    border-radius: 4px;
+    padding: 8px;
+    gap: 3px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.2s;
+    color: white;
+    background-color: var(--annuler-color);
+}
+
+.annuler-button:hover {
+    background-color: var(--annuler-hover-color);
+    /* Change la couleur de fond au survol */
+    transform: scale(1.05);
+}
+
+.annuler-button p {
+    margin: 0;
+}
+
+.annuler-button img {
+    width: var(--button-text-size);
 }
