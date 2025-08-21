@@ -653,3 +653,36 @@ export async function obtenirListeDesUtilisateursParPromo(promo) {
   const data = await res.json();
   return data;
 }
+
+export async function creerNouvelEvenement(data) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/evenements/creer_nouvel_evenement`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data)
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
+
+export async function obtenirEvenementsAsso(id_asso) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/evenements/obtenir_evenements_asso/${id_asso}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur)
+    throw erreur;
+  }
+}

@@ -12,7 +12,7 @@ const RichEditor = ({ value, onChange }) => {
             [{ 'color': [] }, { 'background': [] }],
             [{ 'script': 'sub' }, { 'script': 'super' }],
             [{ 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image'],
+            ['link'],
             ['clean']
         ],
     };

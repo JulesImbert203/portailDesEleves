@@ -26,7 +26,7 @@ controllers_associations = Blueprint('controllers_associations', __name__)
 @controllers_associations.route("/<int:association_id>/editer_description", methods=['POST'])
 @login_required
 @est_membre_de_asso
-def editer_description(association_id:int) :
+def route_editer_description(association_id:int) :
     """
     Modifie la description d'une asso
     """
@@ -216,13 +216,13 @@ def route_creer_asso() :
 
 @controllers_associations.route('/assos', methods = ['GET'])  
 @login_required
-def get_assos():
+def route_get_assos():
     assos = Association.query.all()
     return jsonify([{"id": asso.id, "nom": asso.nom, "nom_dossier" : asso.nom_dossier,"img" :asso.logo_path, "ordre" : asso.ordre_importance} for asso in assos])
 
 @controllers_associations.route('/<int:association_id>', methods = ['GET']) 
 @login_required 
-def get_asso(association_id):
+def route_get_asso(association_id):
     asso = Association.query.filter_by(id=association_id).first()
     print(asso.logo_path)
     return jsonify({"id": asso.id, "nom_dossier": asso.nom_dossier,"nom": asso.nom, "img" :asso.logo_path, "ordre" : asso.ordre_importance, "banniere_path": asso.banniere_path, "description" : asso.description, "membres" : asso.membres})

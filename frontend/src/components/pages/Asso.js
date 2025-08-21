@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import '../../assets/styles/asso.css';
-import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, ajouterMembre, modifierPositionMembre, updateMembersOrder } from './../../api';
+import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, ajouterMembre, modifierPositionMembre, updateMembersOrder, obtenirEvenementsAsso } from './../../api';
 import { useLayout } from '../../layouts/Layout';
 import PageUtilisateur from './PageUtilisateur';
 import RichEditor, { RichTextDisplay } from '../blocs/RichEditor';
@@ -16,20 +16,25 @@ function Asso({ id }) {
     const [isBannerDarkened, setIsBannerDarkened] = useState(false);
     const [isPhotoDarkened, setIsPhotoDarkened] = useState(false);
 
-    const [nouvelleDescription, setNouvelleDescription] = useState(null);
-    const [nouveauRole, setNouveauRole] = useState(null);
     const { setCurrentComponent } = useLayout();
 
-    const [isGestionMembres, setIsGestionMembres] = useState(false);
+    // Gestion de description
+    const [nouvelleDescription, setNouvelleDescription] = useState(null);
 
+    // Gestion d'événements
+    const [isGestionEvents, setIsGestionEvents] = useState(false);
+    const [listeEvents, setListeEvents] = useState([]);
+    const [nouvelEvent, setNouvelEvent] = useState(null);
+
+    // Gestion de membres
+    const [isGestionMembres, setIsGestionMembres] = useState(false);
     const [isAjoutMembre, setIsAjoutMembre] = useState(false);
     const [listePromos, setListePromos] = useState(null);
     const [listeNouveauxMembres, setListeNouveauxMembres] = useState([]);
     const [promoAjoutMembre, setPromoAjoutMembre] = useState("");
     const [idAjoutMembre, setIdAjoutMembre] = useState("");
-
     const [idMembreModifier, setIdMembreModifier] = useState(null);
-
+    const [nouveauRole, setNouveauRole] = useState(null);
     const [nouvellePosition, setNouvellePosition] = useState("");
 
     const handleSetActiveTab = (newTab) => {
@@ -58,6 +63,52 @@ function Asso({ id }) {
         handleSetActiveTab("info");
     };
 
+    // Gestion des événements
+    const handleIsGestionEvents = (newState) => {
+        if (!newState) {
+            setNouvelEvent(null);
+        }
+        setIsGestionEvents(newState);
+    }
+
+    const formatEventDate = (event) => {
+        // Convertir HHMM en HH:MM
+        const formatTime = (time) => {
+            if (!time || time.length !== 4) return '';
+            return `${time.substring(0, 2)}:${time.substring(2, 4)}`;
+        };
+
+        // Événement périodique
+        if (event.evenement_periodique) {
+            // Rajouter "s" à la fin de jours
+            const jours = event.jours_de_la_semaine.map(jour => {
+                return jour.toLowerCase() + 's';
+            }).join(', ');
+
+            const debutHeure = formatTime(event.heure_de_debut);
+            const finHeure = formatTime(event.heure_de_fin);
+
+            return `Tous les ${jours} de ${debutHeure} à ${finHeure}`;
+
+        // Événement unique
+        } else {
+            // Handle non-repeatable events
+            const debutDate = `${event.date_de_debut.substring(6, 8)}/${event.date_de_debut.substring(4, 6)}/${event.date_de_debut.substring(0, 4)}`;
+            const debutHeure = `${event.date_de_debut.substring(8, 10)}:${event.date_de_debut.substring(10, 12)}`;
+
+            const finDate = `${event.date_de_fin.substring(6, 8)}/${event.date_de_fin.substring(4, 6)}/${event.date_de_fin.substring(0, 4)}`;
+            const finHeure = `${event.date_de_fin.substring(8, 10)}:${event.date_de_fin.substring(10, 12)}`;
+
+            // Les événements peuvent durer plusieurs jours
+            if (event.date_de_debut.substring(0, 8) === event.date_de_fin.substring(0, 8)) {
+                return `Le ${debutDate} de ${debutHeure} à ${finHeure}`;
+            } else {
+                return `Du ${debutDate} à ${debutHeure} au ${finDate} à ${finHeure}`;
+            }
+        }
+    };
+
+    // Gestion de membres
     const handleSetIsGestionMembres = (newState) => {
         if (!newState) {
             setIdMembreModifier(null);
@@ -178,11 +229,13 @@ function Asso({ id }) {
                 const assoData = await chargerAsso(id);
                 const membreData = await estUtilisateurDansAsso(id);
                 const promos = await obtenirListeDesPromos();
+                const events = await obtenirEvenementsAsso(id);
                 setAsso(assoData);
                 setNouvelleDescription(assoData.description);
                 setIsMembreDansAsso(membreData.is_membre);
                 setIsMembreAutorise(membreData.autorise);
                 setListePromos(promos.sort().reverse());
+                setListeEvents(events.evenements)
             } catch (error) {
                 console.error("Erreur lors du chargement des données:", error);
             }
@@ -261,7 +314,6 @@ function Asso({ id }) {
                 {isMembreAutorise &&
                     <div className='asso-admin'>
                         {isMembreDansAsso && <div className='badge_est_dans_asso'><p>Vous êtes dans l'asso</p></div>}
-                        <button className='button_asso' id="button_asso_gerer_evenements">Gerer Événements</button>
                         <button className='button_asso' id="button_asso_gerer_publications">Gerer Publications</button>
                     </div>}
             </div>
@@ -278,14 +330,16 @@ function Asso({ id }) {
 
             {/* Contenu des onglets */}
             <div className="asso-tab-content">
+
+                {/* Description de l'asso */}
                 {activeTab === "info" &&
                     <div className='asso-info-section'>
                         <div className='asso-titre-description'>
                             <h2>Description de l'association</h2>
-                            <div className='asso-button' id="asso-description-button" onClick={() => handleSetActiveTab("edit-desc")}>
+                            {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => handleSetActiveTab("edit-desc")}>
                                 <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
                                 <p id="texteCopier">Éditer</p>
-                            </div>
+                            </div>}
                         </div>
                         <div className='asso-description'>
                             <RichTextDisplay content={asso.description}></RichTextDisplay>
@@ -293,8 +347,7 @@ function Asso({ id }) {
                     </div>}
 
                 {/* Modifier la description */}
-                {activeTab === "edit-desc" && <div>
-
+                {activeTab === "edit-desc" && <>
                     <h2>Nouvelle description</h2>
                     <RichEditor value={nouvelleDescription} onChange={setNouvelleDescription} />
                     <div className='valider-holder'>
@@ -307,21 +360,40 @@ function Asso({ id }) {
                             <p>Annuler</p>
                         </div>
                     </div>
-                </div>}
+                </>}
 
+                {/* Événemments */}
+                {activeTab === "events" && <>
+                    <div className='asso-titre-description'>
+                        <h2>Les événements</h2>
+                        {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => handleIsGestionEvents(!isGestionEvents)}>
+                            <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
+                            <p id="texteCopier">Éditer</p>
+                        </div>}
+                    </div>
+                    {listeEvents.map((event) => (
+                        <div className='asso-bloc-interne'>
+                            <h2>{event.nom}</h2>
+                            <p>
+                                <strong>Quand</strong> : {formatEventDate(event)}</p>
+                            <p>
+                                <strong>Où</strong> : {event.lieu}
+                            </p>
+                            <p>{event.description}</p>
+                        </div>
+                    ))}
+                </>}
 
-                {activeTab === "events" && <div className='asso-bloc-interne'>
-                    <p>Liste des événements ici...</p>
-                </div>}
-
-
+                {/* Membres */}
                 {activeTab === "members" && (
                     <div className="asso-membres">
-                        {isMembreAutorise &&
-                            <div className='button-gestion-membres' onClick={() => handleSetIsGestionMembres(!isGestionMembres)}>
+                        <div className='asso-titre-description'>
+                            <h2>Les membres</h2>
+                            {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => handleSetIsGestionMembres(!isGestionMembres)}>
                                 <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
-                                <p>Éditer</p>
+                                <p id="texteCopier">Éditer</p>
                             </div>}
+                        </div>
                         <div className="asso-membres-grid">
                             {asso.membres.map((user) => (
                                 <div className="asso-membres-item" key={user.id}>
@@ -388,7 +460,7 @@ function Asso({ id }) {
 
                 {activeTab === "posts" && <p>Publications ici...</p>}
             </div>
-        </div>
+        </div >
     );
 }
 
