@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import '../../assets/styles/asso.css';
-import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, ajouterMembre, modifierPositionMembre, updateMembersOrder, obtenirEvenementsAsso } from './../../api';
+import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto, modifier_description_asso, retirerMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, ajouterMembre, modifierPositionMembre, updateMembersOrder, obtenirEvenementsAsso, creerNouvelEvenement } from './../../api';
 import { useLayout } from '../../layouts/Layout';
 import PageUtilisateur from './PageUtilisateur';
 import RichEditor, { RichTextDisplay } from '../blocs/RichEditor';
@@ -24,7 +24,24 @@ function Asso({ id }) {
     // Gestion d'événements
     const [isGestionEvents, setIsGestionEvents] = useState(false);
     const [listeEvents, setListeEvents] = useState([]);
-    const [nouvelEvent, setNouvelEvent] = useState(null);
+    const [isNewEvent, setIsNewEvent] = useState(false);
+    const [eventTemps, setEventTemps] = useState({
+        "date_de_debut": "",
+        "heure_de_debut": "",
+        "date_de_fin": "",
+        "heure_de_fin": ""
+    });
+    const [eventTempsPeriodique, setEventTempsPeriodique] = useState({
+        "jours_de_la_semaine": [],
+        "heure_de_debut": "",
+        "heure_de_fin": ""
+    });
+    const [nouvelEvent, setNouvelEvent] = useState({
+        "nom": "",
+        "description": "",
+        "lieu": "",
+        "evenement_periodique": false,
+    });
 
     // Gestion de membres
     const [isGestionMembres, setIsGestionMembres] = useState(false);
@@ -64,46 +81,118 @@ function Asso({ id }) {
     };
 
     // Gestion des événements
+    const clearNewEvent = () => {
+        setEventTemps({
+            "date_de_debut": "",
+            "heure_de_debut": "",
+            "date_de_fin": "",
+            "heure_de_fin": ""
+        });
+        setEventTempsPeriodique({
+            "jours_de_la_semaine": [],
+            "heure_de_debut": "",
+            "heure_de_fin": ""
+        });
+        setNouvelEvent({
+            "nom": "",
+            "description": "",
+            "lieu": "",
+            "evenement_periodique": false,
+        });
+    }
+
+
     const handleIsGestionEvents = (newState) => {
         if (!newState) {
-            setNouvelEvent(null);
+            clearNewEvent();
+            setIsNewEvent(false);
         }
         setIsGestionEvents(newState);
     }
 
+    const handleSetNouvelEvent = (e) => {
+        const { name, value, checked } = e.target;
+        setNouvelEvent(prevState => {
+            // Événement périodique
+            if (name === 'evenement_periodique') {
+                return {
+                    ...prevState,
+                    [name]: checked
+                };
+            }
+            return {
+                ...prevState,
+                [name]: value
+            };
+        });
+    };
+
+    const handleSetEventTempsPeriodique = (e) => {
+        const { name, value, checked } = e.target;
+        setEventTempsPeriodique(prevState => {
+            // Les jours de la semaine pour un événement périodique
+            if (name === 'jours_de_la_semaine') {
+                const currentDays = eventTempsPeriodique.jours_de_la_semaine;
+                const updatedDays = checked ? [...currentDays, value] : currentDays.filter(day => day !== value);
+                return {
+                    ...prevState,
+                    [name]: updatedDays
+                };
+            }
+            return {
+                ...prevState,
+                [name]: value
+            };
+        });
+    }
+
+    const handleSetEventTemps = (e) => {
+        const { name, value } = e.target;
+        setEventTemps(prevState => {
+            return {
+                ...prevState,
+                [name]: value
+            };
+        });
+    }
+
+    const validerNouvelEvent = async () => {
+        try {
+            const newEvent = {
+                ...nouvelEvent,
+                ...eventTempsPeriodique,
+                ...{
+                    date_de_debut: `${eventTemps.date_de_debut}T${eventTemps.heure_de_debut}:00`,
+                    date_de_fin: `${eventTemps.date_de_fin}T${eventTemps.heure_de_fin}:00`
+                }
+            };
+            await creerNouvelEvenement(id, newEvent);
+            clearNewEvent();
+            setIsNewEvent(false);
+            const events = await obtenirEvenementsAsso(id);
+            setListeEvents(events.evenements);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const formatEventDate = (event) => {
-        // Convertir HHMM en HH:MM
-        const formatTime = (time) => {
-            if (!time || time.length !== 4) return '';
-            return `${time.substring(0, 2)}:${time.substring(2, 4)}`;
-        };
-
-        // Événement périodique
         if (event.evenement_periodique) {
-            // Rajouter "s" à la fin de jours
-            const jours = event.jours_de_la_semaine.map(jour => {
-                return jour.toLowerCase() + 's';
-            }).join(', ');
-
-            const debutHeure = formatTime(event.heure_de_debut);
-            const finHeure = formatTime(event.heure_de_fin);
-
+            const jours = event.jours_de_la_semaine.map(day => day + "s").join(', ');
+            const debutHeure = event.heure_de_debut;
+            const finHeure = event.heure_de_fin;
             return `Tous les ${jours} de ${debutHeure} à ${finHeure}`;
-
-        // Événement unique
         } else {
-            // Handle non-repeatable events
-            const debutDate = `${event.date_de_debut.substring(6, 8)}/${event.date_de_debut.substring(4, 6)}/${event.date_de_debut.substring(0, 4)}`;
-            const debutHeure = `${event.date_de_debut.substring(8, 10)}:${event.date_de_debut.substring(10, 12)}`;
-
-            const finDate = `${event.date_de_fin.substring(6, 8)}/${event.date_de_fin.substring(4, 6)}/${event.date_de_fin.substring(0, 4)}`;
-            const finHeure = `${event.date_de_fin.substring(8, 10)}:${event.date_de_fin.substring(10, 12)}`;
-
-            // Les événements peuvent durer plusieurs jours
-            if (event.date_de_debut.substring(0, 8) === event.date_de_fin.substring(0, 8)) {
-                return `Le ${debutDate} de ${debutHeure} à ${finHeure}`;
+            const dateDebut = new Date(event.date_de_debut);
+            const dateFin = new Date(event.date_de_fin);
+            const debutDateStr = dateDebut.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const debutHeureStr = dateDebut.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            const finDateStr = dateFin.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const finHeureStr = dateFin.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            if (dateDebut.toDateString() === dateFin.toDateString()) {
+                return `Le ${debutDateStr} de ${debutHeureStr} à ${finHeureStr}`;
             } else {
-                return `Du ${debutDate} à ${debutHeure} au ${finDate} à ${finHeure}`;
+                return `Du ${debutDateStr} à ${debutHeureStr} au ${finDateStr} à ${finHeureStr}`;
             }
         }
     };
@@ -337,7 +426,7 @@ function Asso({ id }) {
                         <div className='asso-titre-description'>
                             <h2>Description de l'association</h2>
                             {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => handleSetActiveTab("edit-desc")}>
-                                <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
+                                <img src="/assets/icons/edit.svg" alt="Copy" />
                                 <p id="texteCopier">Éditer</p>
                             </div>}
                         </div>
@@ -350,7 +439,7 @@ function Asso({ id }) {
                 {activeTab === "edit-desc" && <>
                     <h2>Nouvelle description</h2>
                     <RichEditor value={nouvelleDescription} onChange={setNouvelleDescription} />
-                    <div className='valider-holder'>
+                    <div className='buttons-container'>
                         <div className='valider-button' onClick={handleModifierDescription}>
                             <img src="/assets/icons/check-mark.svg" alt="Valider" />
                             <p>Valider</p>
@@ -362,7 +451,7 @@ function Asso({ id }) {
                     </div>
                 </>}
 
-                {/* Événemments */}
+                {/* Événements */}
                 {activeTab === "events" && <>
                     <div className='asso-titre-description'>
                         <h2>Les événements</h2>
@@ -371,17 +460,70 @@ function Asso({ id }) {
                             <p id="texteCopier">Éditer</p>
                         </div>}
                     </div>
-                    {listeEvents.map((event) => (
-                        <div className='asso-bloc-interne'>
-                            <h2>{event.nom}</h2>
-                            <p>
-                                <strong>Quand</strong> : {formatEventDate(event)}</p>
-                            <p>
-                                <strong>Où</strong> : {event.lieu}
-                            </p>
-                            <p>{event.description}</p>
+                    {isGestionEvents && !isNewEvent && <div className='buttons-container'>
+                        <div className='valider-button' onClick={() => setIsNewEvent(true)}>
+                            <img src="/assets/icons/plus.svg" alt="Ajouter un événement" />
+                            <p>Ajouter un événement</p>
                         </div>
-                    ))}
+                    </div>}
+                    <div className='asso-events-container'>
+                        {isNewEvent && <div className='asso-bloc-interne'>
+                            <h2>Titre : <input value={nouvelEvent.nom} name='nom' onChange={handleSetNouvelEvent} /></h2>
+                            <p>Événement périodique <input type="checkbox" checked={nouvelEvent.evenement_periodique} name='evenement_periodique' onChange={handleSetNouvelEvent} /></p>
+                            <p><strong>Quand</strong> : </p>
+                            {/* événement périodique */}
+                            {nouvelEvent.evenement_periodique && <>
+                                <p>
+                                    Jours : 
+                                    {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map(day => (
+                                        <label key={day}>
+                                            <input type="checkbox" name="jours_de_la_semaine" value={day} checked={eventTempsPeriodique.jours_de_la_semaine.includes(day)} onChange={handleSetEventTempsPeriodique} />
+                                            {day}
+                                        </label>
+                                    ))}
+                                </p>
+                                <p>Heure début : <input value={eventTempsPeriodique.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetEventTempsPeriodique} /></p>
+                                <p>Heure fin : <input value={eventTempsPeriodique.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetEventTempsPeriodique} /></p>
+                            </>}
+                            {/* événement unique */}
+                            {!nouvelEvent.evenement_periodique && <>
+                                <p>Date de début : <input value={eventTemps.date_de_debut} name='date_de_debut' type='date' onChange={handleSetEventTemps} /></p>
+                                <p>Heure de début : <input value={eventTemps.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetEventTemps} /></p>
+                                <p>Date de fin : <input value={eventTemps.date_de_fin} name='date_de_fin' type='date' onChange={handleSetEventTemps} /></p>
+                                <p>Heure de fin : <input value={eventTemps.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetEventTemps} /></p>
+                            </>}
+                            <p><strong>Où</strong> : <input value={nouvelEvent.lieu} name='lieu' onChange={handleSetNouvelEvent} /></p>
+                            <p>Description : <textarea value={nouvelEvent.description} name='description' onChange={handleSetNouvelEvent} /></p>
+                            {isNewEvent && <div className='buttons-container'>
+                                <div className='valider-button' onClick={validerNouvelEvent}>
+                                    <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
+                                    <p>Ajouter</p>
+                                </div>
+                                <div className='annuler-button' onClick={() => setIsNewEvent(false)}>
+                                    <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
+                                    <p>Annuler</p>
+                                </div>
+                            </div>}
+                        </div>}
+                        {listeEvents.map((event) => (
+                            <div className='asso-bloc-interne'>
+                                <h2>{event.nom}</h2>
+                                <p><strong>Quand</strong> : {formatEventDate(event)}</p>
+                                <p><strong>Où</strong> : {event.lieu}</p>
+                                <p>{event.description}</p>
+                                {isGestionEvents && <div className='buttons-container'>
+                                    <div className='asso-button' onClick={handleModifierDescription}>
+                                        <img src="/assets/icons/edit.svg" alt="Editer" />
+                                        <p>Editer</p>
+                                    </div>
+                                    <div className='annuler-button' onClick={annulerModifierDescription}>
+                                        <img src="/assets/icons/delete.svg" alt="Supprimer" />
+                                        <p>Supprimer</p>
+                                    </div>
+                                </div>}
+                            </div>
+                        ))}
+                    </div>
                 </>}
 
                 {/* Membres */}
@@ -428,7 +570,7 @@ function Asso({ id }) {
                                     {/* Input pour changer l'ordre d'affichage */}
                                     {idMembreModifier == user.id && <>
                                         <label htmlFor='position-input' className='asso-membres-label'>Position</label>
-                                        <input value={nouvellePosition} id='position-input' className='asso-membres-input' onChange={(e) => setNouvellePosition(e.target.value)}></input>
+                                        <input value={nouvellePosition} type='number' id='position-input' className='asso-membres-input' onChange={(e) => setNouvellePosition(e.target.value)}></input>
                                         {/* Validation de changements */}
                                         <button onClick={() => handleMembreChange(user.id)}>Valider</button>
                                     </>}

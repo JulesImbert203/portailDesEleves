@@ -467,7 +467,7 @@ export async function ajouterAsso(nom, description, type_association, ordre_impo
 export async function modifier_description_asso(asso_id, new_desc) {
   try {
     const res = await fetch(`http://localhost:5000/api/associations/${asso_id}/editer_description`, {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -501,7 +501,7 @@ export async function ajouterMembre(associationId, membreId) {
 export async function retirerMembre(associationId, membreId) {
   try {
     const res = await fetch(`http://localhost:5000/api/associations/${associationId}/retirer_membre/${membreId}`, {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
@@ -518,7 +518,7 @@ export async function retirerMembre(associationId, membreId) {
 export async function modifierRoleMembre(associationId, membreId, role) {
   try {
     const res = await fetch(`http://localhost:5000/api/associations/${associationId}/modifier_role_membre/${membreId}`, {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -536,7 +536,7 @@ export async function modifierRoleMembre(associationId, membreId, role) {
 export async function modifierPositionMembre(associationId, membreId, position) {
   try {
     const res = await fetch(`http://localhost:5000/api/associations/${associationId}/modifier_position_membre/${membreId}`, {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -553,7 +553,7 @@ export async function modifierPositionMembre(associationId, membreId, position) 
 export async function updateMembersOrder(associationId) {
   try {
     const res = await fetch(`http://localhost:5000/api/associations/${associationId}/update_members_order`, {
-      method: "GET",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -654,9 +654,9 @@ export async function obtenirListeDesUtilisateursParPromo(promo) {
   return data;
 }
 
-export async function creerNouvelEvenement(data) {
+export async function creerNouvelEvenement(id_asso, data) {
   try {
-    const res = await fetch(`http://localhost:5000/api/evenements/creer_nouvel_evenement`, {
+    const res = await fetch(`http://localhost:5000/api/evenements/${id_asso}/creer_nouvel_evenement`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

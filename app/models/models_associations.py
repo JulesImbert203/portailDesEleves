@@ -15,7 +15,7 @@ class Association(db.Model):
     #Éléments ajoutés à la création de l'association — Modifiables par les membres de l'association
     nom = db.Column(db.String(1000), nullable=False)
     nom_dossier = db.Column(db.String(1000), nullable=False)
-    description = db.Column(db.String(1000), nullable=True)
+    description = db.Column(db.Text, nullable=True)
     logo_path = db.Column(db.String(1000), nullable=True)
     banniere_path = db.Column(db.String(1000), nullable=True) # banniere de l'asso
 

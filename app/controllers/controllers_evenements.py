@@ -11,10 +11,10 @@ from app.services.services_evenements import *
 controllers_evenements = Blueprint('controllers_evenements', __name__)
 
 
-@controllers_evenements.route("/creer_nouvel_evenement", methods=['POST'])
+@controllers_evenements.route("<int:association_id>/creer_nouvel_evenement", methods=['POST'])
 @login_required
 @est_membre_de_asso
-def route_creer_nouvel_evenement():
+def route_creer_nouvel_evenement(association_id: int):
     """
     Ajoute un nouvel evenement dans la BDD. 
     La logique de si l'evenement est periodique ou non est laisse a init du model Evenement
@@ -22,24 +22,69 @@ def route_creer_nouvel_evenement():
     """
     try:
         data = request.json
-        evenement = Evenement(id_association=data["id_association"],
-                              nom=data["nom"],
-                              description=data["description"],
-                              lieu=data["lieu"],
-                              evenement_periodique=data["evenement_periodique"],
-                              date_de_debut=data["date_de_debut"],
-                              date_de_fin=data["date_de_fin"],
-                              jours_de_la_semaine=data["jours_de_la_semaine"],
-                              heure_de_debut=data["heure_de_debut"],
-                              heure_de_fin=data["heure_de_fin"])
-        db.session.add(evenement)
-        db.session.commit()
-        return jsonify({"message": "Événement créé avec succès", "id_evenement": evenement.id}), 201
+        check = verifier_format(data)
+        if check["valide"]:
+            if data["evenement_periodique"]:
+                evenement = Evenement(id_association=association_id,
+                                      nom=data["nom"],
+                                      description=data["description"],
+                                      lieu=data["lieu"],
+                                      evenement_periodique=data["evenement_periodique"],
+                                      jours_de_la_semaine=data["jours_de_la_semaine"],
+                                      heure_de_debut=time.fromisoformat(data["heure_de_debut"]),
+                                      heure_de_fin=time.fromisoformat(data["heure_de_fin"]))
+            else:
+                evenement = Evenement(id_association=association_id,
+                                      nom=data["nom"],
+                                      description=data["description"],
+                                      lieu=data["lieu"],
+                                      evenement_periodique=data["evenement_periodique"],
+                                      date_de_debut=datetime.fromisoformat(data["date_de_debut"]),
+                                      date_de_fin=datetime.fromisoformat(data["date_de_fin"]))
+            db.session.add(evenement)
+            db.session.commit()
+            return jsonify({"message": "Événement créé avec succès", "id_evenement": evenement.id}), 201
+        else:
+            return jsonify({"message": check["message"]}), 400
     except Exception as e:
         return jsonify({"message": f"erreur lors de la création de l'événement : {e}"}), 500
 
 
-@controllers_evenements.route("/evenement/<int:evenement_id>/toggle_visibility", methods=["POST"])
+@controllers_evenements.route("<int:association_id>/modifier_evenement/<int:id_evenement>", methods=['PUT'])
+@login_required
+@est_membre_de_asso
+def route_modifier_evenement(id_evenement: int):
+    """
+    Modifie un événement existant dans la BDD.
+    """
+    try:
+        evenement = Evenement.query.get(id_evenement)
+        if not evenement:
+            return jsonify({"message": "Événement non trouvé"}), 404
+        data = request.json
+        check = verifier_format(data)
+        if check["valide"]:
+            evenement.nom = data["nom"]
+            evenement.description = data["description"]
+            evenement.lieu = data["lieu"]
+            evenement.evenement_periodique = data["evenement_periodique"]
+            if evenement.evenement_periodique:
+                evenement.jours_de_la_semaine = data["jours_de_la_semaine"]
+                evenement.heure_de_debut = data["heure_de_debut"]
+                evenement.heure_de_fin = data["heure_de_fin"]
+            else:
+                evenement.date_de_debut = data["date_de_debut"]
+                evenement.date_de_fin = data["date_de_fin"]
+            db.session.commit()
+            return jsonify({"message": "Événement modifié avec succès"}), 200
+        else:
+            return jsonify({"message": check["message"]}), 400
+
+    except Exception as e:
+        return jsonify({"message": f"Erreur lors de la modification de l'événement : {e}"}), 500
+
+
+@controllers_evenements.route("<int:association_id>/toggle_visibility/<int:evenement_id>", methods=["POST"])
 @login_required
 @est_membre_de_asso
 def route_toggle_visibility(evenement_id):
@@ -50,7 +95,7 @@ def route_toggle_visibility(evenement_id):
     return jsonify({"message": "Visibilité de l'événement modifiée", "evenement_masque": evenement.evenement_masque}), 200
 
 
-@controllers_evenements.route("/evenement/<int:evenement_id>", methods=["DELETE"])
+@controllers_evenements.route("<int:association_id>/supprimer_evenement/<int:evenement_id>", methods=["DELETE"])
 @login_required
 @est_membre_de_asso
 def route_supprimer_evenement(evenement_id):
@@ -61,7 +106,7 @@ def route_supprimer_evenement(evenement_id):
     return jsonify({"message": "Événement supprimé avec succès"}), 200
 
 
-@controllers_evenements.route("/evenement/<int:evenement_id>/annuler", methods=["POST"])
+@controllers_evenements.route("<int:association_id>/annuler_evenement/<int:evenement_id>", methods=["POST"])
 @login_required
 @est_membre_de_asso
 def route_annuler_evenement(evenement_id):

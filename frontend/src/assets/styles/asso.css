@@ -328,7 +328,7 @@
 }
 
 /* contenu de la page */
-/* boutton */
+/* bouttons */
 .asso-button {
     --asso-button-text-size: 15px;
     font-size: var(--asso-button-text-size);
@@ -353,24 +353,13 @@
     margin: 0;
 }
 
-.asso-button-icon {
+.asso-button img {
     width: var(--asso-button-text-size);
 }
 
-/* description */
-.asso-titre-description {
-    display: flex;
-    align-items: center;
-}
-
-#asso-description-button {
-    position: absolute;
-    right: 0;
-    margin-right: var(--asso-padding);
-}
-
-.valider-holder {
+.buttons-container {
     margin-top: var(--asso-members-spacing-medium);
+    margin-bottom: var(--asso-members-spacing-medium);
     display: flex;
     gap: 15px;
 }
@@ -430,4 +419,25 @@
 
 .annuler-button img {
     width: var(--button-text-size);
+}
+
+/* description */
+
+.asso-titre-description {
+    display: flex;
+    align-items: center;
+}
+
+#asso-description-button {
+    position: absolute;
+    right: 0;
+    margin-right: var(--asso-padding);
+}
+
+/* evenements */
+
+.asso-events-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--asso-members-spacing-medium);
 }

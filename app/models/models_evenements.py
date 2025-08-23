@@ -2,7 +2,7 @@ from app import db
 import os
 import re
 import shutil
-from datetime import datetime
+from datetime import datetime, time
 from app.models.models_associations import Association
 
 
@@ -42,17 +42,17 @@ class Evenement (db.Model):
     lieu = db.Column(db.String(1000), nullable=True)
     evenement_periodique = db.Column(db.Boolean, nullable=False)
     evenement_masque = db.Column(db.Boolean, nullable=False)
-    # evenements non periodiques uniquement - AAAAMMJJHHMM
-    date_de_debut = db.Column(db.String(100), nullable=True)
-    date_de_fin = db.Column(db.String(100), nullable=True)
+    # evenements non periodiques uniquement
+    date_de_debut = db.Column(db.DateTime, nullable=True)
+    date_de_fin = db.Column(db.DateTime, nullable=True)
     # evenements periodiques uniquement
     jours_de_la_semaine = db.Column(db.JSON, nullable=True)
-    heure_de_debut = db.Column(db.String(100), nullable=True)
-    heure_de_fin = db.Column(db.String(100), nullable=True)
-    # liste au format AAAAMMJJ, les evenements periodiques ne seront pas affiches ces jours la
+    heure_de_debut = db.Column(db.Time, nullable=True)
+    heure_de_fin = db.Column(db.Time, nullable=True)
+    # les evenements periodiques ne seront pas affichés ces jours la
     dates_annulation = db.Column(db.JSON, nullable=True)
 
-    def __init__(self, id_association: int, nom: str, description: str, lieu: str, evenement_periodique: bool, date_de_debut: str = None, date_de_fin: str = None, jours_de_la_semaine: list = None, heure_de_debut: str = None, heure_de_fin: str = None):
+    def __init__(self, id_association: int, nom: str, description: str, lieu: str, evenement_periodique: bool, date_de_debut: datetime = None, date_de_fin: datetime = None, jours_de_la_semaine: list = None, heure_de_debut: time = None, heure_de_fin: time = None):
         """"
         Crée un nouvel évènement
         """
@@ -69,30 +69,15 @@ class Evenement (db.Model):
             else:
                 raise ValueError(
                     "Liste de jours de la semaine invalide (exemple de format accepte : ['lundi', 'mercredi'])")
-            if est_heure_HHMM(heure_de_debut):
-                self.heure_de_debut = heure_de_debut
-            else:
-                raise ValueError(
-                    f"format d'heure/minutes de heure_de_debut : '{heure_de_debut}' invalide. La date doit etre au format HHMM")
-            if est_heure_HHMM(heure_de_fin):
-                self.heure_de_fin = heure_de_fin
-            else:
-                raise ValueError(
-                    f"format d'heure/minutes de heure_de_fin : '{heure_de_fin}' invalide. La date doit etre au format HHMM")
+            self.heure_de_debut = heure_de_debut
+            self.heure_de_fin = heure_de_fin
             self.date_de_debut = None
             self.date_de_fin = None
         else:
-            if est_date_AAAAMMJJHHMM(date_de_debut):
-                self.date_de_debut = date_de_debut
-            else:
-                raise ValueError(
-                    f"format de date de '{date_de_debut}' invalide. La date doit etre au format AAAAMMJJHHMM")
-            if est_date_AAAAMMJJHHMM(date_de_fin):
-                self.date_de_fin = date_de_fin
-            else:
-                raise ValueError(
-                    f"format de date de '{date_de_fin}' invalide. La date doit etre au format AAAAMMJJHHMM")
-            self.heure = None
+            self.date_de_debut = date_de_debut
+            self.date_de_fin = date_de_fin
+            self.heure_de_debut = None
+            self.heure_de_fin = None
             self.jours_de_la_semaine = None
         self.evenement_masque = False
         self.dates_annulation = []
@@ -107,12 +92,12 @@ class Evenement (db.Model):
 
                    evenement_periodique: bool = None,
 
-                   date_de_debut: str = None,
-                   date_de_fin: str = None,
+                   date_de_debut: datetime = None,
+                   date_de_fin: datetime = None,
 
                    jours_de_la_semaine: list = None,
-                   heure_de_debut: str = None,
-                   heure_de_fin: str = None,
+                   heure_de_debut: time = None,
+                   heure_de_fin: time = None,
                    ):
         """            
         Modifie les valeurs d'un évènement, puis met a jour la base de donnee.
@@ -129,11 +114,11 @@ class Evenement (db.Model):
         - description : str
             Description de l'évènement, peut contenir des accents et des caracteres speciaux 
             ainsi que des sauts de ligne et des informations de mise en page HTML.
-        - date_de_debut : str
-            Date de début de l'évènement au format AAAAMMJJHHMM
+        - date_de_debut : datetime
+            Date de début de l'évènement au format datetime
             Il s'agit de la date de début de l'évènement s'il n'est pas périodique, None s'il est périodique
-        - date_de_fin : str
-            Date de fin de l'évènement au format AAAAMMJJHHMM s'il n'est pas périodique, None s'il est périodique
+        - date_de_fin : datetime
+            Date de fin de l'évènement au format datetime s'il n'est pas périodique, None s'il est périodique
         - lieu : str
             Lieu de l'évènement, peut contenir des accents et des caracteres speciaux.
         - evenement_masque : bool
@@ -142,10 +127,10 @@ class Evenement (db.Model):
             True si l'évènement est périodique, False sinon
         - jours_de_la_semaine : list
             Liste des jours de la semaine où l'évènement a lieu, None s'il n'est pas périodique
-        - heure_de_debut : str
-            Heure de début de l'évènement, au format HHMM
-        - heure_de_fin : str
-            Heure de fin de l'évènement, au format HHMM
+        - heure_de_debut : time
+            Heure de début de l'évènement, au format time
+        - heure_de_fin : time
+            Heure de fin de l'évènement, au format time
         """
 
         if nom != None:
@@ -173,10 +158,10 @@ class Evenement (db.Model):
             self.jours_de_la_semaine = jours_de_la_semaine
 
         if heure_de_debut != None:
-            self.heure = heure_de_debut
+            self.heure_de_debut = heure_de_debut
 
         if heure_de_fin != None:
-            self.heure = heure_de_fin
+            self.heure_de_fin = heure_de_fin
 
     def to_dict(self):
         """
@@ -192,12 +177,12 @@ class Evenement (db.Model):
             "lieu": self.lieu,
             "evenement_periodique": self.evenement_periodique,
             "evenement_masque": self.evenement_masque,
-            "date_de_debut": self.date_de_debut,
-            "date_de_fin": self.date_de_fin,
+            "date_de_debut": self.date_de_debut.isoformat() if self.date_de_debut else None,
+            "date_de_fin": self.date_de_fin.isoformat() if self.date_de_fin else None,
             "jours_de_la_semaine": self.jours_de_la_semaine,
-            "heure_de_debut": self.heure_de_debut,
-            "heure_de_fin": self.heure_de_fin,
-            "dates_annulation": self.dates_annulation
+            "heure_de_debut": self.heure_de_debut.strftime("%H:%M") if self.heure_de_debut else None,
+            "heure_de_fin": self.heure_de_fin.strftime("%H:%M") if self.heure_de_fin else None,
+            "dates_annulation": [date.isoformat() for date in self.dates_annulation]
         }
 
  #   def create_evenement_folder(self) :

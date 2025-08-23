@@ -23,7 +23,7 @@ controllers_associations = Blueprint('controllers_associations', __name__)
 
 # routes API : /!\ AVANT DEPLOIEMENT : ajouter la securite
 
-@controllers_associations.route("/<int:association_id>/editer_description", methods=['POST'])
+@controllers_associations.route("/<int:association_id>/editer_description", methods=['PATCH'])
 @login_required
 @est_membre_de_asso
 def route_editer_description(association_id:int) :
@@ -62,7 +62,7 @@ def route_ajouter_membre(association_id, nouveau_membre_id):
     except Exception as e:
         return jsonify({"message": f"Erreur lors de l'ajout du membre : {str(e)}"}), 500
 
-@controllers_associations.route('/<int:association_id>/retirer_membre/<int:membre_id>', methods=['POST'])
+@controllers_associations.route('/<int:association_id>/retirer_membre/<int:membre_id>', methods=['DELETE'])
 @login_required
 @est_membre_de_asso
 def route_retirer_membre(association_id, membre_id):
@@ -85,7 +85,7 @@ def route_retirer_membre(association_id, membre_id):
     except Exception as e:
         return jsonify({"message": f"Erreur lors du retrait du membre : {str(e)}"}), 500
 
-@controllers_associations.route('/<int:association_id>/modifier_role_membre/<int:membre_id>', methods=['POST'])
+@controllers_associations.route('/<int:association_id>/modifier_role_membre/<int:membre_id>', methods=['PATCH'])
 @login_required
 @est_membre_de_asso
 def route_modifier_role_membre(association_id, membre_id):
@@ -109,7 +109,7 @@ def route_modifier_role_membre(association_id, membre_id):
     except Exception as e:
         return jsonify({"message": f"Erreur lors de la modification du role du membre : {str(e)}"}), 500
 
-@controllers_associations.route('/<int:association_id>/modifier_position_membre/<int:membre_id>', methods=['POST'])
+@controllers_associations.route('/<int:association_id>/modifier_position_membre/<int:membre_id>', methods=['PATCH'])
 @login_required
 @est_membre_de_asso
 def route_modifier_position_membre(association_id, membre_id):
@@ -132,7 +132,7 @@ def route_modifier_position_membre(association_id, membre_id):
     except Exception as e:
         return jsonify({"message": f"Erreur lors de la modification de la position du membre : {str(e)}"}), 500
 
-@controllers_associations.route(('/<int:association_id>/update_members_order'), methods=['GET'])
+@controllers_associations.route(('/<int:association_id>/update_members_order'), methods=['PATCH'])
 @login_required
 @est_membre_de_asso
 def route_modifier_ordre_membres(association_id):
