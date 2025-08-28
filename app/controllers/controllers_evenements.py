@@ -53,7 +53,7 @@ def route_creer_nouvel_evenement(association_id: int):
 @controllers_evenements.route("<int:association_id>/modifier_evenement/<int:id_evenement>", methods=['PUT'])
 @login_required
 @est_membre_de_asso
-def route_modifier_evenement(id_evenement: int):
+def route_modifier_evenement(association_id: int, id_evenement: int):
     """
     Modifie un événement existant dans la BDD.
     """
@@ -70,11 +70,11 @@ def route_modifier_evenement(id_evenement: int):
             evenement.evenement_periodique = data["evenement_periodique"]
             if evenement.evenement_periodique:
                 evenement.jours_de_la_semaine = data["jours_de_la_semaine"]
-                evenement.heure_de_debut = data["heure_de_debut"]
-                evenement.heure_de_fin = data["heure_de_fin"]
+                evenement.heure_de_debut = time.fromisoformat(data["heure_de_debut"])
+                evenement.heure_de_fin = time.fromisoformat(data["heure_de_fin"])
             else:
-                evenement.date_de_debut = data["date_de_debut"]
-                evenement.date_de_fin = data["date_de_fin"]
+                evenement.date_de_debut = datetime.fromisoformat(data["date_de_debut"])
+                evenement.date_de_fin = datetime.fromisoformat(data["date_de_fin"])
             db.session.commit()
             return jsonify({"message": "Événement modifié avec succès"}), 200
         else:
@@ -98,7 +98,7 @@ def route_toggle_visibility(evenement_id):
 @controllers_evenements.route("<int:association_id>/supprimer_evenement/<int:evenement_id>", methods=["DELETE"])
 @login_required
 @est_membre_de_asso
-def route_supprimer_evenement(evenement_id):
+def route_supprimer_evenement(association_id, evenement_id):
     evenement = Evenement.query.get(evenement_id)
     if not evenement:
         return jsonify({"message": "Événement non trouvé"}), 404

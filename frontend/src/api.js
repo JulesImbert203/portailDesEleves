@@ -464,7 +464,7 @@ export async function ajouterAsso(nom, description, type_association, ordre_impo
   }
 }
 
-export async function modifier_description_asso(asso_id, new_desc) {
+export async function modifierDescriptionAsso(asso_id, new_desc) {
   try {
     const res = await fetch(`http://localhost:5000/api/associations/${asso_id}/editer_description`, {
       method: "PATCH",
@@ -669,6 +669,40 @@ export async function creerNouvelEvenement(id_asso, data) {
     console.error("Erreur réseau :", erreur);
     throw erreur;
   }
+}
+
+export async function modifierEvenement(id_asso, id_event, data) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/evenements/${id_asso}/modifier_evenement/${id_event}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data)
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
+
+export async function supprimerEvenement(id_asso, id_event) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/evenements/${id_asso}/supprimer_evenement/${id_event}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+
 }
 
 export async function obtenirEvenementsAsso(id_asso) {

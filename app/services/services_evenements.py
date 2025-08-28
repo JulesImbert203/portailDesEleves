@@ -3,7 +3,7 @@ from app.models.models_evenements import Evenement
 from datetime import datetime, timedelta, time
 
 
-def est_heure_HHMM(heure_str):
+def est_heure_HH_colon_MM(heure_str):
     try:
         datetime.strptime(heure_str, "%H:%M")
         return True
@@ -62,7 +62,7 @@ def verifier_format(data):
             heure_fin = data["heure_de_fin"]
             if not isinstance(jours, list) or not est_valide_liste_de_jours(jours):
                 raise ValueError("le format de jours_de_la_semaine est invalide")
-            if not est_heure_HHMM(heure_debut) or not est_heure_HHMM(heure_fin):
+            if not est_heure_HH_colon_MM(heure_debut) or not est_heure_HH_colon_MM(heure_fin):
                 raise ValueError("le format de heure_debut ou heure_fin est invalide")
         else:
             date_debut = data["date_de_debut"]
