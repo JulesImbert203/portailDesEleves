@@ -132,7 +132,6 @@ function Asso({ id }) {
                 {isMembreAutorise &&
                     <div className='asso-admin'>
                         {isMembreDansAsso && <div className='badge_est_dans_asso'><p>Vous êtes dans l'asso</p></div>}
-                        <button className='button_asso' id="button_asso_gerer_publications">Gerer Publications</button>
                     </div>}
             </div>
 

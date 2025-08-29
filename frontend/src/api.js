@@ -550,22 +550,6 @@ export async function modifierPositionMembre(associationId, membreId, position) 
   }
 }
 
-export async function updateMembersOrder(associationId) {
-  try {
-    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/update_members_order`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-    return handleResponse(res);
-  } catch (erreur) {
-    console.error("Erreur réseau :", erreur)
-    throw erreur;
-  }
-}
-
 export async function ajouterContenu(associationId, file) {
   try {
     const formData = new FormData();
