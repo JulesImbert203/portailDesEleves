@@ -5,6 +5,15 @@ from sqlalchemy.orm.attributes import flag_modified
 
 
 #### GESTION DES ASSOCIATIONS
+def create_association(nom:str, description:str, type_association:str, logo_path:str, ordre_importance:int) -> Association:
+    """
+    Crée une nouvelle association
+    """
+    association = Association(nom, description, type_association, logo_path, ordre_importance)
+    db.session.add(association)
+    db.session.commit()
+    return association.id
+
 
 def get_association(association_id) -> Association:  
     """Renvoie un utilisateur depuis son id"""
@@ -17,12 +26,16 @@ def add_member(association:Association, utilisateur:Utilisateur, role:str) :
         """
         Ajoute un membre à l'association
         Renvoie une erreur si l'utilisateur ou l'association n'existe pas
+        Renvoie également une erreur si l'utilisateur est déjà dans l'association
         """
         association=Association.query.get(association.id)
         if association:
             utilisateur=Utilisateur.query.get(utilisateur.id)
             if utilisateur:
-                association.membres.append({'id': utilisateur.id, 'nom_utilisateur':utilisateur.nom_utilisateur, 'role': role})
+                for membre in association.membres:
+                     if membre['id'] == utilisateur.id:
+                          raise ValueError("L'utilisateur est déjà dans l'association")
+                association.membres.append({'id': utilisateur.id, 'nom_utilisateur':utilisateur.nom_utilisateur, 'role': role, 'position' : 0})
                 utilisateur.assos_actuelles[association.id] = role
             else:
                 raise ValueError("L'utilisateur n'existe pas")
@@ -82,26 +95,34 @@ def update_member_role(association:Association, utilisateur:Utilisateur, role:st
         flag_modified(association, 'membres')
         db.session.commit()
    
-
-    
-def update_members_order(association : Association, members_weights:list) :
+def update_member_position(association : Association, utilisateur:Utilisateur, position:int) :
         """
-        Modifie l'ordre des membres de l'association en fonction de leur poids
+        Modifie la position de l'utilisateur das l'association
         """
         association=Association.query.get(association.id)
         if association:
-            membres=association.membres
+            utilisateur=Utilisateur.query.get(utilisateur.id)
+            if utilisateur:
+                for membre in association.membres:
+                    if membre['id'] == utilisateur.id:
+                        membre['position'] = position
+                        break
+            else:
+                raise ValueError("L'utilisateur n'existe pas")
+        else:
+            raise ValueError("L'association n'existe pas")
+        
+        flag_modified(association, 'membres')
+        db.session.commit()
 
-            # création d'une liste de tuples contenant le poids, le nom et l'index du membre
-            ordres=[[members_weights[i],membres[i]['nom_utilisateur'],i] for i in range(len(membres))]
-            
-            # tri des membres en fonction de leur poids puis de leur nom
-            ordres.sort(key=lambda x: (-x[0],x[1]))
-
-            # mise à jour de l'ordre des membres
-            membres=[membres[ordre[2]] for ordre in ordres]
-
-            association.membres=membres
+def update_members_order(association : Association) :
+        """
+        Modifie l'ordre des membres de l'association en fonction de leur position.
+        """
+        association=Association.query.get(association.id)
+        if association:
+            # tri des membres en fonction de leur position puis de leur nom
+            association.membres.sort(key=lambda member: (-member['position'], member['nom_utilisateur']))
         else:
             raise ValueError("L'association n'existe pas")
         

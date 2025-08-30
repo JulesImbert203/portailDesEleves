@@ -14,11 +14,22 @@ def est_auth():
     Renvoie True si l'utilisateur est connecte, False sinon
     """
     if current_user.is_authenticated : 
-        return jsonify({"etat_connexion": True,
-                        "id_utilisateur": current_user.id}), 200
+        return jsonify({"etat_connexion": True}), 200
     else :
-        return jsonify({"etat_connexion": False,
-                        "id_utilisateur": None}), 200
+        return jsonify({"etat_connexion": False}), 200
+
+
+@utilisateurs_bp.route('/current_user_id', methods=['GET'])
+@login_required
+def current_user_id():
+    """
+    Renvoie l'id de l'utilisateur connecte, une erreur 405 s'il n'est pas connecte
+    """
+    if current_user.is_authenticated : 
+        return jsonify({"id_utilisateur": current_user.id}), 200
+    else :
+        return jsonify({"id_utilisateur": None}), 405
+   
 
 
 # route pour se connecter, executee par React
@@ -46,4 +57,3 @@ def deconnexion():
         return jsonify({'connecte':True}),500
     else :
         return jsonify({'connecte':False}),200
-

@@ -1,0 +1,94 @@
+:root {
+    /* Variables globales simplifiées */
+    --global-header-bg-color: #000; /* Fond noir */
+    --global-header-text-color: #fff; /* Texte blanc */
+    --global-header-dropdown-bg-color: #fff; /* Fond du menu déroulant */
+    --global-header-button-bg-color: #007bff; /* Fond des boutons */
+    --global-header-button-hover-bg-color: #0056b3; /* Fond au survol des boutons */
+    --global-header-border-radius: 8px; /* Rayon de bordure */
+    --global-header-padding: 10px 20px; /* Espacement des boutons */
+    --global-header-font-size: 16px; /* Taille de police des boutons */
+    --global-header-transition-duration: 0.3s; /* Durée de transition */
+}
+
+/* Conteneur du bandeau */
+.global-header-header {
+    background-color: var(--global-header-bg-color);
+    color: var(--global-header-text-color);
+    display: flex;
+    justify-content: space-between; /* Pour aligner le menu et le titre */
+    align-items: center; /* Pour centrer verticalement */
+    padding: 10px 20px; /* Espacement global */
+    height: 60px; /* Hauteur du header */
+}
+
+/* Conteneur du menu déroulant */
+.global-header-dropdown {
+    position: relative;
+}
+
+/* Bouton du menu déroulant */
+.global-header-dropdown-btn {
+    background-color: var(--global-header-button-bg-color);
+    color: var(--global-header-text-color);
+    border: none;
+    padding: var(--global-header-padding);
+    font-size: var(--global-header-font-size);
+    cursor: pointer;
+    border-radius: var(--global-header-border-radius);
+    transition: background-color var(--global-header-transition-duration);
+}
+
+/* Bouton du menu déroulant au survol */
+.global-header-dropdown-btn:hover {
+    background-color: var(--global-header-button-hover-bg-color);
+}
+
+/* Menu déroulant */
+.global-header-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--global-header-dropdown-bg-color);
+    border-radius: var(--global-header-border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 1;
+}
+
+/* Montrer le menu lorsque l'on survole */
+.global-header-dropdown:hover .global-header-menu {
+    display: block;
+}
+
+/* Boutons du menu déroulant */
+.global-header-menu button {
+    background-color: var(--global-header-dropdown-bg-color);
+    color: var(--global-header-button-bg-color);
+    padding: var(--global-header-padding);
+    border: none;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color var(--global-header-transition-duration);
+    border-radius: var(--global-header-border-radius);
+}
+
+/* Effet au survol sur les onglets du menu */
+.global-header-menu button:hover {
+    background-color: var(--global-header-button-bg-color);
+    color: var(--global-header-text-color);
+}
+
+/* Titre centré */
+.global-header-centered-container {
+    flex-grow: 1; /* Permet au titre de prendre de l'espace pour être centré */
+    text-align: center;
+}
+
+/* Titre du header */
+.global-header-centered-container h1 {
+    font-size: 24px;
+    margin: 0;
+}

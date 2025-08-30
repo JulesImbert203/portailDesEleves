@@ -1,19 +1,35 @@
 # Arborescence du frontend
 
 ```
-/frontend
-├── /public
-│   ├── favicon.ico         # Icône de l'application
-│   ├── index.html          # Structure HTML de base
-│   ├── manifest.json       # Informations sur l'application (PWA)
-│   └── robots.txt          # Instructions pour les moteurs de recherche
-└── /src
-    ├── /assets
-    │   ├── /images         # Images de l'application
-    │   └── /styles         # Fichiers de style CSS
-    ├── /components
-    │   └── Header.js       # Composant Header
-    ├── App.js              # Composant principal de l'application
-    ├── index.css           # Styles globaux pour l'application
-    └── index.js            # Point d'entrée React
+frontend/
+│── src/
+│   ├── components/  # Composants réutilisables
+│   ├── pages/       # Pages principales (Accueil, Direction, SPA)
+│   ├── App.jsx      # Routeur principal
+│   ├── api.js       # Gestion des requêtes à Flask
+│   ├── main.jsx     # Entrée principale de React
+│── public/
+│   ├── index.html   # Page HTML de base
+│── package.json     # Dépendances et scripts
+
 ```
+
+/src
+│
+├── /components
+│   ├── LayoutContext.js      # Contexte pour gérer l'état du composant central
+│   ├── Layout.js             # Structure de la page avec les blocs et la zone centrale
+│   ├── blocs
+│   │   └── BlocSondage.js    # Exemple de bloc (comme un sondage à gauche)
+│
+├── /pages
+│   ├── Accueil.js            # Page d'accueil
+│   ├── Direction.js          # Page de direction
+│   └── AppPage.js            # Page principale avec la logique pour changer le composant central
+│
+├── /assets
+│   └── styles
+│       └── layout.css        # CSS pour la mise en page (structure)
+│
+├── main.jsx                  # Point d'entrée de l'application
+└── App.jsx                    # Gère les routes principales

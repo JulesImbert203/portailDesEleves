@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 
 from app.services import *
@@ -17,22 +17,26 @@ def route_sondage_du_jour():
     """
     resultat = obtenir_sondage_du_jour_et_votes()
     if resultat:
-        question_du_jour, reponses, votes_par_question = resultat
-        # Creer un dictionnaire pour les réponses et leurs votes
-        reponses_et_votes = {}
-        for i in range(len(reponses)):
-            reponses_et_votes[reponses[i]] = votes_par_question[i]
-
+        question_du_jour, reponses_brutes, votes_par_question = resultat
+        reponses = []
+        votes = []
+        for i in range(4) :
+            if reponses_brutes[i] != None :
+                reponses.append(reponses_brutes[i])
+                votes.append(votes_par_question[i])
+        
         # Retourner les données sous forme de JSON
         return jsonify({
-            'question': question_du_jour,
-            'reponses': reponses_et_votes
+            'is_sondage': True,
+            'question': question_du_jour, # quel est le meilleur etage ?
+            'reponses': reponses, #["piche", "straal", "bench"]
+            'votes' : votes # [0,1,8]
         })
     else:
-        return jsonify({'message': 'Il n\'y a pas de sondage aujourd\'hui.'}), 200
+        return jsonify({'is_sondage': False}), 200
 
 # /!\ ajouter un decorateur pour verifier qu'il y a bien un sodage aujourd'hui   
-@controllers_sondages.route('/voter/<int:vote>', methods=['POST'])
+@controllers_sondages.route('/route_voter_sondage/<int:vote>', methods=['POST'])
 @login_required
 def route_voter_sondage(vote:int):
     """
@@ -45,7 +49,7 @@ def route_voter_sondage(vote:int):
         return jsonify({'message': str(e)}), 500
     
 # /!\ ajouter un decorateur pour verifier que seul le vp sondaj peut faire ça
-@controllers_sondages.route('/valider_sondage/<int:id_sondage>', methods=['POST'])
+@controllers_sondages.route('/route_valider_sondage/<int:id_sondage>', methods=['POST'])
 @login_required
 def route_valider_sondage(id_sondage:int):
     """
@@ -56,42 +60,54 @@ def route_valider_sondage(id_sondage:int):
         return jsonify({'message': 'Sondage validé avec succès'}), 200
     except ErreurSondage as e:
         return jsonify({'message': str(e)}), 500
-    
-@controllers_sondages.route('/proposer_sondage', methods=['GET', 'POST'])
+
+@controllers_sondages.route('/route_supprimer_sondage/<int:id_sondage>', methods=['POST'])
 @login_required
-def proposer_un_sondage():
+def route_supprimer_sondage(id_sondage:int):
     """
-    Permet a un utilisateur de proposer un sondage avec entre 2 et 4 reponses.
-    Sera utilise en paralle d'un formulaire en html pour proposer. 
+    Permet a un vp sondaj de supprimer un sondage propose.
     """
-    if request.method == 'POST':
-        # Recuperation des donnees envoyees via le formulaire
-        question = request.form.get('question')
-        reponse1 = request.form.get('reponse1')
-        reponse2 = request.form.get('reponse2')
-        reponse3 = request.form.get('reponse3', None)
-        reponse4 = request.form.get('reponse4', None)
-        # Validation des reponses
-        reponses = [reponse1, reponse2, reponse3, reponse4]
-        reponses = [r for r in reponses if r is not None]
+    try :
+        supprimer_sondage(id_sondage)
+        return jsonify({'message': 'Sondage supprimé avec succès'}), 200
+    except ErreurSondage as e:
+        return jsonify({'message': str(e)}), 500
 
-        if len(reponses) < 2 or len(reponses) > 4:
-            return jsonify({'message': 'Le sondage doit avoir entre 2 et 4 réponses possibles.'}), 400
-        try:
-            proposer_sondage(question, reponses, current_user)
-            return jsonify({'message': 'Sondage proposé avec succès.'}), 200
-        except Exception as e:
-            return jsonify({'message': f'Erreur lors de la proposition du sondage : {str(e)}'}), 500
 
-    # Si c'est une requête GET, afficher le formulaire de proposition de sondage
-    return render_template('proposer_sondage.html')
-    # code a modifier en fonction de la logique des views
-    
+@controllers_sondages.route('/route_proposer_sondage', methods=['POST'])
+@login_required
+def route_proposer_sondage():
+    """
+    Permet de proposer un sondage depuis le form React
+    """
+    data = request.get_json()  # Récupère les données JSON envoyées par React
+    question = data.get('question')
+    reponses = data.get('reponses')
+    # Si question ou réponses manquantes, retour d'erreur
+    if not question or not reponses or len(reponses) < 2 or len(reponses) > 4:
+        return jsonify({"message": "Erreur : La question doit avoir entre 2 et 4 réponses."}), 400
+
+    # Appel de la fonction proposer_sondage pour enregistrer le sondage dans la base de données
+    try:
+        proposer_sondage(question, list(reponses), current_user)  # Appel de la fonction de service
+        return jsonify({"etat": True, "message": "Sondage créé avec succès!"}), 201
+    except Exception as e:
+        return jsonify({"etat": False, "message": f"Erreur lors de la création du sondage: {str(e)}"}), 500
 
 # sera execute automatiquement chaque jour a minuit
 @controllers_sondages.route("/sondage_suivant", methods=["POST"])
 def route_sondage_suivant() :
     try :
         sondage_suivant()
+        return jsonify({"message" : "success"}), 200
     except Exception as e:
         return jsonify({'message': f'Erreur lors du passage au sondage suivant : {str(e)}'}), 500
+
+@controllers_sondages.route("/route_obtenir_sondages_en_attente", methods=["GET"])
+def route_obtenir_sondages_en_attente() :
+    try :
+        sondages = obtenir_sondages_non_valide()
+        return jsonify({"sondages": sondages}), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Erreur lors du chargement des sondages : {str(e)}'}), 500

@@ -66,6 +66,12 @@ class Utilisateur(db.Model, UserMixin) :
     # Apparaitra sur la page du 2048
     meilleur_score_2048 = db.Column(db.Integer, nullable=False)
 
+    # soifguard
+    solde_octo = db.Column(db.Numeric(10, 2), nullable=False, default=0)  # Arrondi à 2 décimales
+    solde_biero = db.Column(db.Numeric(10, 2), nullable=True, default=0)  # Arrondi à 2 décimales
+    est_cotisant_biero = db.Column(db.Integer, nullable=False, default=False)
+    est_cotisant_octo = db.Column(db.Integer, nullable=False, default=False)
+
     def __init__(self, nom_utilisateur:str, prenom:str, nom_de_famille:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str) :
         """
         Cree un nouvel utilisateur
@@ -74,15 +80,15 @@ class Utilisateur(db.Model, UserMixin) :
         if verifier_chaine_nom_utilisateur(nom_utilisateur) :
             self.nom_utilisateur = nom_utilisateur
         else :
-            raise ValueError("Nom d'utilisateur invalide")
+            raise ValueError(f"Nom d'utilisateur invalide : {nom_utilisateur}")
         if verifier_chaine_prenom_nom(prenom) : 
             self.prenom = prenom
         else :
-            raise ValueError("Prenom invalide")
+            raise ValueError(f"Prenom invalide : {prenom}")
         if verifier_chaine_prenom_nom(nom_de_famille) :
             self.nom_de_famille = nom_de_famille
         else :
-            raise ValueError("Nom de famille invalide")
+            raise ValueError(f"Nom de famille invalide : {nom_de_famille}")
         self.promotion = promotion
         if cycle in {'ic', 'ast', 'vs', 'isup', 'ev', 'de'} :
             self.cycle = cycle 

@@ -13,9 +13,11 @@ class Association(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     #Éléments ajoutés à la création de l'association — Modifiables par les membres de l'association
-    nom = db.Column(db.String(1000), nullable=True)
-    nom_dossier = db.Column(db.String(1000), nullable=True)
-    description = db.Column(db.String(1000), nullable=True)
+    nom = db.Column(db.String(1000), nullable=False)
+    nom_dossier = db.Column(db.String(1000), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    logo_path = db.Column(db.String(1000), nullable=True)
+    banniere_path = db.Column(db.String(1000), nullable=True) # banniere de l'asso
 
     #Liste des membres de l'association
     membres = db.Column(db.JSON, nullable=True)
@@ -23,7 +25,7 @@ class Association(db.Model):
     type_association = db.Column(db.String(1000), nullable=True)
     ordre_importance = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, nom:str, description:str, type_association:str) :
+    def __init__(self, nom:str, ordre_importance:int, description:str=None, type_association:str=None, logo_path:str=None,  banniere_path:str=None,):
         """
         Crée une nouvelle association
         """
@@ -32,6 +34,10 @@ class Association(db.Model):
         self.membres = []  # Initialiser comme une liste
         self.publications = []
         self.type_association = type_association
+        self.logo_path = logo_path
+        self.ordre_importance = ordre_importance
+        self.banniere_path = banniere_path
+
 
         # Créer un dossier pour l'association
         self.create_association_folder()
@@ -61,10 +67,10 @@ class Association(db.Model):
         - description : str
             Description de l'association, peut contenir des accents et des caracteres speciaux 
             ainsi que des sauts de ligne et des informations de mise en page HTML.
-        - membres : dict
-            Liste des membres de l'association au format {id_utilisateur : role}.
+        - membres : json
+            Liste des membres de l'association au format {id : int, nom_utilisateur : str, role : str, position : int}.
             role est une chaine de caracteres, peut contenir des accents et des caracteres speciaux.
-            exemple : { 1 : "Trez, VP fraude fiscale" }
+            exemple : { "id": 1, "nom_utilisateur": "24lefort", "role": "membre", "position" : 0},
         - publications : liste d'objets Publication
             Liste des publications de l'association
         
@@ -91,22 +97,5 @@ class Association(db.Model):
             os.mkdir(f"app/upload/associations/{nom_dossier}")
         except :
             print(f"dossier {nom_dossier} déjà créé !")
-        if nom_dossier == 'bde':
-            self.id = 1
-    
-    def get_members(self) :
-        """
-        Récupère les membres de l'association
-        """
-        members = []
-        for member in self.membres:
-            utilisateur = Utilisateur.query.get(member['id'])
-            if utilisateur:
-                members.append({
-                    'id': utilisateur.id,
-                    'nom_utilisateur': utilisateur.nom_utilisateur,
-                    'prenom': utilisateur.prenom,
-                    'nom_de_famille': utilisateur.nom_de_famille,
-                    'role': member['role']
-                })
-        return members
+        
+ 

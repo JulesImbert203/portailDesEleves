@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 
 from app.services import *
@@ -9,8 +9,108 @@ from app.services.services_utilisateurs import *
 # Creer le blueprint pour les utilisateurs
 controllers_utilisateurs = Blueprint('controllers_utilisateurs', __name__)
 
+@controllers_utilisateurs.route('/obtenir_liste_utilisateurs/<int:promo>/<string:cycles>', methods=['GET'])
+@login_required
+def obtenir_liste_utilisateurs(promo:int, cycles:str):
+    """
+    Renvoie la liste des utilisateurs par cycle et par promotion
+    - cycles est une liste en string de la forme "ic,ast"
+    - Ne fonctionne pas pour renvoyer la de
+    """
+    str_cycles = cycles.split(",")
+    valid_cycles = {'ic', 'ast', 'vs', 'ev', 'isup'}
+    # Vérification des cycles
+    for cycle in str_cycles:
+        if cycle not in valid_cycles:
+            return jsonify({"message": f"Erreur : cycle invalide '{cycle}'. Valeurs autorisées: {valid_cycles}"}), 400
+    # Récupération des utilisateurs avec seulement les champs nécessaires
+    utilisateurs = Utilisateur.query.with_entities(
+        Utilisateur.id, 
+        Utilisateur.nom_utilisateur, 
+        Utilisateur.prenom, 
+        Utilisateur.surnom, 
+        Utilisateur.nom_de_famille, 
+        Utilisateur.promotion, 
+        Utilisateur.cycle
+    ).filter(
+        Utilisateur.promotion == str(promo),
+        Utilisateur.cycle.in_(str_cycles)
+    ).all()
+    # Conversion en JSON
+    liste_utilisateurs = [
+        {
+            "id": u.id,
+            "nom_utilisateur": u.nom_utilisateur,
+            "prenom": u.prenom,
+            "surnom": u.surnom,
+            "nom_de_famille": u.nom_de_famille,
+            "promotion": u.promotion,
+            "cycle": u.cycle
+        }
+        for u in utilisateurs
+    ]
+    return jsonify(liste_utilisateurs), 200
+
+
+
+@controllers_utilisateurs.route('/obtenir_liste_des_promos', methods=["GET"])
+@login_required
+def obtenir_liste_des_promos():
+    """Renvoie la liste des promotions au format JSON"""
+    promotions = db.session.query(Utilisateur.promotion).distinct().all()
+    promotions_list = [promo[0] for promo in promotions if promo[0] is not None]  # Exclure les None
+    return jsonify(promotions_list)
+
+@controllers_utilisateurs.route('/charger_utilisateurs_par_promo/<int:promo>', methods=['GET'])
+@login_required
+def charger_utilisateurs_par_promo(promo: int):
+    """
+    Charge la liste des utilisateurs d'une promo donnée pour Soifguard
+    """
+    utilisateurs = Utilisateur.query.filter_by(promotion=promo).all()
+    if not utilisateurs:
+        return jsonify({"message": "Aucun utilisateur trouvé pour cette promo"}), 404
+    liste_utilisateurs = [
+        {
+            "id": utilisateur.id,
+            "nom_utilisateur": utilisateur.nom_utilisateur,
+            "prenom": utilisateur.prenom,
+            "nom_de_famille": utilisateur.nom_de_famille,
+            "promotion": utilisateur.promotion,
+            "solde_octo": utilisateur.solde_octo,
+            "solde_biero": utilisateur.solde_biero,
+            "est_cotisant_biero": utilisateur.est_cotisant_biero,
+            "est_cotisant_octo":utilisateur.est_cotisant_octo
+        }
+        for utilisateur in utilisateurs
+    ]
+    return jsonify(liste_utilisateurs), 200
+
 
 # routes API :
+# /!\ NON securisé. Doit être utilisé pour de l'affichage uniquement, 
+# chaque route sensible doit avoir le decorateur @superutilisateur_required
+@controllers_utilisateurs.route("/verifier_superutilisateur", methods=["GET"])
+@login_required
+def verifier_superutilisateur():
+    """
+    Vérifie si l'utilisateur connecté est un superutilisateur.
+    Retourne { "is_superuser": True } si oui, sinon { "is_superuser": False }.
+    """
+    return jsonify({"is_superuser": current_user.est_superutilisateur})
+
+@controllers_utilisateurs.route("/obtenir_id_par_nomutilisateur/<string:nom_utilisateur>", methods=["GET"])
+@login_required
+def obtenir_id_par_nomutilisateur(nom_utilisateur:str):
+    """
+    Récupère l'ID d'un utilisateur à partir de son nom d'utilisateur.
+    """
+    utilisateur = Utilisateur.query.filter_by(nom_utilisateur=nom_utilisateur).first()
+    if utilisateur:
+        return jsonify({"success": True, "id_utilisateur": utilisateur.id}), 200
+    else:
+        return jsonify({"success": False, "message": "Utilisateur introuvable"}), 404
+    
 
 @controllers_utilisateurs.route('/obtenir_infos_profil/<int:user_id>', methods=['GET'])
 @login_required
@@ -43,7 +143,8 @@ def obtenir_infos_profil(user_id:int) :
             "fillots_dict": utilisateur.fillots_dict,
             "questions_reponse_du_portail": utilisateur.questions_reponses_du_portail,
             "assos_actuelles": utilisateur.assos_actuelles,
-            "anciennes_assos": utilisateur.anciennes_assos
+            "anciennes_assos": utilisateur.anciennes_assos,
+            "vote_sondaj_du_jour" : utilisateur.vote_sondaj_du_jour,
         }
         return jsonify(infos_utilisateur), 200
 

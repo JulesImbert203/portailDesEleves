@@ -29,17 +29,10 @@ def verifier_authentification():
     else:
         print(f"Erreur lors de la vérification de l'authentification : {response.status_code}")
 
+
+
 def se_deconnecter() :
     response = session.post("http://127.0.0.1:5000/deconnexion")
-
-verifier_authentification()
-se_connecter("23imbert")
-verifier_authentification()
-
-se_deconnecter()
-verifier_authentification()
-
-
 
 def print_infos(id):
     response = session.get(f'http://127.0.0.1:5000/api/users/obtenir_infos_profil/{id}')
@@ -53,6 +46,17 @@ def print_infos(id):
         print(f"{nom_utilisateur} |Co : {co_nom}| Marrain : {marrain_nom}| Fillots :{', '.join(noms_fillots) if noms_fillots else 'Aucun'}")
     else:
         print("Erreur :", response.status_code, response.text)
+
+
+
+verifier_authentification()
+se_connecter("23imbert")
+verifier_authentification()
+print_infos(1)
+
+se_deconnecter()
+verifier_authentification()
+
 
 
 """co
