@@ -43,6 +43,7 @@ function AssoEvents({ asso_id }) {
         "evenement_periodique": false,
     });
 
+    // La création d'un nouvel événement
     const clearNewEvent = () => {
         setNewEventTemps({
             "date_de_debut": "",
@@ -63,54 +64,9 @@ function AssoEvents({ asso_id }) {
         });
     }
 
-    const clearModiferEvent = () => {
-        setModifierEventTemps({
-            "date_de_debut": "",
-            "heure_de_debut": "",
-            "date_de_fin": "",
-            "heure_de_fin": ""
-        });
-        setModifierEventTempsPeriodique({
-            "jours_de_la_semaine": [],
-            "heure_de_debut": "",
-            "heure_de_fin": ""
-        });
-        setModifierEvent({
-            "nom": "",
-            "description": "",
-            "lieu": "",
-            "evenement_periodique": false,
-        });
-    }
-
-    const handleIsGestionEvents = (newState) => {
-        if (!newState) {
-            clearNewEvent();
-            setIsNewEvent(false);
-        }
-        setIsGestionEvents(newState);
-    }
-
     const handleSetNouvelEvent = (e) => {
         const { name, value, checked } = e.target;
         setNouvelEvent(prevState => {
-            // Événement périodique
-            if (name === 'evenement_periodique') {
-                return {
-                    ...prevState,
-                    [name]: checked
-                };
-            }
-            return {
-                ...prevState,
-                [name]: value
-            };
-        });
-    };
-
-    const handleSetModifierEvent = (e) => {
-        const { name, value, checked } = e.target;
-        setModifierEvent(prevState => {
             // Événement périodique
             if (name === 'evenement_periodique') {
                 return {
@@ -142,40 +98,11 @@ function AssoEvents({ asso_id }) {
                 [name]: value
             };
         });
-    }
-
-    const handleSetModifierEventTempsPeriodique = (e) => {
-        const { name, value, checked } = e.target;
-        setModifierEventTempsPeriodique(prevState => {
-            // Les jours de la semaine pour un événement périodique
-            if (name === 'jours_de_la_semaine') {
-                const currentDays = modifierEventTempsPeriodique.jours_de_la_semaine;
-                const updatedDays = checked ? [...currentDays, value] : currentDays.filter(day => day !== value);
-                return {
-                    ...prevState,
-                    [name]: updatedDays
-                };
-            }
-            return {
-                ...prevState,
-                [name]: value
-            };
-        });
-    }
+    };
 
     const handleSetNewEventTemps = (e) => {
         const { name, value } = e.target;
         setNewEventTemps(prevState => {
-            return {
-                ...prevState,
-                [name]: value
-            };
-        });
-    }
-
-    const handleSetModifierEventTemps = (e) => {
-        const { name, value } = e.target;
-        setModifierEventTemps(prevState => {
             return {
                 ...prevState,
                 [name]: value
@@ -197,10 +124,108 @@ function AssoEvents({ asso_id }) {
             clearNewEvent();
             setIsNewEvent(false);
             const events = await obtenirEvenementsAsso(asso_id);
-            setListeEvents(events.evenements);
+            const sortedEvents = sortEvents(events.evenements)
+            setListeEvents(sortedEvents);
         } catch (error) {
             console.error(error);
         }
+    };
+
+    // La modification d'un événement existant
+    const clearModiferEvent = () => {
+        setModifierEventTemps({
+            "date_de_debut": "",
+            "heure_de_debut": "",
+            "date_de_fin": "",
+            "heure_de_fin": ""
+        });
+        setModifierEventTempsPeriodique({
+            "jours_de_la_semaine": [],
+            "heure_de_debut": "",
+            "heure_de_fin": ""
+        });
+        setModifierEvent({
+            "nom": "",
+            "description": "",
+            "lieu": "",
+            "evenement_periodique": false,
+        });
+    };
+
+    const handleSetModifierEvent = (e) => {
+        const { name, value, checked } = e.target;
+        setModifierEvent(prevState => {
+            // Événement périodique
+            if (name === 'evenement_periodique') {
+                return {
+                    ...prevState,
+                    [name]: checked
+                };
+            }
+            return {
+                ...prevState,
+                [name]: value
+            };
+        });
+    };
+
+    const handleSetModifierEventTempsPeriodique = (e) => {
+        const { name, value, checked } = e.target;
+        setModifierEventTempsPeriodique(prevState => {
+            // Les jours de la semaine pour un événement périodique
+            if (name === 'jours_de_la_semaine') {
+                const currentDays = modifierEventTempsPeriodique.jours_de_la_semaine;
+                const updatedDays = checked ? [...currentDays, value] : currentDays.filter(day => day !== value);
+                return {
+                    ...prevState,
+                    [name]: updatedDays
+                };
+            }
+            return {
+                ...prevState,
+                [name]: value
+            };
+        });
+    };
+
+    const handleSetModifierEventTemps = (e) => {
+        const { name, value } = e.target;
+        setModifierEventTemps(prevState => {
+            return {
+                ...prevState,
+                [name]: value
+            };
+        });
+    };
+
+    const validerModifierEvent = async () => {
+        try {
+            const newEvent = {
+                ...modifierEvent,
+                ...modifierEventTempsPeriodique,
+                ...{
+                    date_de_debut: `${modifierEventTemps.date_de_debut}T${modifierEventTemps.heure_de_debut}:00`,
+                    date_de_fin: `${modifierEventTemps.date_de_fin}T${modifierEventTemps.heure_de_fin}:00`
+                }
+            };
+            await modifierEvenement(asso_id, idEventModifier, newEvent);
+            clearModiferEvent();
+            setIdEventModifier(null);
+            const events = await obtenirEvenementsAsso(asso_id);
+            const sortedEvents = sortEvents(events.evenements);
+            setListeEvents(sortedEvents);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // La logique
+    const handleIsGestionEvents = (newState) => {
+        if (!newState) {
+            clearNewEvent();
+            setIsNewEvent(false);
+        }
+        setIsGestionEvents(newState);
     };
 
     const handleSetIdEventModifier = (event_id) => {
@@ -225,31 +250,12 @@ function AssoEvents({ asso_id }) {
         }
     }
 
-    const validerModifierEvent = async () => {
-        try {
-            const newEvent = {
-                ...modifierEvent,
-                ...modifierEventTempsPeriodique,
-                ...{
-                    date_de_debut: `${modifierEventTemps.date_de_debut}T${modifierEventTemps.heure_de_debut}:00`,
-                    date_de_fin: `${modifierEventTemps.date_de_fin}T${modifierEventTemps.heure_de_fin}:00`
-                }
-            };
-            await modifierEvenement(asso_id, idEventModifier, newEvent);
-            clearModiferEvent();
-            setIdEventModifier(null);
-            const events = await obtenirEvenementsAsso(asso_id);
-            setListeEvents(events.evenements);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const removeEvent = async (event_id) => {
         try {
             await supprimerEvenement(asso_id, event_id);
             const events = await obtenirEvenementsAsso(asso_id);
-            setListeEvents(events.evenements);
+            const sortedEvents = sortEvents(events.evenements);
+            setListeEvents(sortedEvents);
         } catch (erreur) {
             console.error(erreur);
         }
@@ -276,13 +282,33 @@ function AssoEvents({ asso_id }) {
         }
     };
 
+    function sortEvents(events) {
+        return events.toSorted((a, b) => {
+            // Les événements périodiques d'abord
+            if (a.evenement_periodique && !b.evenement_periodique) {
+                return -1;
+            }
+            if (!a.evenement_periodique && b.evenement_periodique) {
+                return 1;
+            }
+            // Les événements récents d'abord
+            if (!a.evenement_periodique && !b.evenement_periodique) {
+                const dateA = new Date(a.date_de_debut);
+                const dateB = new Date(b.date_de_debut);
+                return dateB.getTime() - dateA.getTime();
+            }
+            return 0;
+        });
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const membreData = await estUtilisateurDansAsso(asso_id);
-                const events = await obtenirEvenementsAsso(asso_id);
+                const eventsData = await obtenirEvenementsAsso(asso_id);
+                const sortedEvents = sortEvents(eventsData.evenements)
                 setIsMembreAutorise(membreData.autorise);
-                setListeEvents(events.evenements)
+                setListeEvents(sortedEvents);
             } catch (error) {
                 console.error("Erreur lors du chargement des données:", error);
             }

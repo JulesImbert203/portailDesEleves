@@ -1,4 +1,3 @@
-
 from app import db
 from sqlalchemy.ext.mutable import MutableDict
 from flask_login import UserMixin # pour faire le lien entre la class utilisateur et flask_login
@@ -49,13 +48,11 @@ class Utilisateur(db.Model, UserMixin) :
     questions_reponses_du_portail = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
     # Exemple = { "trash to co" : "Il pue", "Quelles assos comptes-tu faire ?" : "Le WEIIIII" }
 
-    # Liste des assos - Non modifiable
-    assos_actuelles = db.Column(MutableDict.as_mutable(db.JSON), nullable=False)
-    # clef : id de l'asso, contenu : role(s). Ce role sera le meme que dans la table de l'asso
-    # Exemple = { 101 : "Trez, VP fraude fiscale" } 
-    anciennes_assos = db.Column(MutableDict.as_mutable(db.JSON), nullable=False)
-    # clef : id de l'asso, contenu : (mandat, role(s)). Ce role sera le meme que dans la table des anciens mandats de l'asso
-    # Exemple = { 101 : [23, "Trez, VP fraude fiscale"] } 
+    # Liste des assos actuelles
+    associations_actuelles = db.relationship('AssociationMembre', back_populates='utilisateur')
+
+    # Liste des assos anciennes
+    associations_anciennes = db.relationship('AssociationAncienMembre', back_populates='utilisateur')
 
     # Sondages
     vote_sondaj_du_jour = db.Column(db.Integer, nullable=True)
@@ -106,8 +103,6 @@ class Utilisateur(db.Model, UserMixin) :
         self.nombre_participations_sondaj = 0 
         self.nombre_victoires_sondaj = 0
         self.meilleur_score_2048 = 0
-        self.assos_actuelles = dict()
-        self.anciennes_assos = dict()
     
     def __repr__(self):
         """
@@ -187,13 +182,6 @@ class Utilisateur(db.Model, UserMixin) :
             Le dictionnaire contient du texte, pas d'emojis ou de caracteres speciaux. 
         
         /!\ Ne doivent pas etre utilise hors d'une fonction qui verifie la validite des id
-
-        - assos_actuelles : dict
-            clef : id de l'asso, contenu : role(s). Ce role sera le meme que dans la liste des roles dans la table de l'asso.
-            Exemple = { 101 : "Trez, VP fraude fiscale" } 
-        - anciennes_assos : dict
-            Sous la forme suivante : {id_asso1 : [promo_du_mandat, roles], id_asso2 : [promo_du_mandat, roles], ...}
-            Exemple : {101 : [23, "Trez"], 54 : [23, "Sec Gen, vp vert"]}
         
         - vote_sondaj_du_jour : int
             1, 2, 3 ou 4 selon le vote de l'utilisateur au sondaj du jour. 
@@ -311,19 +299,6 @@ class Utilisateur(db.Model, UserMixin) :
             elif key=="questions_reponses_du_portail" :
                 if value == None or valider_questions_du_portail(value) :
                     self.questions_reponses_du_portail = value
-            elif key=="assos_actuelles" :
-                if value==None or valider_assos_roles(value):
-                    self.assos_actuelles = value
-                else :
-                    raise ValueError("Erreur du format des donnees pour assos_actuelles. Le format a respecter est :\n \
-                                    { 101 : \"Trez, VP fraude fiscale\"}") 
-            elif key=="anciennes_assos" :
-                if value==None or valider_anciennes_assos(value):
-                    self.anciennes_assos = value
-                else :
-                    raise ValueError("Erreur du format des donnees pour anciennes_assos. Le format a respecter est :\n \
-                                    {id_asso1 : [promo_du_mandat, roles], id_asso2 : [promo_du_mandat, roles], ...}\n \
-                                    Exemple : {101 : [23, \"Trez\"], 54 : [23, \"Sec Gen, vp vert\"]}")
             elif key=="vote_sondaj_du_jour" :
                 if value==None or value in {1,2,3,4} :
                     self.vote_sondaj_du_jour = value

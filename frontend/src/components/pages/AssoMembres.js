@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, retirerMembre, updateMembersOrder } from "../../api";
+import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, retirerMembre } from "../../api";
 import { useLayout } from "../../layouts/Layout";
 import PageUtilisateur from "./PageUtilisateur";
 
@@ -51,7 +51,6 @@ function AssoMembres({ asso_id }) {
         if (nouvellePosition != null) {
             try {
                 await modifierPositionMembre(asso_id, membreId, parseInt(nouvellePosition));
-                await updateMembersOrder(asso_id);
                 const asso = await chargerAsso(asso_id);
                 setListeMembres(asso.membres)
             } catch (erreur) {
@@ -158,7 +157,7 @@ function AssoMembres({ asso_id }) {
                             <label htmlFor='role-input' className='asso-membres-label'>Rôle</label>
                             <input value={nouveauRole} id='role-input' className='asso-membres-input' onChange={(e) => setNouveauRole(e.target.value)}></input>
                         </>}
-                        {isGestionMembres && idMembreModifier !== user.id && <p className="asso-membres-role">Position : {user.position}</p>}
+                        {isGestionMembres && idMembreModifier !== user.id && <p className="asso-membres-position"><hr/>Position : {user.position}</p>}
 
                         {/* Input pour changer l'ordre d'affichage */}
                         {idMembreModifier == user.id && <>

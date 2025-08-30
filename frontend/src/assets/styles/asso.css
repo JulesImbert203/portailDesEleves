@@ -262,6 +262,13 @@
     margin: 0;
 }
 
+.asso-membres-position {
+    color: var(--text-color);
+    font-size: 0.9em;
+    margin-top:auto;
+    margin-bottom: 0;
+}
+
 .asso-membres-input {
     color: var(--text-color);
     font-style: italic;
