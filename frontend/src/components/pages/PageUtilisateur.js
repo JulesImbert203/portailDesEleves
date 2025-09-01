@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { obtenirDataUser } from '../../api';
-import '../../assets/styles/utilisateur.css'; 
+import '../../assets/styles/utilisateur.css';
 
 
 function PageUtilisateur({ id }) {
@@ -66,7 +66,7 @@ function PageUtilisateur({ id }) {
                 </div>
                 
                 {/* Menu */}
-                <div className="user-tabs">
+                <div className="user-tabs"> 
                     <div className={`user-tab ${activeTab === "info" ? "active" : ""}`} onClick={() => setActiveTab("info")}>Infos</div>
                     <div className={`user-tab ${activeTab === "assos" ? "active" : ""}`} onClick={() => setActiveTab("assos")}>Associations</div>
                     <div className={`user-tab ${activeTab === "questions" ? "active" : ""}`} onClick={() => setActiveTab("questions")}>Questions du portail</div>
@@ -74,8 +74,18 @@ function PageUtilisateur({ id }) {
                 
                 {/* Contenu des onglets */}
                 <div className="user-tab-content">
-                    {activeTab === "info" && <p>Infos principales</p>}
-                    {activeTab === "assos" && <p>Liste des associations ici...</p>}
+                    {activeTab === "info" && <>
+                        <p>Promo : {donneesUtilisateur.promotion}</p>
+                        <p>Date de naissance : {donneesUtilisateur.date_de_naissance}</p>
+                        <p>Chambre : {donneesUtilisateur.chambre}</p>
+                        <p>Ville d'origine : {donneesUtilisateur.ville_origine}</p>
+                        <p>Instruments joués : {donneesUtilisateur.instruments}</p>
+                        <p>Co : {donneesUtilisateur.co_nom}</p>
+                        <p>Parrain.e : {donneesUtilisateur.marrain_nom}</p>
+                    </>}
+                    {activeTab === "assos" && <>
+                        <p>Assos : {donneesUtilisateur.associations_actuelles}</p>
+                    </>}
                     {activeTab === "questions" && <p>Questions du portail ici...</p>}
                 </div>
             </div>

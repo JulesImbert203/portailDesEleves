@@ -6,9 +6,10 @@ import Home from '../pages/Home';
 import Liste_Assos from "../pages/ListeAssos";
 import PlanningAsso from "../pages/PlanningAsso";
 import Trombi from "../pages/Trombi";
+import PageUtilisateur from "../pages/PageUtilisateur";
 
 const Header = () => {
-    const { setCurrentComponent } = useLayout();
+    const { setCurrentComponent, userData } = useLayout();
     
     return (
         <div className="global-header-header">
@@ -20,7 +21,7 @@ const Header = () => {
                 <button onClick={() => setCurrentComponent(<Liste_Assos />)}>Assos</button>
                 <button onClick={() =>setCurrentComponent(<PlanningAsso />)}>Planning associatif</button>
                 <button onClick={() =>setCurrentComponent(<Trombi />)}>Trombinoscope</button>
-
+                <button onClick={() =>setCurrentComponent(<PageUtilisateur id={userData.id} />)}>Ma page</button>
                 </div>
             </div>
 
