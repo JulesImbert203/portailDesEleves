@@ -122,7 +122,7 @@ export async function voterSondage(id_vote) {
 
 // SOIFGUARD :
 
-const SOIFGUARD_BASE_URL = "${API_BASE_URL}api/soifguard";
+const SOIFGUARD_BASE_URL = `${API_BASE_URL}api/soifguard`;
 
 async function handleResponse(response) {
   if (!response.ok) {
