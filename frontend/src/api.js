@@ -1,20 +1,22 @@
 // api.js 
 // aide a interagir avec le backend flask
 
+const API_BASE_URL = "http://localhost:5000/";
+
 export async function estAuthentifie() {
-  const res = await fetch("http://localhost:5000/est_auth", { credentials: "include" });
+  const res = await fetch(`${API_BASE_URL}est_auth`, { credentials: "include" });
   const data = await res.json();
   return data.etat_connexion; // Flask renvoie { "etat_connexion": true/false }
 }
 
 export async function obtenirIdUser() {
-  const res = await fetch("http://localhost:5000/current_user_id", { credentials: "include" });
+  const res = await fetch(`${API_BASE_URL}current_user_id`, { credentials: "include" });
   const data = await res.json();
   return data.id_utilisateur; // Flask renvoie { "id_utilisateur": int ou None si on connecte, ...}
 }
 
 export async function obtenirDataUser(id_utilisateur) {
-  const res = await fetch(`http://localhost:5000/api/users/obtenir_infos_profil/${id_utilisateur}`,
+  const res = await fetch(`${API_BASE_URL}api/users/obtenir_infos_profil/${id_utilisateur}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -22,14 +24,14 @@ export async function obtenirDataUser(id_utilisateur) {
 }
 
 export async function seDeconnecter() {
-  await fetch("http://localhost:5000/deconnexion", {
+  await fetch(`${API_BASE_URL}deconnexion`, {
     method: "POST",
     credentials: "include"
   });
 }
 
 export async function seConnecter(username, password) {
-  const res = await fetch("http://localhost:5000/connexion", {
+  const res = await fetch(`${API_BASE_URL}connexion`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include", // Important pour gérer les cookies de session
@@ -41,7 +43,7 @@ export async function seConnecter(username, password) {
 }
 
 export async function obtenirSondageDuJour() {
-  const res = await fetch(`http://localhost:5000/api/sondages/sondage_du_jour`,
+  const res = await fetch(`${API_BASE_URL}api/sondages/sondage_du_jour`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -50,7 +52,7 @@ export async function obtenirSondageDuJour() {
 
 
 export async function requeteProposerSondage(question, reponses) {
-  const res = await fetch("http://localhost:5000/api/sondages/route_proposer_sondage", {
+  const res = await fetch(`${API_BASE_URL}api/sondages/route_proposer_sondage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include", // Si tu utilises des cookies de session
@@ -62,7 +64,7 @@ export async function requeteProposerSondage(question, reponses) {
 }
 
 export async function obtenirSondagesEnAttente() {
-  const res = await fetch(`http://localhost:5000/api/sondages/route_obtenir_sondages_en_attente`,
+  const res = await fetch(`${API_BASE_URL}api/sondages/route_obtenir_sondages_en_attente`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -70,7 +72,7 @@ export async function obtenirSondagesEnAttente() {
 }
 
 export async function validerSondage(id_sondage) {
-  await fetch(`http://localhost:5000/api/sondages/route_valider_sondage/${id_sondage}`, {
+  await fetch(`${API_BASE_URL}api/sondages/route_valider_sondage/${id_sondage}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include"
@@ -78,7 +80,7 @@ export async function validerSondage(id_sondage) {
 }
 
 export async function supprimerSondage(id_sondage) {
-  await fetch(`http://localhost:5000/api/sondages/route_supprimer_sondage/${id_sondage}`, {
+  await fetch(`${API_BASE_URL}api/sondages/route_supprimer_sondage/${id_sondage}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include"
@@ -87,7 +89,7 @@ export async function supprimerSondage(id_sondage) {
 
 export async function sondageSuivant() {
   try {
-    const response = await fetch(`http://localhost:5000/api/sondages/sondage_suivant`, {
+    const response = await fetch(`${API_BASE_URL}api/sondages/sondage_suivant`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include"
@@ -111,7 +113,7 @@ export async function sondageSuivant() {
 
 
 export async function voterSondage(id_vote) {
-  await fetch(`http://localhost:5000/api/sondages/route_voter_sondage/${id_vote}`, {
+  await fetch(`${API_BASE_URL}api/sondages/route_voter_sondage/${id_vote}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include"
@@ -120,7 +122,7 @@ export async function voterSondage(id_vote) {
 
 // SOIFGUARD :
 
-const SOIFGUARD_BASE_URL = "http://localhost:5000/api/soifguard";
+const SOIFGUARD_BASE_URL = "${API_BASE_URL}api/soifguard";
 
 async function handleResponse(response) {
   if (!response.ok) {
@@ -302,7 +304,7 @@ export async function modifierPrixConsoBiero(id_conso, nouveau_prix, nouveau_pri
 
 export async function getListeConsos(asso = "octo") {
   try {
-    const response = await fetch(`http://localhost:5000/api/soifguard/liste_consos/${asso}`, {
+    const response = await fetch(`${SOIFGUARD_BASE_URL}/liste_consos/${asso}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -315,7 +317,7 @@ export async function getListeConsos(asso = "octo") {
 
 export async function verifierPermission(asso) {
   try {
-    const response = await fetch("http://localhost:5000/api/soifguard/verifier_permission", {
+    const response = await fetch(`${SOIFGUARD_BASE_URL}/verifier_permission`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -331,7 +333,7 @@ export async function verifierPermission(asso) {
 
 export async function ajouterPermission(id_utilisateur, asso = "octo") {
   try {
-    const response = await fetch("http://localhost:5000/api/soifguard/ajouter_permission", {
+    const response = await fetch(`${SOIFGUARD_BASE_URL}/ajouter_permission`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -351,7 +353,7 @@ export async function ajouterPermission(id_utilisateur, asso = "octo") {
 
 export async function obtenirPermissionsSoifguard() {
   try {
-    const response = await fetch('http://localhost:5000/api/soifguard/get_permissions_soifguard', {
+    const response = await fetch('${API_BASE_URL}api/soifguard/get_permissions_soifguard', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -372,7 +374,7 @@ export async function obtenirPermissionsSoifguard() {
 
 export async function verifierSuperutilisateur() {
   try {
-    const response = await fetch("http://localhost:5000/api/users/verifier_superutilisateur", {
+    const response = await fetch(`${API_BASE_URL}api/users/verifier_superutilisateur`, {
       method: "GET",
       credentials: "include",
     });
@@ -389,7 +391,7 @@ export async function verifierSuperutilisateur() {
 }
 
 export async function obtenirIdUserParNom(nom_utilisateur) {
-  const res = await fetch(`http://localhost:5000/api/users/obtenir_id_par_nomutilisateur/${nom_utilisateur}`,
+  const res = await fetch(`${API_BASE_URL}api/users/obtenir_id_par_nomutilisateur/${nom_utilisateur}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -397,7 +399,7 @@ export async function obtenirIdUserParNom(nom_utilisateur) {
 }
 
 export async function chargerUtilisateursParPromo(promo) {
-  const res = await fetch(`http://localhost:5000/api/users/charger_utilisateurs_par_promo/${promo}`,
+  const res = await fetch(`${API_BASE_URL}api/users/charger_utilisateurs_par_promo/${promo}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -406,7 +408,7 @@ export async function chargerUtilisateursParPromo(promo) {
 
 export async function switchCotisationOcto(idUtilisateur) {
   try {
-    await fetch(`http://localhost:5000/api/soifguard/switch_cotisation_octo/${idUtilisateur}`, {
+    await fetch(`${SOIFGUARD_BASE_URL}/switch_cotisation_octo/${idUtilisateur}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -418,7 +420,7 @@ export async function switchCotisationOcto(idUtilisateur) {
 
 export async function switchCotisationBiero(idUtilisateur) {
   try {
-    await fetch(`http://localhost:5000/api/soifguard/switch_cotisation_biero/${idUtilisateur}`, {
+    await fetch(`${SOIFGUARD_BASE_URL}/switch_cotisation_biero/${idUtilisateur}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -429,7 +431,7 @@ export async function switchCotisationBiero(idUtilisateur) {
 }
 
 export async function obtenirDetteMaxi(asso) {
-  const res = await fetch(`http://localhost:5000/api/soifguard/get_negatif_max/${asso}`,
+  const res = await fetch(`${SOIFGUARD_BASE_URL}/get_negatif_max/${asso}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -438,7 +440,7 @@ export async function obtenirDetteMaxi(asso) {
 
 export async function ajouterAsso(nom, description, type_association, ordre_importance, logo_path, banniere_path) {
   try {
-    const response = await fetch("http://localhost:5000/api/associations/route_creer_asso", {
+    const response = await fetch(`${API_BASE_URL}api/associations/route_creer_asso`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -466,7 +468,7 @@ export async function ajouterAsso(nom, description, type_association, ordre_impo
 
 export async function modifierDescriptionAsso(asso_id, new_desc) {
   try {
-    const res = await fetch(`http://localhost:5000/api/associations/${asso_id}/editer_description`, {
+    const res = await fetch(`${API_BASE_URL}api/associations/${asso_id}/editer_description`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -483,7 +485,7 @@ export async function modifierDescriptionAsso(asso_id, new_desc) {
 
 export async function ajouterMembre(associationId, membreId) {
   try {
-    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/ajouter_membre/${membreId}`, {
+    const res = await fetch(`${API_BASE_URL}api/associations/${associationId}/ajouter_membre/${membreId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -500,7 +502,7 @@ export async function ajouterMembre(associationId, membreId) {
 
 export async function retirerMembre(associationId, membreId) {
   try {
-    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/retirer_membre/${membreId}`, {
+    const res = await fetch(`${API_BASE_URL}api/associations/${associationId}/retirer_membre/${membreId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -517,7 +519,7 @@ export async function retirerMembre(associationId, membreId) {
 
 export async function modifierRoleMembre(associationId, membreId, role) {
   try {
-    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/modifier_role_membre/${membreId}`, {
+    const res = await fetch(`${API_BASE_URL}api/associations/${associationId}/modifier_role_membre/${membreId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -535,7 +537,7 @@ export async function modifierRoleMembre(associationId, membreId, role) {
 
 export async function modifierPositionMembre(associationId, membreId, position) {
   try {
-    const res = await fetch(`http://localhost:5000/api/associations/${associationId}/modifier_position_membre/${membreId}`, {
+    const res = await fetch(`${API_BASE_URL}api/associations/${associationId}/modifier_position_membre/${membreId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -555,7 +557,7 @@ export async function ajouterContenu(associationId, file) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`http://localhost:5000/api/associations/${associationId}/add_content`, {
+    const response = await fetch(`${API_BASE_URL}api/associations/${associationId}/add_content`, {
       method: "POST",
       headers: {
         "Accept": "application/json",
@@ -576,7 +578,7 @@ export async function ajouterContenu(associationId, file) {
 
 export async function changerPhoto(asso_id, photo_type, new_name) {
   try {
-    await fetch(`http://localhost:5000/api/associations/${asso_id}/modifier_logo_banniere/${photo_type}/${new_name}`, {
+    await fetch(`${API_BASE_URL}api/associations/${asso_id}/modifier_logo_banniere/${photo_type}/${new_name}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -589,7 +591,7 @@ export async function changerPhoto(asso_id, photo_type, new_name) {
 
 export async function estUtilisateurDansAsso(asso_id) {
   // renvoie True aussi pour le superutilisateur
-  const res = await fetch(`http://localhost:5000/api/associations/route_est_membre_de_asso/${asso_id}`,
+  const res = await fetch(`${API_BASE_URL}api/associations/route_est_membre_de_asso/${asso_id}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -597,7 +599,7 @@ export async function estUtilisateurDansAsso(asso_id) {
 }
 
 export async function chargerAsso(asso_id) {
-  const res = await fetch(`http://localhost:5000/api/associations/${asso_id}`,
+  const res = await fetch(`${API_BASE_URL}api/associations/${asso_id}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -606,7 +608,7 @@ export async function chargerAsso(asso_id) {
 
 export async function chargerListeAssos() {
   try {
-    const res = await fetch(`http://localhost:5000/api/associations/assos`,
+    const res = await fetch(`${API_BASE_URL}api/associations/assos`,
       { credentials: "include" }
     );
     return handleResponse(res);
@@ -616,7 +618,7 @@ export async function chargerListeAssos() {
 }
 
 export async function obtenirListeDesPromos() {
-  const res = await fetch(`http://localhost:5000/api/users/obtenir_liste_des_promos`,
+  const res = await fetch(`${API_BASE_URL}api/users/obtenir_liste_des_promos`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -624,7 +626,7 @@ export async function obtenirListeDesPromos() {
 }
 
 export async function obtenirListeDesUtilisateurs(promo, cycles) {
-  let url = `http://localhost:5000/api/users/obtenir_liste_utilisateurs/${promo}`;
+  let url = `${API_BASE_URL}api/users/obtenir_liste_utilisateurs/${promo}`;
   url += `/${cycles.join(",")}`;
   const res = await fetch(url, { credentials: "include" });
   const data = await res.json();
@@ -632,7 +634,7 @@ export async function obtenirListeDesUtilisateurs(promo, cycles) {
 }
 
 export async function obtenirListeDesUtilisateursParPromo(promo) {
-  let url = `http://localhost:5000/api/users/charger_utilisateurs_par_promo/${promo}`;
+  let url = `${API_BASE_URL}api/users/charger_utilisateurs_par_promo/${promo}`;
   const res = await fetch(url, { credentials: "include" });
   const data = await res.json();
   return data;
@@ -640,7 +642,7 @@ export async function obtenirListeDesUtilisateursParPromo(promo) {
 
 export async function creerNouvelEvenement(id_asso, data) {
   try {
-    const res = await fetch(`http://localhost:5000/api/evenements/${id_asso}/creer_nouvel_evenement`, {
+    const res = await fetch(`${API_BASE_URL}api/evenements/${id_asso}/creer_nouvel_evenement`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -657,7 +659,7 @@ export async function creerNouvelEvenement(id_asso, data) {
 
 export async function modifierEvenement(id_asso, id_event, data) {
   try {
-    const res = await fetch(`http://localhost:5000/api/evenements/${id_asso}/modifier_evenement/${id_event}`, {
+    const res = await fetch(`${API_BASE_URL}api/evenements/${id_asso}/modifier_evenement/${id_event}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -674,7 +676,7 @@ export async function modifierEvenement(id_asso, id_event, data) {
 
 export async function supprimerEvenement(id_asso, id_event) {
   try {
-    const res = await fetch(`http://localhost:5000/api/evenements/${id_asso}/supprimer_evenement/${id_event}`, {
+    const res = await fetch(`${API_BASE_URL}api/evenements/${id_asso}/supprimer_evenement/${id_event}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -691,7 +693,7 @@ export async function supprimerEvenement(id_asso, id_event) {
 
 export async function obtenirEvenementsAsso(id_asso) {
   try {
-    const res = await fetch(`http://localhost:5000/api/evenements/obtenir_evenements_asso/${id_asso}`, {
+    const res = await fetch(`${API_BASE_URL}api/evenements/obtenir_evenements_asso/${id_asso}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
