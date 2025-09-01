@@ -3,46 +3,48 @@ import os
 import re
 import shutil
 
+from datetime import datetime
 from app.models.models_associations import Association
-
 from app.models.models_utilisateurs import Utilisateur
 
+
 class Commentaire():
-    def __init__(self, auteur:int, contenu:str, date:str) :
-        """
-        Crée un nouveau commentaire
-        """
+    __tablename__ = 'commentaire'
+    # ID du commentaire
+    id = db.Column(db.Integer, primary_key=True)
+    # L'auteur du commentaire
+    id_auteur = db.Column(db.Integer, db.ForeignKey('utilisateur.id'))
+    auteur = db.relationship('Utilisateur', backref='commentaires')
+    # La publication
+    id_publication = db.Column(db.Integer, db.ForeignKey('publication.id'))
+    publication = db.relationship('Publication', backref='commentaires')
+
+    contenu = db.Column(db.String(10000), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    likes = db.Column(db.JSON, nullable=True)
+
+    def __init__(self, auteur: Utilisateur, contenu: str, date: datetime, publication: 'Publication'):
         self.auteur = auteur
         self.contenu = contenu
         self.date = date
+        self.publication = publication
         self.likes = []
-    def add_like(self, id_utilisateur:int) :
-        """
-        Ajoute un like au commentaire
-        """
-        self.likes.append(id_utilisateur)
-        self.likes = list(set(self.likes))
-    def remove_like(self, id_utilisateur:int) :
-        """
-        Retire un like du commentaire
-        """
-        self.likes.remove(id_utilisateur)
 
 
 class Publication(db.Model):
     __tablename__ = 'publication'
-    #ID de l'association
+    # ID de la publication
     id = db.Column(db.Integer, primary_key=True)
 
-    #Identification de l'association publiant le post
-    id_association = db.Column(db.Integer, nullable=True)
-    nom_association = db.Column(db.String(1000), nullable=True)
+    # Identification de l'association publiant le post
+    id_association = db.Column(db.Integer, db.ForeignKey('association.id'), nullable=True)
+    association = db.relationship('Association', backref='publications')
 
-    #Identification de l'auteur du post, ne doit pas etre modifie
-    id_auteur = db.Column(db.Integer, nullable=True)
-    auteur = db.Column(db.String(1000), nullable=True)
+    # Identification de l'auteur du post, ne doit pas etre modifie
+    id_auteur = db.Column(db.Integer, db.ForeignKey('utilisateur.id'), nullable=True)
+    auteur = db.relationship('Utilisateur', backref='publications')
 
-    #Surtout utile pour la DE, par défaut vaut False pour les autres associations
+    # Surtout utile pour la DE, par défaut vaut False pour les autres associations
     is_publiee_par_utilisateur = db.Column(db.Boolean, nullable=True)
 
     contenu = db.Column(db.String(10000), nullable=True)
@@ -52,7 +54,7 @@ class Publication(db.Model):
     likes = db.Column(db.JSON, nullable=True)
 
     is_commentable = db.Column(db.Boolean, nullable=True)
-    commentaires = db.Column(db.JSON, nullable=True)
+    commentaires = db.relationship('Commentaire', backref='publication')
 
     a_cacher_to_cycles = db.Column(db.JSON, nullable=True)
 
@@ -60,17 +62,14 @@ class Publication(db.Model):
 
     is_publication_interne = db.Column(db.Boolean, nullable=True)
 
-    def __init__(self, id_association:int, id_auteur : int, contenu:str, date_publication:str,is_commentable:bool, a_cacher_to_cycles:list=[], a_cacher_to_promos:list=[], is_publication_interne:bool=False, is_publiee_par_utilisateur:bool=False) :
+    def __init__(self, association: Association, auteur: Utilisateur, contenu: str, date_publication: str, is_commentable: bool, a_cacher_to_cycles: list = [], a_cacher_to_promos: list = [], is_publication_interne: bool = False, is_publiee_par_utilisateur: bool = False):
         """
         Crée une nouvelle publication
         """
 
-        self.id_association = id_association
+        self.association = association
 
-        self.nom_association = Association.query.get(id_association).nom
-
-        self.id_auteur = id_auteur
-        self.auteur = Utilisateur.query.get(id_auteur).nom_utilisateur
+        self.auteur = auteur
 
         self.contenu = contenu
 
@@ -88,15 +87,13 @@ class Publication(db.Model):
 
         self.is_publication_interne = is_publication_interne
 
-        if self.nom_association == "DE" :
+        if self.association.nom == "DE":
             self.is_publiee_par_utilisateur = True
-        
-        else :
+
+        else:
             self.is_publiee_par_utilisateur = is_publiee_par_utilisateur
 
-
-    def __update__(self, contenu:str=None, is_commentable:bool=None, a_cacher_to_cycles:list=None, a_cacher_to_promos:list=None, is_publication_interne:bool=None) :
-
+    def __update__(self, contenu: str = None, is_commentable: bool = None, a_cacher_to_cycles: list = None, a_cacher_to_promos: list = None, is_publication_interne: bool = None):
         """
         Modifie les valeurs d'une publication.
         Il ne s'agit pas ici de modifier les likes ou les commentaires, 
@@ -109,28 +106,28 @@ class Publication(db.Model):
         ----------------------
         - id_association : int
             ID de l'association publiant le post
-        
-        - nom_association : str
-            Nom de l'association publiant le post, enregistré pour plus de facilité
+
+        - association : Association
+            l'association publiant le post, enregistré pour plus de facilité
 
         - id_auteur : int
             ID de l'auteur du post
 
-        - auteur : str
-            Nom de l'auteur du post, enregistré pour plus de facilité et de traçabilité
+        - auteur : Utilisateur
+            l'auteur du post, enregistré pour plus de facilité et de traçabilité
 
         - is_publiee_par_utilisateur : bool
             Surtout utile pour la DE, par défaut vaut False pour les autres associations,
             L'idée est de savoir si le post est affiché comme publié par l'utilisateur ou
             par l'association
-        
+
         - contenu : str
             Contenu du post, peut contenir des sauts de ligne et des informations 
             de mise en page HTML
 
         - date_publication : str
             Date de publication du post au format 'AAAAMMJJHHMM'
-        
+
         - likes : list
             Liste des ID des utilisateurs ayant liké le post
 
@@ -152,19 +149,17 @@ class Publication(db.Model):
             Permettrait peut-être à terme de gérer les posts des listes BDE, BDA, BDS
 
         """
-        if contenu != None :
+        if contenu != None:
             self.contenu = contenu
 
-        if is_commentable != None :
+        if is_commentable != None:
             self.is_commentable = is_commentable
 
-        if a_cacher_to_cycles != None :
+        if a_cacher_to_cycles != None:
             self.a_cacher_to_cycles = a_cacher_to_cycles
 
-        if a_cacher_to_promos != None :
+        if a_cacher_to_promos != None:
             self.a_cacher_to_promos = a_cacher_to_promos
 
-        if is_publication_interne != None :
+        if is_publication_interne != None:
             self.is_publication_interne = is_publication_interne
-
-   

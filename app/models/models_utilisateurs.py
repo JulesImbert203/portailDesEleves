@@ -69,6 +69,11 @@ class Utilisateur(db.Model, UserMixin) :
     est_cotisant_biero = db.Column(db.Integer, nullable=False, default=False)
     est_cotisant_octo = db.Column(db.Integer, nullable=False, default=False)
 
+    # Publications
+    publications = db.relationship('Publication', backref='auteur')
+    # Commentaires
+    commentaires = db.relationship('Commentaire', backref='auteur')
+
     def __init__(self, nom_utilisateur:str, prenom:str, nom_de_famille:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str) :
         """
         Cree un nouvel utilisateur
@@ -162,6 +167,8 @@ class Utilisateur(db.Model, UserMixin) :
         - sports : str
         instruments : str
             Du texte, avec accents et caracteres speciaux autorises mais pas emojis. 
+        - publications : liste d'objets Publication
+            Liste des publications d'utilisateur
         
         ### Pour marrains, fillots et co, aucune correspondance n'est geree par cette fonction. 
         Cette fonctionnalite ne doit pas etre utilisee, sauf dans un cas bien precis. 
