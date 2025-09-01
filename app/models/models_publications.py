@@ -8,16 +8,16 @@ from app.models.models_associations import Association
 from app.models.models_utilisateurs import Utilisateur
 
 
-class Commentaire():
-    __tablename__ = 'commentaire'
+class Commentaire(db.Model):
+    __tablename__ = 'commentaires'
     # ID du commentaire
     id = db.Column(db.Integer, primary_key=True)
     # L'auteur du commentaire
-    id_auteur = db.Column(db.Integer, db.ForeignKey('utilisateur.id'))
-    auteur = db.relationship('Utilisateur', backref='commentaires')
+    id_auteur = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'))
+    auteur = db.relationship('Utilisateur', back_populates='commentaires')
     # La publication
-    id_publication = db.Column(db.Integer, db.ForeignKey('publication.id'))
-    publication = db.relationship('Publication', backref='commentaires')
+    id_publication = db.Column(db.Integer, db.ForeignKey('publications.id'))
+    publication = db.relationship('Publication', back_populates='commentaires')
 
     contenu = db.Column(db.String(10000), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
@@ -32,17 +32,17 @@ class Commentaire():
 
 
 class Publication(db.Model):
-    __tablename__ = 'publication'
+    __tablename__ = 'publications'
     # ID de la publication
     id = db.Column(db.Integer, primary_key=True)
 
     # Identification de l'association publiant le post
-    id_association = db.Column(db.Integer, db.ForeignKey('association.id'), nullable=True)
-    association = db.relationship('Association', backref='publications')
+    id_association = db.Column(db.Integer, db.ForeignKey('associations.id'), nullable=True)
+    association = db.relationship('Association', back_populates='publications')
 
     # Identification de l'auteur du post, ne doit pas etre modifie
-    id_auteur = db.Column(db.Integer, db.ForeignKey('utilisateur.id'), nullable=True)
-    auteur = db.relationship('Utilisateur', backref='publications')
+    id_auteur = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=True)
+    auteur = db.relationship('Utilisateur', back_populates='publications')
 
     # Surtout utile pour la DE, par défaut vaut False pour les autres associations
     is_publiee_par_utilisateur = db.Column(db.Boolean, nullable=True)
@@ -54,7 +54,7 @@ class Publication(db.Model):
     likes = db.Column(db.JSON, nullable=True)
 
     is_commentable = db.Column(db.Boolean, nullable=True)
-    commentaires = db.relationship('Commentaire', backref='publication')
+    commentaires = db.relationship('Commentaire', back_populates='publication')
 
     a_cacher_to_cycles = db.Column(db.JSON, nullable=True)
 

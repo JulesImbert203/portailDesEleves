@@ -62,7 +62,7 @@ class Association(db.Model):
     banniere_path = db.Column(db.String(1000), nullable=True)  # banniere de l'asso
 
     # Les publications de l'asso
-    publications = db.relationship('Publication', backref='association')
+    publications = db.relationship('Publication', back_populates='association')
 
     # Les membres sont toujours triés par ordre de priorité
     membres_actuels = db.relationship(

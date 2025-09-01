@@ -70,9 +70,9 @@ class Utilisateur(db.Model, UserMixin) :
     est_cotisant_octo = db.Column(db.Integer, nullable=False, default=False)
 
     # Publications
-    publications = db.relationship('Publication', backref='auteur')
+    publications = db.relationship('Publication', back_populates='auteur')
     # Commentaires
-    commentaires = db.relationship('Commentaire', backref='auteur')
+    commentaires = db.relationship('Commentaire', back_populates='auteur')
 
     def __init__(self, nom_utilisateur:str, prenom:str, nom_de_famille:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str) :
         """
