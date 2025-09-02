@@ -686,7 +686,6 @@ export async function supprimerEvenement(id_asso, id_event) {
     console.error("Erreur réseau :", erreur);
     throw erreur;
   }
-
 }
 
 export async function obtenirEvenementsAsso(id_asso) {
@@ -701,6 +700,55 @@ export async function obtenirEvenementsAsso(id_asso) {
     return handleResponse(res);
   } catch (erreur) {
     console.error("Erreur réseau :", erreur)
+    throw erreur;
+  }
+}
+
+export async function obtenirPublicationsAsso(id_asso) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/publications/obtenir_publications_asso/${id_asso}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur)
+    throw erreur;
+  }
+}
+
+export async function creerNouvellePublication(id_asso, data) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/publications/${id_asso}/creer_nouvelle_publication`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data)
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
+
+export async function supprimerPublication(id_asso, id_publication) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/publications/${id_asso}/supprimer_publication/${id_publication}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
     throw erreur;
   }
 }

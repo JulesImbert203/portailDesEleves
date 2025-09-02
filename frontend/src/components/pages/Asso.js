@@ -5,6 +5,7 @@ import AssoInfo from './AssoInfo';
 import AssoMembres from './AssoMembres';
 import { useLayout } from '../../layouts/Layout';
 import AssoEvents from './AssoEvents';
+import AssoPosts from './AssoPosts';
 
 function Asso({ id }) {
     const [asso, setAsso] = useState(null);
@@ -150,7 +151,7 @@ function Asso({ id }) {
                 {activeTab === "info" && <AssoInfo asso_id={asso.id} />}
                 {activeTab === "events" && <AssoEvents asso_id={asso.id} />}
                 {activeTab === "members" && <AssoMembres asso_id={asso.id} />}
-                {activeTab === "posts" && <p>Publications ici...</p>}
+                {activeTab === "posts" && <AssoPosts asso_id={asso.id}/>}
             </div>
         </div >
     );
