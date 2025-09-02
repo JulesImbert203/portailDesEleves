@@ -21,28 +21,28 @@ export default function BlocChat() {
         setSocket(newSocket);
 
         newSocket.on("connect", () => {
-        console.log("Connected to server");
+            console.log("Connected to server");
         });
 
         newSocket.on("message", (message) => {
-        setMessages((prev) => [...prev, { text: message.text, from: "server" }]);
+            setMessages((prev) => [...prev, { text: message.text, time: message.time, author: message.author }]);
         });
 
         newSocket.on("disconnect", () => {
-        console.log("Disconnected from server");
+            console.log("Disconnected from server");
         });
 
         return () => {
-        newSocket.disconnect();
+            newSocket.disconnect();
         };
     }, []);
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    const message = { text: input };
-    socket.emit("message", message);
-    setInput("");
-  };
+    const sendMessage = () => {
+        if (!input.trim()) return;
+        const message = { text: input };
+        socket.emit("message", message);
+        setInput("");
+    };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -58,7 +58,7 @@ export default function BlocChat() {
                   : "bg-gray-200 text-gray-800 self-start mr-auto"
               }`}
             >
-              {msg.text}
+              <span style={{color: "grey", fontSize: "0.7em"}}>{msg.time}</span> <span style={{color: "grey"}}>{msg.author}</span> : {msg.text}
             </div>
           ))}
         </div>
