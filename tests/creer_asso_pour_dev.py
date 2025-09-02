@@ -1,7 +1,7 @@
 from app import create_app, db
 from app.models import Association
 
-app = create_app()
+_, app = create_app()
 
 # Activer le contexte de l'application
 with app.app_context():

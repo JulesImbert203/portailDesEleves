@@ -7,7 +7,7 @@ from app import create_app, db
 from app.models import GlobalVariable
 
 # Creer une instance de l'application Flask
-app = create_app()
+_, app = create_app()
 
 # Créer les tables si elles n'existent pas encore
 with app.app_context():

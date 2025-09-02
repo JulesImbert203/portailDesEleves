@@ -10,7 +10,7 @@ from app.services.services_utilisateurs import *
 from sqlalchemy.orm.attributes import flag_modified
 
 def test_creer_utilisateur():
-    app = create_app()
+    _, app = create_app()
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Utiliser une DB en memoire pour les tests
     with app.app_context():
         db.create_all()  # Creer les tables

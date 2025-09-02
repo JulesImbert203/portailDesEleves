@@ -5,7 +5,7 @@ from app.services.services_utilisateurs import *
 from sqlalchemy.orm.attributes import flag_modified
 
 
-app = create_app()
+_, app = create_app()
 
 with app.app_context():
  
