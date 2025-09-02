@@ -68,10 +68,10 @@ function Layout({ reloadSondage  }) {
             <button onClick={() => handleLogout()} className="bloc-global-button">
               Se déconnecter
             </button>
-          </div>
-        </div>
-        <div className="sidebar-global right">
-          <BlocChat />
+            </div>
+            <div className="bloc-global">
+            <BlocChat />
+            </div>
         </div>
       </div>
     </div>
