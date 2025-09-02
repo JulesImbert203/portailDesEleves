@@ -110,15 +110,6 @@ Résumons le rôle de chaque élément :
 - **`controllers/`** : 
   Contient les routes de requêtes à l'API, qui font appel aux fonction de `services/` pour lire et modifier des données selon la logique de l'application. Les permissions sont vérifiées avec des décorateurs de `decorators.py`.
 
-- **`views/`** :
-  Contient les routes pour gérer l'affichage des pages web et le lien entre elles, en fonction des résultats des requêtes envoyées avec les controllers.
-
-- **`templates/`** :
-  Dossier contenant les fichiers HTML pour le rendu des pages. Ces templates sont utilisés par les fonctions de route dans les fichiers `views/`, permettant d’afficher les données traitées par les controllers sous forme de pages web.
-
-- **`static/`** :
-    Contient les données statiques du site : les images, les icônes, les feuilles de style, le javascript, etc. 
-
 - **`requirements.txt`** :
   Fichier listant toutes les dépendances Python nécessaires au fonctionnement de l’application. Facilite l’installation des dépendances avec `$ pip install -r requirements.txt`.
 

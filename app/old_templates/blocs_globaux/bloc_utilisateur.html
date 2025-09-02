@@ -1,7 +1,0 @@
-<!-- templates/blocs_globaux/bloc_utilisateur.html -->
-<div class="bloc_utilisateur">
-    <p>{{ current_user.nom_utilisateur }}</p>
-    <form action="{{ url_for('utilisateurs.deconnexion') }}" method="post">
-        <button type="submit">Se déconnecter</button>
-    </form>
-</div>
