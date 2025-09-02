@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { chargerAsso, estUtilisateurDansAsso, modifierDescriptionAsso } from "../../api";
+import { chargerAsso, estUtilisateurDansAsso, modifierDescriptionAsso } from "../../api/baz";
 import RichEditor, { RichTextDisplay } from '../blocs/RichEditor';
 
 function AssoInfo({ asso_id }) {

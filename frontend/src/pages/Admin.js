@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { obtenirIdUserParNom, obtenirPermissionsSoifguard, ajouterPermission } from "../api"; // Assurez-vous que le chemin est correct
+import { obtenirIdUserParNom,  } from "../api/baz"; // Assurez-vous que le chemin est correct
+import { obtenirPermissionsSoifguard, ajouterPermission } from '../api/soifguard';
 
 export default function Admin() {
   const navigate = useNavigate();

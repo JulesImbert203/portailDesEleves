@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { creerNouvelEvenement, estUtilisateurDansAsso, modifierEvenement, obtenirEvenementsAsso, supprimerEvenement } from "../../api";
+import { 
+    creerNouvelEvenement,
+    estUtilisateurDansAsso,
+    modifierEvenement,
+    obtenirEvenementsAsso,
+    supprimerEvenement
+} from "../../api/baz";
 
 function AssoEvents({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);

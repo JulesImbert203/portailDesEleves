@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { seConnecter } from "../api";
+import { seConnecter } from "../api/baz";
 
 export default function FormulaireConnexion() {
   const [username, setUsername] = useState("");

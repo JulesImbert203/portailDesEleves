@@ -49,15 +49,8 @@ export default function BlocChat() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg flex flex-col p-4">
         <h1 className="text-xl font-bold mb-4 text-center">Chat</h1>
         <div className="flex-1 overflow-y-auto mb-4 space-y-2">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`p-2 rounded-xl max-w-[80%] ${
-                msg.from === "me"
-                  ? "bg-blue-500 text-white self-end ml-auto"
-                  : "bg-gray-200 text-gray-800 self-start mr-auto"
-              }`}
-            >
+          {messages.map((msg) => (
+            <div>
               <span style={{color: "grey", fontSize: "0.7em"}}>{msg.time}</span> <span style={{color: "grey"}}>{msg.author}</span> : {msg.text}
             </div>
           ))}

@@ -4,7 +4,7 @@ import {useLayout} from './../../layouts/Layout';
 import ListeAssos from './ListeAssos';
 import AccueilSoifguard from "./AccueilSoifguard";
 import { useNavigate } from "react-router-dom";
-import { verifierSuperutilisateur } from "../../api";
+import { verifierSuperutilisateur } from "../../api/baz";
 
  function Home() {
   const { setCurrentComponent } = useLayout();

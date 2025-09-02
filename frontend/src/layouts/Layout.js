@@ -3,8 +3,9 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
 import BlocChat from '../components/blocs/blocChat';
+import BlocAnniversaire from '../components/blocs/blocAnniversaire';
 import '../assets/styles/layout.css';  // Import du CSS global du layout
-import { seDeconnecter, obtenirIdUser, obtenirDataUser } from '../api';
+import { seDeconnecter, obtenirIdUser, obtenirDataUser } from '../api/baz';
 import { useNavigate } from 'react-router-dom';
 
 const LayoutContext = createContext();
@@ -69,8 +70,11 @@ function Layout({ reloadSondage  }) {
               Se déconnecter
             </button>
             </div>
+            <div className="bloc-global" style={{height: "30vh"}}>
+                <BlocChat/>
+            </div>
             <div className="bloc-global">
-            <BlocChat />
+                <BlocAnniversaire/>
             </div>
         </div>
       </div>

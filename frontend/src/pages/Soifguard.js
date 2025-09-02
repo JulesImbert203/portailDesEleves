@@ -4,7 +4,6 @@ import {
   getListeConsos, 
   ajouterConsoOcto, 
   ajouterConsoBiero, 
-  chargerUtilisateursParPromo, 
   switchCotisationOcto, 
   switchCotisationBiero, 
   supprimerConsoOcto,
@@ -15,7 +14,10 @@ import {
   verifierPermission
   //modifierPrixConsoOcto,
   //modifierPrixConsoBiero,
-} from "../api";
+} from "../api/soifguard";
+import {
+  chargerUtilisateursParPromo, 
+} from "../api/baz"
 import "../assets/styles/soifguard.css";
 
 export default function SoifGuard() {

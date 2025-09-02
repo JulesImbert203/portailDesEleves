@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {useLayout} from './../../layouts/Layout';  
-import { obtenirListeDesPromos } from '../../api';
+import { obtenirListeDesPromos } from '../../api/baz';
 import '../../assets/styles/trombi.css'; 
 import TrombiPromo from './TrombiPromo';
 

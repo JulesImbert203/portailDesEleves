@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../assets/styles/liste_assos.css'; 
 import {useLayout} from '../../layouts/Layout'; 
 import Asso from './Asso';
-import {chargerListeAssos, verifierSuperutilisateur} from "../../api";
+import {chargerListeAssos, verifierSuperutilisateur} from "../../api/baz";
 import AjouterAssociation from "./AjouterAssociation";
 
 function Liste_Assos() {

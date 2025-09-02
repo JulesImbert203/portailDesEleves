@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, retirerMembre } from "../../api";
+import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, retirerMembre } from "../../api/baz";
 import { useLayout } from "../../layouts/Layout";
 import PageUtilisateur from "./PageUtilisateur";
 
