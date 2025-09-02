@@ -12,12 +12,17 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS # permet d'accepter les requetes provenant de n'importe quelle origine
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_socketio import SocketIO
+# from flask_session import Session
 from config import Config
 import os
+
+socketio = SocketIO(cors_allowed_origins="*", manage_session=False)
 
 # Initialisation des extensions (sans encore les attacher à l'application)
 db = SQLAlchemy()
 login_manager = LoginManager()
+# session = Session()
 
 def create_app():
     # Creation de l'instance de l'application Flask
@@ -32,6 +37,7 @@ def create_app():
     # Initialisation des extensions avec l'application
     db.init_app(app)
     login_manager.init_app(app)
+    # session.init_app(app)
 
     from .models import Utilisateur  # Importer la classe Utilisateur
 
@@ -39,28 +45,19 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return Utilisateur.query.get(int(user_id))  # Charger l'utilisateur par ID
-    
-    # Importer les blueprints
-    from .views.views_utilisateurs import utilisateurs_bp 
-    from .views.views_admin import admin_bp 
-    from .views.views_associations import associations_bp 
-    from .views.views_index import index_bp 
 
     # Importer et enregistrer le blueprint global API
     from app.controllers import api
     app.register_blueprint(api, url_prefix='/api')
-    
-    # Enregistrer les blueprint
-    app.register_blueprint(utilisateurs_bp) 
-    app.register_blueprint(admin_bp) 
-    app.register_blueprint(associations_bp) 
-    app.register_blueprint(index_bp) 
     
     #permet d'avoir accès au fichier upload 
     #ne pas supprimer
     UPLOAD_FOLDER = os.path.join(os.getcwd(), 'app', 'upload')
     @app.route('/upload/<path:filename>')
     def serve_file(filename):
-        return send_from_directory(UPLOAD_FOLDER, filename)    
+        return send_from_directory(UPLOAD_FOLDER, filename)
     
-    return app
+    socketio.init_app(app)
+
+    # socketio.init_app(app, cors_allowed_origins="*")
+    return socketio, app

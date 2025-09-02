@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
+import BlocChat from '../components/blocs/blocChat';
 import '../assets/styles/layout.css';  // Import du CSS global du layout
 import { seDeconnecter, obtenirIdUser, obtenirDataUser } from '../api';
 import { useNavigate } from 'react-router-dom';
@@ -67,7 +68,10 @@ function Layout({ reloadSondage  }) {
             <button onClick={() => handleLogout()} className="bloc-global-button">
               Se déconnecter
             </button>
-          </div>
+            </div>
+            <div className="bloc-global">
+            <BlocChat />
+            </div>
         </div>
       </div>
     </div>

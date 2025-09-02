@@ -125,7 +125,7 @@
 
 
 
-/* Menu de navigation 
+/* Menu de navigation  */
 .user-tabs {
     display: flex;
     justify-content: space-around;
@@ -151,4 +151,4 @@
 .user-tab-content {
     position: relative;
     padding: var(--padding);
-} */
+}

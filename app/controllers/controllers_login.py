@@ -5,10 +5,10 @@ from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash
 
 # Création du Blueprint "users"
-utilisateurs_bp = Blueprint('utilisateurs', __name__)
+controllers_login = Blueprint('controllers_login', __name__)
 from ..models import db, Utilisateur
 
-@utilisateurs_bp.route('/est_auth', methods=['GET'])
+@controllers_login.route('est_auth', methods=['GET'])
 def est_auth():
     """
     Renvoie True si l'utilisateur est connecte, False sinon
@@ -19,7 +19,7 @@ def est_auth():
         return jsonify({"etat_connexion": False}), 200
 
 
-@utilisateurs_bp.route('/current_user_id', methods=['GET'])
+@controllers_login.route('current_user_id', methods=['GET'])
 @login_required
 def current_user_id():
     """
@@ -33,7 +33,7 @@ def current_user_id():
 
 
 # route pour se connecter, executee par React
-@utilisateurs_bp.route('/connexion', methods=['POST'])
+@controllers_login.route('connexion', methods=['POST'])
 def connexion():
     data = request.get_json()
     username = data.get('username')
@@ -49,7 +49,7 @@ def connexion():
         
 
 # se deconnecter    
-@utilisateurs_bp.route('/deconnexion', methods=['POST'])
+@controllers_login.route('deconnexion', methods=['POST'])
 @login_required
 def deconnexion():
     logout_user()
