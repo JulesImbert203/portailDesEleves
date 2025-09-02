@@ -2,5 +2,6 @@ Flask
 Flask-SQLAlchemy
 Flask-Login
 Flask-Cors
+Flask-SocketIO
 pytest
 requests
