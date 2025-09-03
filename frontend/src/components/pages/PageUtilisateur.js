@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { obtenirDataUser } from '../../api/baz';
+import { obtenirDataUser } from '../../api/api_utilisateurs';
 import '../../assets/styles/utilisateur.css';
 
 

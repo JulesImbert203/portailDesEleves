@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLayout } from "../../layouts/Layout";  
 import Home from "./Home";
 import { useNavigate } from "react-router-dom";
-import { verifierPermission } from "../../api/soifguard";
+import { verifierPermission } from "../../api/api_soifguard";
 
 function AccueilSoifguard() {
   const { setCurrentComponent } = useLayout();

@@ -5,7 +5,8 @@ import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
 import BlocChat from '../components/blocs/blocChat';
 import BlocAnniversaire from '../components/blocs/blocAnniversaire';
 import '../assets/styles/layout.css';  // Import du CSS global du layout
-import { seDeconnecter, obtenirIdUser, obtenirDataUser } from '../api/baz';
+import { seDeconnecter, obtenirIdUser} from '../api/api_global';
+import { obtenirDataUser } from '../api/api_utilisateurs';
 import { useNavigate } from 'react-router-dom';
 
 const LayoutContext = createContext();

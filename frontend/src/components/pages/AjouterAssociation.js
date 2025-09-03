@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLayout } from './../../layouts/Layout';  
-import { ajouterAsso } from '../../api/baz';  // Importation de la fonction ajouterAsso
+import { ajouterAsso } from '../../api/api_associations';  // Importation de la fonction ajouterAsso
 import Liste_Assos from "./ListeAssos" ;
 
 function AjouterAssociation() {

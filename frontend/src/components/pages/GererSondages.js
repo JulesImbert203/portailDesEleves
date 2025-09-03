@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLayout } from './../../layouts/Layout';  
 import Home from './Home';
-import { obtenirSondagesEnAttente, validerSondage, supprimerSondage, sondageSuivant } from '../../api/baz';
+import { obtenirSondagesEnAttente, validerSondage, supprimerSondage, sondageSuivant } from '../../api/api_sondages';
 
 function GererSondages() {
     const { setCurrentComponent, reloadBlocSondage} = useLayout();

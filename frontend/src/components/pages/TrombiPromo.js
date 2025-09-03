@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLayout } from './../../layouts/Layout';  
-import { obtenirListeDesUtilisateurs } from '../../api/baz';
 import Trombi from './Trombi';
 import PageUtilisateur from './PageUtilisateur';
+import { obtenirListeDesUtilisateurs } from '../../api/api_utilisateurs';
 
 function TrombiPromo({ promo }) {
     const { setCurrentComponent } = useLayout();

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import '../../assets/styles/liste_assos.css'; 
 import {useLayout} from '../../layouts/Layout'; 
 import Asso from './Asso';
-import {chargerListeAssos, verifierSuperutilisateur} from "../../api/baz";
 import AjouterAssociation from "./AjouterAssociation";
+import { verifierSuperutilisateur } from '../../api/api_utilisateurs';
+import { chargerListeAssos } from '../../api/api_associations';
 
 function Liste_Assos() {
 

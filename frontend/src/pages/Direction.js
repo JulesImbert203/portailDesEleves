@@ -4,8 +4,8 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { estAuthentifie } from "../api/baz";
 import FormulaireConnexion from "../components/FormulaireConnexion";
+import { estAuthentifie } from "../api/api_global";
 
 export default function Direction() {
   const navigate = useNavigate();

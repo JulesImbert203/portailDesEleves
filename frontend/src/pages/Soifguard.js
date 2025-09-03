@@ -14,10 +14,10 @@ import {
   verifierPermission
   //modifierPrixConsoOcto,
   //modifierPrixConsoBiero,
-} from "../api/soifguard";
+} from "../api/api_soifguard";
 import {
   chargerUtilisateursParPromo, 
-} from "../api/baz"
+} from "../api/api_utilisateurs"
 import "../assets/styles/soifguard.css";
 
 export default function SoifGuard() {

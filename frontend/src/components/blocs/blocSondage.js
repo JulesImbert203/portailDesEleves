@@ -1,6 +1,8 @@
 // src/components/blocs/BlocSondage.jsx
 import React, { useEffect, useState } from 'react';
-import {obtenirIdUser, obtenirDataUser, obtenirSondageDuJour, voterSondage } from '../../api/baz';
+import {obtenirDataUser } from '../../api/api_utilisateurs';
+import {obtenirSondageDuJour, voterSondage} from '../../api/api_sondages';
+import { obtenirIdUser } from '../../api/api_global';
 import {useLayout} from './../../layouts/Layout';  
 import ProposerSondage from '../pages/ProposerSondage';
 import GererSondages from '../pages/GererSondages';

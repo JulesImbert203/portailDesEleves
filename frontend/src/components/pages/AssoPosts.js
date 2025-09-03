@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { chargerAsso, estUtilisateurDansAsso, obtenirPublicationsAsso } from "../../api";
+import { chargerAsso, estUtilisateurDansAsso } from "../../api/api_associations";
+import { obtenirPublicationsAsso } from "../../api/api_publications";
 
 function AssoPosts({ asso_id }) {
     const [isEdition, setIsEdition] = useState(false);

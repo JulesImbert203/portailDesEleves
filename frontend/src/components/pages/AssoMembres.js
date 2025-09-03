@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo, retirerMembre } from "../../api/baz";
+import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, retirerMembre } from "../../api/api_associations";
+import { obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo } from "../../api/api_utilisateurs";
 import { useLayout } from "../../layouts/Layout";
 import PageUtilisateur from "./PageUtilisateur";
 
@@ -157,7 +158,7 @@ function AssoMembres({ asso_id }) {
                             <label htmlFor='role-input' className='asso-membres-label'>Rôle</label>
                             <input value={nouveauRole} id='role-input' className='asso-membres-input' onChange={(e) => setNouveauRole(e.target.value)}></input>
                         </>}
-                        {isGestionMembres && idMembreModifier !== user.id && <p className="asso-membres-position"><hr/>Position : {user.position}</p>}
+                        {isGestionMembres && idMembreModifier !== user.id && <p className="asso-membres-position"><hr />Position : {user.position}</p>}
 
                         {/* Input pour changer l'ordre d'affichage */}
                         {idMembreModifier == user.id && <>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import '../../assets/styles/asso.css';
-import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto } from './../../api/baz';
+import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto } from './../../api/api_associations';
 import AssoInfo from './AssoInfo';
 import AssoMembres from './AssoMembres';
 import { useLayout } from '../../layouts/Layout';
