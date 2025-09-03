@@ -1,5 +1,5 @@
 // src/components/blocs/BlocSondage.jsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {obtenirDataUser } from '../../api/api_utilisateurs';
 import {obtenirSondageDuJour, voterSondage} from '../../api/api_sondages';
 import { obtenirIdUser } from '../../api/api_global';
@@ -74,7 +74,7 @@ export default function BlocSondage({ reloadSondage }) {
               return sondage.reponses.map((reponse, index) => {
                 const votes = sondage.votes[index];
                 const percent = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
-                const isUserVote = voteUser === index + 1;
+                // const isUserVote = voteUser === index + 1;
                 return (
                   <div key={index}>
                     <div className='sondage_question_stats_container'>
@@ -103,7 +103,7 @@ export default function BlocSondage({ reloadSondage }) {
       <>
         <h3 className='sondage_question'>Pas de sondage aujourd'hui</h3>
         <div className='sondage_gros_plus_container' onClick={() => setCurrentComponent(<ProposerSondage />)}>
-          <img className='sondage_gros_plus' src="assets/icons/plus.svg" />
+          <img className='sondage_gros_plus' src="assets/icons/plus.svg" alt="Bouton en forme de plus"/>
         </div>
       </>
     );
@@ -117,13 +117,13 @@ export default function BlocSondage({ reloadSondage }) {
           className="gestion_sondage_button"
           onClick={() => setCurrentComponent(<ProposerSondage />)}
         >
-          <img src="assets/icons/plus.svg" className='sondage_icon_button'/>
+          <img src="assets/icons/plus.svg" className='sondage_icon_button' alt="Bouton en forme de plus"/>
         </button>
         <button
           className="gestion_sondage_button"
           onClick={() => setCurrentComponent(<GererSondages />)}
         >
-          <img src="assets/icons/manage.svg" className='sondage_icon_button'/>
+          <img src="assets/icons/manage.svg" className='sondage_icon_button' alt="Bouton en forme de plus"/>
         </button>
       </div>
     </div>

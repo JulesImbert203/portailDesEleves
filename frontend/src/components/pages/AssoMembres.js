@@ -62,7 +62,7 @@ function AssoMembres({ asso_id }) {
     }
 
     const handleSetPromoAjoutMembre = async (promo) => {
-        if (promo != "") {
+        if (promo !== "") {
             try {
                 const listeMembres = await obtenirListeDesUtilisateursParPromo(promo);
                 setListeNouveauxMembres(listeMembres);
@@ -145,23 +145,23 @@ function AssoMembres({ asso_id }) {
                             </div>)}
                             <img
                                 src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg"
-                                alt={`Photo de ${user.nom_utilisateur}`}
+                                alt={`${user.nom_utilisateur}`}
                                 className="asso-membres-photo"
                                 onClick={() => setCurrentComponent(<PageUtilisateur id={user.id} />)}
                             />
                         </div>
                         <p className="asso-membres-name">{user.nom_utilisateur}</p>
-                        {idMembreModifier != user.id && <p className="asso-membres-role">{user.role}</p>}
+                        {idMembreModifier !== user.id && <p className="asso-membres-role">{user.role}</p>}
 
                         {/* Input pour changer le rôle */}
-                        {idMembreModifier == user.id && <>
+                        {idMembreModifier === user.id && <>
                             <label htmlFor='role-input' className='asso-membres-label'>Rôle</label>
                             <input value={nouveauRole} id='role-input' className='asso-membres-input' onChange={(e) => setNouveauRole(e.target.value)}></input>
                         </>}
                         {isGestionMembres && idMembreModifier !== user.id && <p className="asso-membres-position"><hr />Position : {user.position}</p>}
 
                         {/* Input pour changer l'ordre d'affichage */}
-                        {idMembreModifier == user.id && <>
+                        {idMembreModifier === user.id && <>
                             <label htmlFor='position-input' className='asso-membres-label'>Position</label>
                             <input value={nouvellePosition} type='number' id='position-input' className='asso-membres-input' onChange={(e) => setNouvellePosition(e.target.value)}></input>
                             {/* Validation de changements */}

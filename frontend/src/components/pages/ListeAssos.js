@@ -6,7 +6,7 @@ import AjouterAssociation from "./AjouterAssociation";
 import { verifierSuperutilisateur } from '../../api/api_utilisateurs';
 import { chargerListeAssos } from '../../api/api_associations';
 
-function Liste_Assos() {
+export default function ListeAssos() {
 
   const [assos, setAssos] = useState([]);
   const { setCurrentComponent } = useLayout();
@@ -57,5 +57,3 @@ function Liste_Assos() {
     </div>
   );
 }
-
-export default Liste_Assos;

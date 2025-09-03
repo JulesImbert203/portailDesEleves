@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLayout } from './../../layouts/Layout';  
 import { ajouterAsso } from '../../api/api_associations';  // Importation de la fonction ajouterAsso
-import Liste_Assos from "./ListeAssos" ;
+import LISTE_ASSOS from "./ListeAssos" ;
 
 function AjouterAssociation() {
   const { setCurrentComponent } = useLayout();
@@ -91,7 +91,7 @@ function AjouterAssociation() {
       {message && <p>{message}</p>}
       {erreur && <p style={{ color: "red" }}>{erreur}</p>}
 
-      <button onClick={() => setCurrentComponent(<Liste_Assos />)}>Retour</button>
+      <button onClick={() => setCurrentComponent(<LISTE_ASSOS/>)}>Retour</button>
     </div>
   );
 }

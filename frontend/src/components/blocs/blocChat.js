@@ -1,12 +1,6 @@
 import { io } from 'socket.io-client';
-import { useState, useEffect, useRef } from 'react';
-
-// "undefined" means the URL will be computed from the `window.location` object
-const URL = 'http://localhost:5000';
-
-const socket = io(URL, {
-    withCredentials: true
-});
+import { useState, useEffect } from 'react';
+import { CHAT_BASE_URL } from '../../api/base';
 
 export default function BlocChat() {
   const [messages, setMessages] = useState([]);
@@ -15,7 +9,7 @@ export default function BlocChat() {
 
   useEffect(() => {
         // Connect to backend Socket.IO server
-        const newSocket = io(URL, {
+        const newSocket = io(CHAT_BASE_URL, {
             withCredentials: true
         });
         setSocket(newSocket);

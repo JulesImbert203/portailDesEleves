@@ -1,14 +1,13 @@
 // src/components/blocs/Header.js
-import React, { useState } from "react";
 import '../../assets/styles/header.css';
 import {useLayout} from '../../layouts/Layout'; 
 import Home from '../pages/Home';
-import Liste_Assos from "../pages/ListeAssos";
+import ListeAssos from "../pages/ListeAssos";
 import PlanningAsso from "../pages/PlanningAsso";
 import Trombi from "../pages/Trombi";
 import PageUtilisateur from "../pages/PageUtilisateur";
 
-const Header = () => {
+export default function Header() {
     const { setCurrentComponent, userData } = useLayout();
     
     return (
@@ -18,7 +17,7 @@ const Header = () => {
                 <button className="global-header-dropdown-btn">Menu</button>
                 <div className="global-header-menu">
                 <button onClick={() => setCurrentComponent(<Home />)}>Accueil</button>
-                <button onClick={() => setCurrentComponent(<Liste_Assos />)}>Assos</button>
+                <button onClick={() => setCurrentComponent(<ListeAssos />)}>Assos</button>
                 <button onClick={() =>setCurrentComponent(<PlanningAsso />)}>Planning associatif</button>
                 <button onClick={() =>setCurrentComponent(<Trombi />)}>Trombinoscope</button>
                 <button onClick={() =>setCurrentComponent(<PageUtilisateur id={userData.id} />)}>Ma page</button>
@@ -33,5 +32,3 @@ const Header = () => {
 
     );
 };
-
-export default Header;

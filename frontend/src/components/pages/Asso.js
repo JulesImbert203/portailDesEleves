@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useState } from 'react';
 import '../../assets/styles/asso.css';
 import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto } from './../../api/api_associations';
 import AssoInfo from './AssoInfo';
@@ -97,6 +97,7 @@ function Asso({ id }) {
                             onMouseEnter={() => setIsBannerDarkened(true)}
                             onMouseLeave={() => setIsBannerDarkened(false)}
                             onClick={() => changerPhotoLogoOuBanniere('banniere')}
+                            alt="Bouton en forme d'appareil-photo"
                         />
                     </>
                 )}
@@ -119,7 +120,7 @@ function Asso({ id }) {
                             onMouseEnter={() => setIsPhotoDarkened(true)}
                             onMouseLeave={() => setIsPhotoDarkened(false)}
                             onClick={() => changerPhotoLogoOuBanniere('logo')}
-                            alt="Modifier photo"
+                            alt="Bouton en forme d'appareil-photo"
                         />
                     </>
                 )}

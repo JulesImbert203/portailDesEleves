@@ -235,9 +235,9 @@ function AssoEvents({ asso_id }) {
     };
 
     const handleSetIdEventModifier = (event_id) => {
-        if (idEventModifier != event_id) {
+        if (idEventModifier !== event_id) {
             clearModiferEvent();
-            const event = listeEvents.find(e => e.id == event_id)
+            const event = listeEvents.find(e => e.id === event_id)
             const { nom, description, lieu, evenement_periodique } = event;
             setModifierEvent({ nom, description, lieu, evenement_periodique })
             if (evenement_periodique) {
@@ -384,7 +384,7 @@ function AssoEvents({ asso_id }) {
                 {/* Les événements existants */}
                 {listeEvents.map((event) => (
                     <div key={event.id} className='asso-bloc-interne'>
-                        {idEventModifier != event.id &&
+                        {idEventModifier !== event.id &&
                             <>
                                 <h2>{event.nom}</h2>
                                 <p><strong>Quand</strong> : {formatEventDate(event)}</p>
@@ -403,7 +403,7 @@ function AssoEvents({ asso_id }) {
                             </>}
 
                         {/* Modification d'événement */}
-                        {idEventModifier == event.id &&
+                        {idEventModifier === event.id &&
                             <>
                                 <h2>Titre : <input value={modifierEvent.nom} name='nom' onChange={handleSetModifierEvent} /></h2>
                                 <p>Événement périodique <input type="checkbox" checked={modifierEvent.evenement_periodique} name='evenement_periodique' onChange={handleSetModifierEvent} /></p>

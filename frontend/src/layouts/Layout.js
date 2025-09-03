@@ -1,5 +1,5 @@
 // src/layouts/Layout.js
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
 import BlocChat from '../components/blocs/blocChat';
