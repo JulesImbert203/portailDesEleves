@@ -142,8 +142,8 @@ def obtenir_infos_profil(user_id:int) :
             "co_nom": utilisateur.co_nom,
             "fillots_dict": utilisateur.fillots_dict,
             "questions_reponse_du_portail": utilisateur.questions_reponses_du_portail,
-            "associations_actuelles": [asso.nom for asso in utilisateur.associations_actuelles],
-            "asociations_anciennes": [asso.nom for asso in utilisateur.associations_anciennes],
+            "associations_actuelles": [asso.association.nom for asso in utilisateur.associations_actuelles],
+            "asociations_anciennes": [asso.association.nom for asso in utilisateur.associations_anciennes],
             "vote_sondaj_du_jour" : utilisateur.vote_sondaj_du_jour,
         }
         return jsonify(infos_utilisateur), 200
