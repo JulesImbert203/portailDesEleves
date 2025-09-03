@@ -109,7 +109,7 @@ def route_supprimer_evenement(association_id, evenement_id):
 @controllers_evenements.route("<int:association_id>/annuler_evenement/<int:evenement_id>", methods=["POST"])
 @login_required
 @est_membre_de_asso
-def route_annuler_evenement(evenement_id):
+def route_annuler_evenement(association_id, evenement_id):
     data = request.json
     date = data.get("date")
     evenement = Evenement.query.get(evenement_id)
