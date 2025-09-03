@@ -5,11 +5,15 @@ from sqlalchemy.orm.attributes import flag_modified
 
 
 # GESTION DES ASSOCIATIONS
-def create_association(nom: str, description: str, type_association: str, logo_path: str, ordre_importance: int) -> Association:
+def create_association(
+    nom: str, description: str, type_association: str,
+    logo_path: str, ordre_importance: int,
+    est_sensible: bool
+) -> Association:
     """
     Crée une nouvelle association
     """
-    association = Association(nom, description, type_association, logo_path, ordre_importance)
+    association = Association(nom, description, type_association, logo_path, ordre_importance, est_sensible)
     db.session.add(association)
     db.session.commit()
     return association.id

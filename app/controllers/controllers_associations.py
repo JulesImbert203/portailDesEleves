@@ -194,8 +194,11 @@ def route_creer_asso():
     """
     try:
         data = request.json
-        nouvelle_asso = Association(nom=data["nom"], description=data['description'], type_association=data["type_association"],
-                                    ordre_importance=data["ordre_importance"], logo_path=data["logo_path"], banniere_path=data["banniere_path"])
+        nouvelle_asso = Association(
+            nom=data["nom"], description=data['description'], type_association=data["type_association"],
+            ordre_importance=data["ordre_importance"], logo_path=data["logo_path"],
+            banniere_path=data["banniere_path"], est_sensible=data["est_sensible"]
+        )
         nouvelle_asso.create_association_folder()
         db.session.add(nouvelle_asso)
         db.session.commit()

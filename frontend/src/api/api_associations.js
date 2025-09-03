@@ -1,6 +1,6 @@
 import { API_BASE_URL, handleResponse } from "./base";
 
-export async function ajouterAsso(nom, description, type_association, ordre_importance, logo_path, banniere_path) {
+export async function ajouterAsso(nom, description, type_association, ordre_importance, logo_path, banniere_path, est_sensible) {
   try {
     const response = await fetch(`${API_BASE_URL}/associations/route_creer_asso`, {
       method: "POST",
@@ -15,6 +15,7 @@ export async function ajouterAsso(nom, description, type_association, ordre_impo
         ordre_importance,
         logo_path,
         banniere_path,
+        est_sensible,
       }),
     });
     const data = await response.json();

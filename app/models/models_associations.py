@@ -81,7 +81,11 @@ class Association(db.Model):
     type_association = db.Column(db.String(1000), nullable=True)
     ordre_importance = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, nom: str, ordre_importance: int, description: str = None, type_association: str = None, logo_path: str = None,  banniere_path: str = None,):
+    def __init__(
+        self, nom: str, ordre_importance: int,description: str = None,
+        type_association: str = None, logo_path: str = None,  banniere_path: str = None,
+        est_sensible: bool = False
+    ):
         """
         Crée une nouvelle association
         """
@@ -91,6 +95,7 @@ class Association(db.Model):
         self.logo_path = logo_path
         self.ordre_importance = ordre_importance
         self.banniere_path = banniere_path
+        self.est_sensible = est_sensible
 
         # Créer un dossier pour l'association
         self.create_association_folder()

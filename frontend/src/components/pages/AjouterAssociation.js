@@ -9,6 +9,7 @@ function AjouterAssociation() {
   const [description, setDescription] = useState("");
   const [typeAssociation, setTypeAssociation] = useState("");
   const [ordreImportance, setOrdreImportance] = useState("");
+  const [estSensible, setEstSensible] = useState("");
   const [message, setMessage] = useState("");
   const [erreur, setErreur] = useState("");
 
@@ -27,7 +28,7 @@ function AjouterAssociation() {
     }
 
     // Appel à la fonction pour ajouter l'association
-    const response = await ajouterAsso(nom, description, typeAssociation, ordreImportance, "", "");
+    const response = await ajouterAsso(nom, description, typeAssociation, ordreImportance, "", "", estSensible);
 
     if (response.success) {
       setMessage("Association ajoutée avec succès.");
@@ -82,6 +83,15 @@ function AjouterAssociation() {
             value={ordreImportance}
             onChange={(e) => setOrdreImportance(e.target.value)}
             placeholder="Ordre d'importance"
+          />
+        </div>
+
+        <div>
+          <label>Association sensible</label>
+          <input
+            type="checkbox"
+            value={estSensible}
+            onChange={(e) => setEstSensible(e.target.checked)}
           />
         </div>
 
