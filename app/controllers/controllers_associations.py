@@ -189,6 +189,9 @@ def route_add_content(association_id):
 @login_required
 @superutilisateur_required
 def route_creer_asso():
+    """
+    Crée l'asso
+    """
     try:
         data = request.json
         nouvelle_asso = Association(nom=data["nom"], description=data['description'], type_association=data["type_association"],
@@ -204,14 +207,22 @@ def route_creer_asso():
 @controllers_associations.route('/assos', methods=['GET'])
 @login_required
 def route_get_assos():
-    assos = Association.query.all()
+    if current_user.est_baptise:
+        assos = Association.query.all()
+    else:
+        assos = Association.query.filter_by(est_sensible=False)
+
     return jsonify([{"id": asso.id, "nom": asso.nom, "nom_dossier": asso.nom_dossier, "img": asso.logo_path, "ordre": asso.ordre_importance} for asso in assos])
 
 
 @controllers_associations.route('/<int:association_id>', methods=['GET'])
 @login_required
 def route_get_asso(association_id):
-    asso = Association.query.filter_by(id=association_id).first()
+    if current_user.est_baptise:
+        asso = Association.query.filter_by(id=association_id).first()
+    else:
+        asso = Association.query.filter_by(defaultest_baptise=True, id=association_id).first()
+
     if not asso:
         return jsonify({"error": "Association not found"}), 404
     membres_data = []

@@ -13,16 +13,19 @@ from flask_cors import CORS # permet d'accepter les requetes provenant de n'impo
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_socketio import SocketIO
+from flask_apscheduler import APScheduler
+
 # from flask_session import Session
 from config import Config
 import os
 
-socketio = SocketIO(cors_allowed_origins="*", manage_session=False)
+socketio = SocketIO(cors_allowed_origins="*")
 
 # Initialisation des extensions (sans encore les attacher à l'application)
 db = SQLAlchemy()
 login_manager = LoginManager()
 # session = Session()
+scheduler = APScheduler()
 
 def create_app():
     # Creation de l'instance de l'application Flask
@@ -58,6 +61,10 @@ def create_app():
         return send_from_directory(UPLOAD_FOLDER, filename)
     
     socketio.init_app(app)
+
+    scheduler.init_app(app)
+    from .tasks import tasks
+    scheduler.start()
 
     # socketio.init_app(app, cors_allowed_origins="*")
     return socketio, app

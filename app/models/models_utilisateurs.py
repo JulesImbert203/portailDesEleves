@@ -39,6 +39,7 @@ class Utilisateur(db.Model, UserMixin) :
     marrain_nom = db.Column(db.String(1000), nullable=True)
     fillots_dict = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
     # le dictionnaire {fillot1_id : fillot_1_nom, fillot2_id : fillot2_nom, etc.}
+    est_baptise = db.Column(db.Boolean, nullable=False)
 
     # Gestion des colocations - meme commentaire
     co_id = db.Column(db.Integer, nullable=True)
@@ -100,6 +101,7 @@ class Utilisateur(db.Model, UserMixin) :
         self.est_visible = True
         self.est_vp_sondaj = False
         self.est_superutilisateur = False
+        self.est_baptise = False
         if verifier_chaine_mail(email):
             self.email = email
         else :

@@ -26,7 +26,7 @@ def proposer_sondage(question:str, reponses:list, utilisateur:Utilisateur) :
     db.session.commit()
 
 
-# METTRE decorateur sondage_du_jour_required sur le controller
+# TODO: METTRE decorateur sondage_du_jour_required sur le controller
 def creer_vote_sondage_du_jour(utilisateur:Utilisateur, vote:int) :
     """
     Fait voter un utilisateur a un sondage
@@ -87,7 +87,7 @@ def _donner_votes_gagnants(compteur_votes) :
             gagnants.append(i+1)
     return gagnants
 
-def _update_si_win(utilisateurs, gagnants) :
+def _update_si_win(utilisateurs: list[Utilisateur], gagnants: list[int]) :
     """
     Met a jour la ligne de l'utilisateur s'il a gagne le sondage du jour
     - utilisateurs : tableau d'utilisateurs
@@ -98,7 +98,7 @@ def _update_si_win(utilisateurs, gagnants) :
             utilisateur.nombre_victoires_sondaj += 1
         utilisateur.update(vote_sondaj_du_jour=None)
 
-def _archiver_sondage(sondage_du_jour:Sondage, compteur_votes) :
+def _archiver_sondage(sondage_du_jour:Sondage, compteur_votes) -> AncienSondage:
     """
     Archive un sondage qui vient de s'achever. Renvoie l'element a ajouter dans la table
     - sondage_du_jour : le sondage d'aujourd'hui a archiver
@@ -119,7 +119,7 @@ def _archiver_sondage(sondage_du_jour:Sondage, compteur_votes) :
     return nouveau_ancien_sondage
  
 
-def sondage_suivant() :
+def sondage_suivant() -> None:
     """
     - regarde l'id du sondage du jour
     - si il y en a un regarde si il y a des votes
@@ -133,7 +133,7 @@ def sondage_suivant() :
         # il y a un sondage du jour
         sondage_du_jour = db.session.get(Sondage, id_sondage_du_jour)
         votes = VoteSondageDuJour.query.all()
-        if votes != [] :
+        if votes:
             # des gens ont vote
             compteur_votes = _resultat_sondage_du_jour(votes)
             gagnants = _donner_votes_gagnants(compteur_votes)

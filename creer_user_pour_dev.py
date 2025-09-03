@@ -21,6 +21,7 @@ with app.app_context():
     # Ajouter un super utilisateur
     super_user = Utilisateur("admin", "Admin", "Dev", 23, "admin@mail.com", "ic", "1234")
     super_user.est_superutilisateur = True
+    super_user.est_baptise = True
     db.session.add(super_user)
 
     # Valider les ajouts dans la base

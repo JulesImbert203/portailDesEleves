@@ -60,6 +60,7 @@ class Association(db.Model):
     description = db.Column(db.Text, nullable=True)
     logo_path = db.Column(db.String(1000), nullable=True)
     banniere_path = db.Column(db.String(1000), nullable=True)  # banniere de l'asso
+    est_sensible = db.Column(db.Boolean, nullable=False)
 
     # Les publications de l'asso
     publications = db.relationship('Publication', back_populates='association')

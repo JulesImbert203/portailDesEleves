@@ -113,6 +113,9 @@ Résumons le rôle de chaque élément :
 - **`requirements.txt`** :
   Fichier listant toutes les dépendances Python nécessaires au fonctionnement de l’application. Facilite l’installation des dépendances avec `$ pip install -r requirements.txt`.
 
+- **`tasks/`** :
+  Contient les taches à réaliser à intervalles réguliers par le backend.
+
 
 ## II. Fonctionnement du site
 
