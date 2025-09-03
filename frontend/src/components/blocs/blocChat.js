@@ -42,7 +42,7 @@ export default function BlocChat() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg flex flex-col p-4">
         <h1 className="text-xl font-bold mb-4 text-center">Chat</h1>
-        <div className="flex-1 overflow-y-auto mb-4 space-y-2">
+        <div className="flex-1 mb-4 space-y-2" style={{overflow: "hidden"}}>
           {messages.map((msg) => (
             <div>
               <span style={{color: "grey", fontSize: "0.7em"}}>{msg.time}</span> <span style={{color: "grey"}}>{msg.author}</span> : {msg.text}

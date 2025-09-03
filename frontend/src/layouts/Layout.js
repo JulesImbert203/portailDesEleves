@@ -5,12 +5,10 @@ import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
 import BlocChat from '../components/blocs/blocChat';
 import BlocAnniversaire from '../components/blocs/blocAnniversaire';
 import '../assets/styles/layout.css';  // Import du CSS global du layout
-import { seDeconnecter, obtenirIdUser} from '../api/api_global';
+import { obtenirIdUser } from '../api/api_global';
 import { obtenirDataUser } from '../api/api_utilisateurs';
-import { useNavigate } from 'react-router-dom';
 
 const LayoutContext = createContext();
-
 
 export function LayoutProvider({ children, defaultComponent }) {
   const [currentComponent, setCurrentComponent] = useState(defaultComponent); // Home sera affiché par défaut
@@ -43,16 +41,9 @@ export function LayoutProvider({ children, defaultComponent }) {
   );
 }
 
-function Layout({ reloadSondage  }) {
+function Layout({ reloadSondage }) {
   const { currentComponent, userData } = useContext(LayoutContext);
 
-  const navigate = useNavigate();
-  // Fonction de déconnexion
-    async function handleLogout() {
-        await seDeconnecter();
-        navigate("/direction");  // Rediriger après déconnexion
-    }
-  
 
   return (
     <div className="layout">
@@ -65,18 +56,12 @@ function Layout({ reloadSondage  }) {
           {currentComponent}
         </div>
         <div className="sidebar-global right">
-          <div id="blocUtilisateur" className="bloc-global">
-            <h3>Bienvenue {userData ? userData.nom_utilisateur : "Chargement..."} !</h3>
-            <button onClick={() => handleLogout()} className="bloc-global-button">
-              Se déconnecter
-            </button>
-            </div>
-            <div className="bloc-global" style={{height: "30vh"}}>
-                <BlocChat/>
-            </div>
-            <div className="bloc-global">
-                <BlocAnniversaire/>
-            </div>
+          <div className="bloc-global" style={{ height: "30vh" }}>
+            <BlocChat />
+          </div>
+          <div className="bloc-global">
+            <BlocAnniversaire />
+          </div>
         </div>
       </div>
     </div>
