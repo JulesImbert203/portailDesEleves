@@ -9,6 +9,7 @@ from app.controllers.controllers_soifguard import controllers_soifguard
 from app.controllers.controllers_evenements import controllers_evenements
 from app.controllers.controllers_publications import controllers_publications
 from app.controllers.controllers_login import controllers_login
+from app.controllers.controllers_chat import controllers_chat
 
 # Creer un blueprint global qui regroupe tous les autres
 api = Blueprint('api', __name__)
@@ -22,6 +23,7 @@ api.register_blueprint(controllers_soifguard, url_prefix='/soifguard')
 api.register_blueprint(controllers_evenements, url_prefix='/evenements')
 api.register_blueprint(controllers_publications, url_prefix='/publications')
 api.register_blueprint(controllers_login, url_prefix='/login')
+api.register_blueprint(controllers_chat, url_prefix='/chat')
 
 # Ainsi, toutes les routes seront accessibles sous `/api/users` et `/api/sondages`, etc.
 from . import chat_socket
