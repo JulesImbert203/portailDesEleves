@@ -10,7 +10,6 @@ export default function BlocChat() {
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(null);
   const [loadNewMessages, setLoadNewMessages] = useState(false);
-  const { userData } = useLayout();
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function BlocChat() {
     newSocket.on("message", (message) => {
       setMessages((prev) => [
         ...prev,
-        { text: message.text, time: message.time, author: message.author, is_you: message.is_you }
+        { text: message.text, time: message.time, author: message.author, is_you: message.is_you, id: message.id }
       ]);
     });
 
@@ -46,8 +45,10 @@ export default function BlocChat() {
 
   useEffect(() => {
     async function fecthNewMessages() {
-      const new_messages = await obtenirPlusDeMessages(65)
-      setMessages(new_messages.concat(messages))
+      if (messages.length > 0) {
+        const new_messages = await obtenirPlusDeMessages(messages[0].id)
+        setMessages(new_messages.concat(messages))
+      }
     };
     fecthNewMessages();
     setLoadNewMessages(false);

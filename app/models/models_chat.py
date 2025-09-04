@@ -41,5 +41,6 @@ class Message(db.Model):
             "text": self.text,
             "time": self.date.strftime ("%H:%M"),
             "author": author.nom_utilisateur,
-            "is_you": asker_id==self.utilisateur
+            "is_you": asker_id==self.utilisateur,
+            "id": self.id
         }
