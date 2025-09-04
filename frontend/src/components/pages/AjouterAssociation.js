@@ -9,7 +9,7 @@ function AjouterAssociation() {
   const [description, setDescription] = useState("");
   const [typeAssociation, setTypeAssociation] = useState("");
   const [ordreImportance, setOrdreImportance] = useState("");
-  const [estSensible, setEstSensible] = useState("");
+  const [estSensible, setEstSensible] = useState(false);
   const [message, setMessage] = useState("");
   const [erreur, setErreur] = useState("");
 
