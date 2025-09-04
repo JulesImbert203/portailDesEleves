@@ -27,7 +27,7 @@ export async function verifierSuperutilisateur() {
 }
 
 export async function obtenirIdUserParNom(nom_utilisateur) {
-  const res = await fetch(`${API_BASE_URL}/api/users/obtenir_id_par_nomutilisateur/${nom_utilisateur}`,
+  const res = await fetch(`${API_BASE_URL}/users/obtenir_id_par_nomutilisateur/${nom_utilisateur}`,
     { credentials: "include" }
   );
   const data = await res.json();
@@ -35,7 +35,7 @@ export async function obtenirIdUserParNom(nom_utilisateur) {
 }
 
 export async function chargerUtilisateursParPromo(promo) {
-  const res = await fetch(`${API_BASE_URL}/api/users/charger_utilisateurs_par_promo/${promo}`,
+  const res = await fetch(`${API_BASE_URL}/users/charger_utilisateurs_par_promo/${promo}`,
     { credentials: "include" }
   );
   const data = await res.json();

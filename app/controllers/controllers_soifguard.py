@@ -219,7 +219,7 @@ def verifier_permission():
     if asso not in ["octo", "biero"]:
         return jsonify({"success": False, "message": "Association invalide"}), 400
     permission = PermissionSoifguard.query.filter_by(id_utilisateur=current_user.id, asso=asso).first()
-    has_permission = permission is not None
+    has_permission = permission is not None or current_user.est_superutilisateur
     return jsonify({"success": True, "has_permission": has_permission}), 200
 
 @controllers_soifguard.route('/switch_cotisation_octo/<int:id_utilisateur>', methods=['POST'])
