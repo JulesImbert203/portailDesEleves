@@ -76,11 +76,11 @@ class Publication(db.Model):
 
     a_cacher_to_cycles = db.Column(db.JSON, nullable=True)
 
-    a_cacher_to_promos = db.Column(db.JSON, nullable=True)
+    a_cacher_aux_nouveaux = db.Column(db.Boolean, nullable=True)
 
     is_publication_interne = db.Column(db.Boolean, nullable=True)
 
-    def __init__(self, association: Association, auteur: Utilisateur, titre: str, contenu: str, date_publication: str, is_commentable: bool, a_cacher_to_cycles: list = [], a_cacher_to_promos: list = [], is_publication_interne: bool = False, is_publiee_par_utilisateur: bool = False):
+    def __init__(self, association: Association, auteur: Utilisateur, titre: str, contenu: str, date_publication: str, is_commentable: bool, a_cacher_to_cycles: list = [], a_cacher_aux_nouveaux: bool = False, is_publication_interne: bool = False, is_publiee_par_utilisateur: bool = False):
         """
         Crée une nouvelle publication
         """
@@ -103,7 +103,7 @@ class Publication(db.Model):
 
         self.a_cacher_to_cycles = a_cacher_to_cycles
 
-        self.a_cacher_to_promos = a_cacher_to_promos
+        self.a_cacher_aux_nouveaux = a_cacher_aux_nouveaux
 
         self.is_publication_interne = is_publication_interne
 
@@ -113,7 +113,7 @@ class Publication(db.Model):
         else:
             self.is_publiee_par_utilisateur = is_publiee_par_utilisateur
 
-    def __update__(self, titre: str = None, contenu: str = None, is_commentable: bool = None, a_cacher_to_cycles: list = None, a_cacher_to_promos: list = None, is_publication_interne: bool = None):
+    def __update__(self, titre: str = None, contenu: str = None, is_commentable: bool = None, a_cacher_to_cycles: list = None, a_cacher_aux_nouveaux: bool = None, is_publication_interne: bool = None):
         """
         Modifie les valeurs d'une publication.
         Il ne s'agit pas ici de modifier les likes ou les commentaires, 
@@ -165,8 +165,8 @@ class Publication(db.Model):
         - a_cacher_to_cycles : list
             Liste des cycles pour lesquels le post doit être caché (permet de préciser plutôt pour pas spammer les autres)
 
-        - a_cacher_to_promos : list
-            Liste des promotions pour lesquelles le post doit être caché (ex: un post pour le Baptême ou la PR)
+        - a_cacher_aux_nouveaux : bool
+            Indique si le post doit être à ceux qui n'ont pas été baptisés (ex: un post pour le Baptême ou la PR)
 
         - is_publication_interne : bool
             Indique si le post est réservé aux membres de l'association ou visible par tous
@@ -185,31 +185,8 @@ class Publication(db.Model):
         if a_cacher_to_cycles != None:
             self.a_cacher_to_cycles = a_cacher_to_cycles
 
-        if a_cacher_to_promos != None:
-            self.a_cacher_to_promos = a_cacher_to_promos
+        if a_cacher_aux_nouveaux != None:
+            self.a_cacher_to_promos = a_cacher_aux_nouveaux
 
         if is_publication_interne != None:
             self.is_publication_interne = is_publication_interne
-
-    def to_dict(self):
-        """
-        Renvoie l'objet sous la forme d'un dictionnaire
-        Utile pour envoyer l'objet via l'API
-        """
-        return {
-            "id": self.id,
-            "id_association": self.id_association,
-            "association": self.association.nom if self.association else None,
-            "id_auteur": self.id_auteur,
-            "auteur": self.auteur.nom_utilisateur if self.auteur else None,
-            "is_publiee_par_utilisateur": self.is_publiee_par_utilisateur,
-            "titre": self.titre,
-            "contenu": self.contenu,
-            "date_publication": self.date_publication,
-            "likes": self.likes,
-            "is_commentable": self.is_commentable,
-            "commentaires": [comment.to_dict() for comment in self.commentaires],
-            "a_cacher_to_cycles": self.a_cacher_to_cycles,
-            "a_cacher_to_promos": self.a_cacher_to_promos,
-            "is_publication_interne": self.is_publication_interne
-        }

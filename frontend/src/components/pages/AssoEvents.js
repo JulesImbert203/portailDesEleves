@@ -337,7 +337,7 @@ function AssoEvents({ asso_id }) {
                     <p>Ajouter un événement</p>
                 </div>
             </div>}
-            <div className='asso-events-container'>
+            <div className='asso-content-container'>
 
                 {/* formulaire pour un nouvel événement */}
                 {isNewEvent && <div className='asso-bloc-interne'>

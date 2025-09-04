@@ -17,35 +17,49 @@ function AssoPosts({ asso_id }) {
         "contenu": "",
         "is_commentable": true,
         "a_cacher_to_cycles": [],
-        "a_cacher_to_promos": [],
+        "a_cacher_aux_nouveaux": false,
         "is_publication_interne": false
     })
     const [listePosts, setListePosts] = useState([]);
 
-    const clearPost = () => {
+    const clearNewPost = () => {
         setNewPost({
             "titre": "",
             "contenu": "",
             "is_commentable": true,
             "a_cacher_to_cycles": [],
-            "a_cacher_to_promos": [],
+            "a_cacher_aux_nouveaux": false,
             "is_publication_interne": false
         })
+    }
+
+    const formatPublicationDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString("fr-FR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
     }
 
     const handleSetNewPost = (e) => {
         const { name, value, checked } = e.target;
         setNewPost(prevState => {
-            if (name === 'is_commentable') {
+            if (['is_commentable', 'is_publication_interne', 'a_cacher_aux_nouveaux'].includes(name)) {
                 return {
                     ...prevState,
                     [name]: checked
                 };
             }
-            if (name === 'is_publication_interne') {
+            if (name === 'a_cacher_to_cycles') {
+                const currentCycles = newPost.a_cacher_to_cycles;
+                const updatedCycles = checked ? [...currentCycles, value] : currentCycles.filter(cycle => cycle !== value);
                 return {
                     ...prevState,
-                    [name]: checked
+                    [name]: updatedCycles
                 };
             }
             return {
@@ -67,12 +81,11 @@ function AssoPosts({ asso_id }) {
 
     const validateNewPost = async () => {
         try {
-            await modifierEvenement(asso_id, idEventModifier, newEvent);
-            clearModiferEvent();
-            setIdEventModifier(null);
-            const events = await obtenirEvenementsAsso(asso_id);
-            const sortedEvents = sortEvents(events.evenements);
-            setListeEvents(sortedEvents);
+            await creerNouvellePublication(asso_id, newPost);
+            clearNewPost();
+            setIsNewPost(false);
+            const postsData = await obtenirPublicationsAsso(asso_id);
+            setListePosts(postsData.publications);
         } catch (erreur) {
             console.error(erreur);
         }
@@ -97,7 +110,7 @@ function AssoPosts({ asso_id }) {
             <div className='asso-info-section'>
                 <div className='asso-titre-description'>
                     <h2>Les publications</h2>
-                    {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => setIsGestion(true)}>
+                    {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => setIsGestion(!isGestion)}>
                         <img src="/assets/icons/edit.svg" alt="Copy" />
                         <p id="texteCopier">Éditer</p>
                     </div>}
@@ -109,30 +122,30 @@ function AssoPosts({ asso_id }) {
                     <p>Ajouter une publication</p>
                 </div>
             </div>}
-            <div className='asso-events-container'>
+            <div className='asso-content-container'>
 
                 {/* formulaire pour une nouvelle publication */}
                 {isNewPost && <div className='asso-bloc-interne'>
-                    <h2><input value={newPost.titre} name='titre' type='text' onChange={handleSetNewPost} /></h2>
-                    <p><input value={newPost.contenu} name='contenu' type='text' onChange={handleSetNewPost} /></p>
+                    <h2>Titre : <input value={newPost.titre} name='titre' type='text' onChange={handleSetNewPost} /></h2>
                     <p>Autoriser les commentaires : <input type="checkbox" checked={newPost.is_commentable} name='is_commentable' onChange={handleSetNewPost} /></p>
                     <p>Publication interne : <input type="checkbox" checked={newPost.is_publication_interne} name='is_publication_interne' onChange={handleSetNewPost} /></p>
+                    <p>Cacher aux 1A : <input type="checkbox" checked={newPost.a_cacher_aux_nouveaux} name='a_cacher_aux_nouveaux' onChange={handleSetNewPost} /></p>
                     <p>
                         Cacher aux cycles :
-                        {/* TODO : A FINIR */}
-                        {["ic", "ast", "ev", "vs", "isup"].map(day => (
-                            <label key={day}>
-                                <input type="checkbox" name="jours_de_la_semaine" value={day} checked={modifierEventTempsPeriodique.jours_de_la_semaine.includes(day)} onChange={handleSetModifierEventTempsPeriodique} />
-                                {day}
+                        {["ic", "ast", "ev", "vs", "isup"].map(cycle => (
+                            <label key={cycle}>
+                                <input type="checkbox" name="a_cacher_to_cycles" value={cycle} checked={newPost.a_cacher_to_cycles.includes(cycle)} onChange={handleSetNewPost} />
+                                {cycle}
                             </label>
                         ))}
                     </p>
+                    <p>Description : <textarea value={newPost.contenu} name='contenu' type='text' onChange={handleSetNewPost} /></p>
                     {isNewPost && <div className='buttons-container'>
                         <div className='valider-button' onClick={validateNewPost}>
                             <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
                             <p>Ajouter</p>
                         </div>
-                        <div className='annuler-button' onClick={() => setIsNewEvent(false)}>
+                        <div className='annuler-button' onClick={() => setIsNewPost(false)}>
                             <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
                             <p>Annuler</p>
                         </div>
@@ -143,6 +156,7 @@ function AssoPosts({ asso_id }) {
                 {listePosts.map((post) => (<div key={post.id} className='asso-bloc-interne'>
                     <h2>{post.titre}</h2>
                     <p>{post.contenu}</p>
+                    <p className="publication-date">Publié le : {formatPublicationDate(post.date_publication)}</p>
                     {isGestion && <div className='buttons-container'>
                         <div className='asso-button' onClick={() => console.log(post.id)}>
                             <img src="/assets/icons/edit.svg" alt="Editer" />

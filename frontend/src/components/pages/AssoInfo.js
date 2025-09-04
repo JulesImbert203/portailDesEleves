@@ -46,7 +46,7 @@ function AssoInfo({ asso_id }) {
             <div className='asso-info-section'>
                 <div className='asso-titre-description'>
                     <h2>Description de l'association</h2>
-                    {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => setIsEdition(true)}>
+                    {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => setIsEdition(!isEdition)}>
                         <img src="/assets/icons/edit.svg" alt="Copy" />
                         <p id="texteCopier">Éditer</p>
                     </div>}
