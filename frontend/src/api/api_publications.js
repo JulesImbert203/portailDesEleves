@@ -31,3 +31,20 @@ export async function supprimerPublication(asso_id, publication_id) {
     throw erreur;
   }
 }
+
+export async function creerNouvellePublication(id_asso, data) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/${id_asso}/creer_nouvelle_publication`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data)
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
