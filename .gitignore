@@ -3,4 +3,4 @@
 
 .env
 
-*.db
+instance/*

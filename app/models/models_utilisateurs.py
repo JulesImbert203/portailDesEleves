@@ -6,6 +6,28 @@ from werkzeug.security import generate_password_hash # Pour hacher les mdp
 # verification du format des donnees :
 from ..utils.verification_format import *
 
+
+default_questions = { # Les trois premiers caractères servent à l'odonnancement
+    "010Ta devise ?": "",
+    "020Tes hobbies ?": "",
+    "030Quelles assoces comptes-tu faire ?": "",
+    "040Tes sports ?": "",
+    "050Raconte une blague :": "",
+    "060Trash ton co :": "",
+    "070Et ton parrain, comment tu l'aimes ?": "",
+    "080Et ton fillot ?": "",
+    "090Champagne ou Ricard ?": "",
+    "100Ton top 5 du moment :": "",
+    "110Que signifie JPG ?": "",
+    "120Qui convoites-tu secrètement ?": "",
+    "130Le truc le plus absurde qui te soit jamais arrivé :": "",
+    "140Tes vacances de rêve ?": "",
+    "150Ton date idéal ?": "",
+    "160Ton talent caché ?": "",
+}
+
+
+
 class Utilisateur(db.Model, UserMixin) :
     __tablename__ = 'utilisateurs'
     # Initialise lors de l'ajout d'une promotion. Ne dois pas etre modifiable par l'utilisateur
@@ -110,6 +132,8 @@ class Utilisateur(db.Model, UserMixin) :
         self.nombre_participations_sondaj = 0 
         self.nombre_victoires_sondaj = 0
         self.meilleur_score_2048 = 0
+
+        self.questions_reponses_du_portail = default_questions
     
     def __repr__(self):
         """

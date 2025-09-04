@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { obtenirDataUser } from '../../api/api_utilisateurs';
 import '../../assets/styles/utilisateur.css';
 
+import TabInfo from './PageUtilisateur/Info';
+import TabAsso from './PageUtilisateur/Asso';
+import TabQuestions from './PageUtilisateur/Question';
 
 function PageUtilisateur({ id }) {
     const [donneesUtilisateur, setDonneesUtilisateur] = useState([]);
@@ -71,22 +74,12 @@ function PageUtilisateur({ id }) {
                     <div className={`user-tab ${activeTab === "assos" ? "active" : ""}`} onClick={() => setActiveTab("assos")}>Associations</div>
                     <div className={`user-tab ${activeTab === "questions" ? "active" : ""}`} onClick={() => setActiveTab("questions")}>Questions du portail</div>
                 </div>
-                
+
                 {/* Contenu des onglets */}
                 <div className="user-tab-content">
-                    {activeTab === "info" && <>
-                        <p>Promo : {donneesUtilisateur.promotion}</p>
-                        <p>Date de naissance : {donneesUtilisateur.date_de_naissance}</p>
-                        <p>Chambre : {donneesUtilisateur.chambre}</p>
-                        <p>Ville d'origine : {donneesUtilisateur.ville_origine}</p>
-                        <p>Instruments joués : {donneesUtilisateur.instruments}</p>
-                        <p>Co : {donneesUtilisateur.co_nom}</p>
-                        <p>Parrain.e : {donneesUtilisateur.marrain_nom}</p>
-                    </>}
-                    {activeTab === "assos" && <>
-                        <p>Assos : {donneesUtilisateur.associations_actuelles}</p>
-                    </>}
-                    {activeTab === "questions" && <p>Questions du portail ici...</p>}
+                    {activeTab === "info" && <TabInfo id={id}/>}
+                    {activeTab === "assos" && <TabAsso id={id}/>}
+                    {activeTab === "questions" && <TabQuestions id={id}/>}
                 </div>
             </div>
 

@@ -1,5 +1,13 @@
 import { API_BASE_URL, handleResponse } from "./base";
 
+export async function obtenirIDActuel() {
+  const res = await fetch(`${API_BASE_URL}/users/id_actuel`,
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data["id"]; 
+}
+
 export async function obtenirDataUser(id_utilisateur) {
   const res = await fetch(`${API_BASE_URL}/users/obtenir_infos_profil/${id_utilisateur}`,
     { credentials: "include" }
@@ -7,6 +15,25 @@ export async function obtenirDataUser(id_utilisateur) {
   const data = await res.json();
   return data; // au format JSON 
 }
+
+
+export async function obtenirQuestionsReponses(id_utilisateur) {
+  const res = await fetch(`${API_BASE_URL}/users/questions_reponses/${id_utilisateur}`,
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data; // au format JSON 
+}
+
+export async function modifierQuestionsReponses(id_utilisateur, new_QR) {
+  await fetch(`${API_BASE_URL}/users/questions_reponses/${id_utilisateur}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(new_QR)
+  });
+}
+
 
 export async function verifierSuperutilisateur() {
   try {

@@ -141,13 +141,47 @@ def obtenir_infos_profil(user_id:int) :
             "co_id": utilisateur.co_id,
             "co_nom": utilisateur.co_nom,
             "fillots_dict": utilisateur.fillots_dict,
-            "questions_reponse_du_portail": utilisateur.questions_reponses_du_portail,
             "associations_actuelles": [asso.association.nom for asso in utilisateur.associations_actuelles],
             "asociations_anciennes": [asso.association.nom for asso in utilisateur.associations_anciennes],
             "vote_sondaj_du_jour" : utilisateur.vote_sondaj_du_jour,
         }
         return jsonify(infos_utilisateur), 200
 
+
+@controllers_utilisateurs.get('/obtenir_questions_reponses/<int:user_id>')
+@login_required
+def obtenir_questions_reponses(user_id: int) :
+    """
+    Fournit les informations affichees sur le profil d'un utilisateur
+    """
+    
+
+
+@controllers_utilisateurs.route('/questions_reponses/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def modifier_questions_reponses(user_id: int):
+    """
+    Renvoie ou modifie les réponses au questions du portail
+    """
+    utilisateur = get_utilisateur(user_id)
+    if not utilisateur:
+        return jsonify({"message": "Utilisateur non trouvé"}), 404
+
+    if request.method == 'GET':
+        return jsonify(utilisateur.questions_reponses_du_portail), 200
+
+    elif request.method == 'POST':
+        if not (user_id == current_user.id or current_user.est_superutilisateur):
+            return jsonify({"message": "Pas le droit"}), 401
+        
+        data = request.get_json()
+        if not valider_questions_du_portail (data):
+            return jsonify({"message": "Reponses mal formées"}), 400
+        utilisateur.questions_reponses_du_portail = data
+        db.session.add(utilisateur)
+        db.session.commit()
+        return jsonify({"message": "Reponses patchées"}), 200
+        
 
 @controllers_utilisateurs.route('/supprimer_co', methods=['POST'])
 @login_required
@@ -218,3 +252,9 @@ def route_supprimer_fillots() :
         return jsonify({"message": "Fillot(s) supprime(s) avec succes"}), 200  
     except Exception as e:
         return jsonify({"message": f"Erreur lors de la suppression des fillots : {str(e)}"}), 500
+
+
+@controllers_utilisateurs.get('/id_actuel')
+@login_required
+def get_id_actuel():
+    return jsonify({"id": current_user.id})
