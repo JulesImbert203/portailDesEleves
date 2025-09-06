@@ -51,19 +51,15 @@ def route_creer_publication(association_id: int):
         asso = Association.query.get(association_id)
         if asso:
             data = request.json
-            publication = Publication(association=asso,
-                                      auteur=current_user,
-                                      titre=data["titre"],
-                                      contenu=data["contenu"],
-                                      date_publication=datetime.now(),
-                                      is_commentable=data["is_commentable"],
-                                      a_cacher_to_cycles=data["a_cacher_to_cycles"],
-                                      a_cacher_aux_nouveaux=data["a_cacher_aux_nouveaux"],
-                                      is_publication_interne=data["is_publication_interne"]
-                                      )
-            db.session.add(publication)
-            db.session.commit()
-            return jsonify({"message": "Événement créé avec succès", "id_publication": publication.id}), 201
+            id_publication = add_publication(association=asso,
+                                             titre=data["titre"],
+                                             contenu=data["contenu"],
+                                             is_commentable=data["is_commentable"],
+                                             a_cacher_to_cycles=data["a_cacher_to_cycles"],
+                                             a_cacher_aux_nouveaux=data["a_cacher_aux_nouveaux"],
+                                             is_publication_interne=data["is_publication_interne"]
+                                             )
+            return jsonify({"message": "événement créé avec succès", "id_publication": id_publication}), 201
         else:
             return jsonify({"message": "association non trouvée"}), 404
     except Exception as e:
@@ -74,9 +70,66 @@ def route_creer_publication(association_id: int):
 @login_required
 @est_membre_de_asso
 def route_supprimer_publication(association_id, publication_id):
+    """
+    Supprime la publication
+    Ainsi que toutes les commentaires associés
+    """
     publication = Publication.query.get(publication_id)
+    if publication.a_cacher_aux_nouveaux and (not current_user.est_baptise):
+        # Les non baptisés n'ont pas le droit de supprimer les posts cachés
+        return jsonify({"message": "publication non trouvé"}), 404
     if not publication:
-        return jsonify({"message": "Publication non trouvé"}), 404
-    db.session.delete(publication)
-    db.session.commit()
-    return jsonify({"message": "Publication supprimée avec succès"}), 200
+        return jsonify({"message": "publication non trouvé"}), 404
+    remove_publication(publication)
+    return jsonify({"message": "publication supprimée avec succès"}), 200
+
+
+@controllers_publications.route("<int:association_id>/modifier_publication/<int:publication_id>", methods=["PUT"])
+@login_required
+@est_membre_de_asso
+def route_modifier_publication(association_id, publication_id):
+    """
+    Modifie la publication
+    Les commentaires associés sont inchangés
+    """
+    publication = Publication.query.get(publication_id)
+    if publication:
+        data = request.json
+        if publication.a_cacher_aux_nouveaux and (not current_user.est_baptise):
+            # Les non baptisés n'ont pas le droit de modifier les posts cachés
+            return jsonify({"message": "publication non trouvé"}), 404
+        modify_publication(publication,
+                           data["titre"],
+                           data["contenu"],
+                           data["is_commentable"],
+                           data["a_cacher_to_cycles"],
+                           data["a_cacher_aux_nouveaux"],
+                           data["is_publication_interne"])
+        return jsonify({"message": "publication modifiée avec succès"}), 200
+    else:
+        return jsonify({"message": "publication non trouvée"}), 404
+
+
+@controllers_publications.route("<int:association_id>/creer_nouveau_commentaire/<int:post_id>", methods=['POST'])
+@login_required
+def route_creer_commentaire(association_id: int, post_id: int):
+    """
+    Ajoute un nouveau commentaire à la publication.
+    """
+    try:
+        asso = Association.query.get(association_id)
+        if asso:
+            post = Publication.query.get(post_id)
+            if post:
+                data = request.json
+                if post.a_cacher_aux_nouveaux and (not current_user.est_baptise):
+                    # Les non baptisés n'ont pas le droit de commenter les posts cachés
+                    return jsonify({"message": "publication non trouvé"}), 404
+                comment_id = add_comment(post, asso, data.contenu)
+                return jsonify({"message": "commentaire créé avec succès", "comment_id": comment_id}), 201
+            else:
+                return jsonify({"message": "publication non trouvée"}), 404
+        else:
+            return jsonify({"message": "association non trouvée"}), 404
+    except Exception as e:
+        return jsonify({"message": f"erreur lors de la création du commentaire: {e}"}), 500
