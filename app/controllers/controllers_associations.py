@@ -224,7 +224,7 @@ def route_get_asso(association_id):
     if current_user.est_baptise:
         asso = Association.query.filter_by(id=association_id).first()
     else:
-        asso = Association.query.filter_by(defaultest_baptise=True, id=association_id).first()
+        asso = Association.query.filter_by(est_sensible=False, id=association_id).first()
 
     if not asso:
         return jsonify({"error": "Association not found"}), 404

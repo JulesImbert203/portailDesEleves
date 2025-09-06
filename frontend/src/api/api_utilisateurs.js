@@ -1,5 +1,14 @@
 import { API_BASE_URL, handleResponse } from "./base";
 
+
+export async function obtenirAssosUtilisateur(id_utilisateur) {
+  const res = await fetch(`${API_BASE_URL}/users/assos_utilisateur/${id_utilisateur}`,
+    { credentials: "include" }
+  );
+  const data = await res.json();
+  return data; // au format JSON
+}
+
 export async function obtenirIDActuel() {
   const res = await fetch(`${API_BASE_URL}/users/id_actuel`,
     { credentials: "include" }

@@ -36,7 +36,7 @@ def est_membre_de_asso(f):
         association_id = kwargs.get("association_id")
         if not association_id:
             return jsonify({"message": "l'URL doit contenir l'id de l'association."}), 400      
-        if current_user.est_superutilisateur or (association_id in current_user.assos_actuelles.keys()):
+        if current_user.est_superutilisateur or (association_id in current_user.associations_actuelles.keys()):
             return f(*args, **kwargs)
         return jsonify({"message": "Vous n'avez pas les permissions pour effectuer cette action"}), 403
     return decorated_function

@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from app.services import *
 from app.utils.decorators import * 
 from app.services.services_utilisateurs import *
+from app.models.models_associations import AssociationMembre
 
 
 # Creer le blueprint pour les utilisateurs
@@ -141,25 +142,37 @@ def obtenir_infos_profil(user_id:int) :
             "co_id": utilisateur.co_id,
             "co_nom": utilisateur.co_nom,
             "fillots_dict": utilisateur.fillots_dict,
-            "associations_actuelles": [asso.association.nom for asso in utilisateur.associations_actuelles],
-            "asociations_anciennes": [asso.association.nom for asso in utilisateur.associations_anciennes],
             "vote_sondaj_du_jour" : utilisateur.vote_sondaj_du_jour,
         }
         return jsonify(infos_utilisateur), 200
 
 
-@controllers_utilisateurs.get('/obtenir_questions_reponses/<int:user_id>')
+@controllers_utilisateurs.route('/assos_utilisateur/<int:user_id>', methods=['GET', 'POST'])
 @login_required
-def obtenir_questions_reponses(user_id: int) :
+def assos_utilisateur(user_id: int):
     """
-    Fournit les informations affichees sur le profil d'un utilisateur
+    Renvoie les assos de l'utilisateur, avec leurs noms et le rôle dans l'asso
     """
-    
+    utilisateur = get_utilisateur(user_id)
+    if not utilisateur:
+        return jsonify({"message": "Utilisateur non trouvé"}), 404
 
+    roles_actuels = AssociationMembre.query.filter_by(utilisateur_id=user_id).all()
+    roles_anciens = AssociationAncienMembre.query.filter_by(utilisateur_id=user_id).all()
+
+    data = {
+        "associations_actuelles": [
+            {"role": role.role, "nom": role.association.nom, "asso_id": role.association_id} for role in roles_actuels
+        ],
+        "associations_anciennes": [
+            {"role": role.role, "nom": role.association.nom, "asso_id": role.association_id} for role in roles_anciens
+        ]
+    }
+    return jsonify (data)
 
 @controllers_utilisateurs.route('/questions_reponses/<int:user_id>', methods=['GET', 'POST'])
 @login_required
-def modifier_questions_reponses(user_id: int):
+def questions_reponses(user_id: int):
     """
     Renvoie ou modifie les réponses au questions du portail
     """
