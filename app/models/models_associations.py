@@ -60,7 +60,7 @@ class Association(db.Model):
     description = db.Column(db.Text, nullable=True)
     logo_path = db.Column(db.String(1000), nullable=True)
     banniere_path = db.Column(db.String(1000), nullable=True)  # banniere de l'asso
-    est_sensible = db.Column(db.Boolean, nullable=False)
+    a_cacher_aux_nouveaux = db.Column(db.Boolean, nullable=False)
 
     # Les publications de l'asso
     publications = db.relationship('Publication', back_populates='association')
@@ -84,7 +84,7 @@ class Association(db.Model):
     def __init__(
         self, nom: str, ordre_importance: int,description: str = None,
         type_association: str = None, logo_path: str = None,  banniere_path: str = None,
-        est_sensible: bool = False
+        a_cacher_aux_nouveaux: bool = False
     ):
         """
         Crée une nouvelle association
@@ -95,7 +95,7 @@ class Association(db.Model):
         self.logo_path = logo_path
         self.ordre_importance = ordre_importance
         self.banniere_path = banniere_path
-        self.est_sensible = est_sensible
+        self.a_cacher_aux_nouveaux = a_cacher_aux_nouveaux
 
         # Créer un dossier pour l'association
         self.create_association_folder()
@@ -132,6 +132,8 @@ class Association(db.Model):
             {'loi 1901','club BDE','club BDS','club BDA','autre'}
         - ordre_importance : int
             Ordre d'importance de l'association, doit etre un entier positif (vaut par défaut l'id de l'association)
+        - a_cacher_aux_nouveaux : bool
+            Est-ce que l'association doit être cachée aux non-baptisés.
         """
 
         if nom != None:

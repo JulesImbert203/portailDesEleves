@@ -70,7 +70,7 @@ def test_creer_utilisateur():
             bde=Association.query.filter_by(nom="BDE").first()
             jules=Utilisateur.query.filter_by(nom_utilisateur="23imbert").first()
             print(bde.membres)
-            print(jules.assos_actuelles)
+            print(jules.associations_actuelles)
             
             remove_member(bde,jules)
             flag_modified(bde, 'membres')

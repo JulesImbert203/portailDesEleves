@@ -19,7 +19,7 @@ def route_obtenir_publications_asso(association_id: int):
         query = Publication.query.filter(Publication.id_association == association_id)
         if not (current_user.est_superutilisateur):
             # publications internes
-            if not association_id in current_user.assos_actuelles.keys():
+            if not any(member.association_id == association_id for member in current_user.associations_actuelles):
                 query = query.filter(Publication.is_publication_interne.is_(False))
             # publications sensibles
             if not current_user.est_baptise:
@@ -110,26 +110,42 @@ def route_modifier_publication(association_id, publication_id):
         return jsonify({"message": "publication non trouvée"}), 404
 
 
-@controllers_publications.route("<int:association_id>/creer_nouveau_commentaire/<int:post_id>", methods=['POST'])
+@controllers_publications.route("modifier_like/<int:post_id>", methods=['PATCH'])
 @login_required
-def route_creer_commentaire(association_id: int, post_id: int):
+def route_modifier_likes(post_id: int):
     """
     Ajoute un nouveau commentaire à la publication.
     """
     try:
-        asso = Association.query.get(association_id)
-        if asso:
-            post = Publication.query.get(post_id)
-            if post:
-                data = request.json
-                if post.a_cacher_aux_nouveaux and (not current_user.est_baptise):
-                    # Les non baptisés n'ont pas le droit de commenter les posts cachés
-                    return jsonify({"message": "publication non trouvé"}), 404
-                comment_id = add_comment(post, asso, data.contenu)
-                return jsonify({"message": "commentaire créé avec succès", "comment_id": comment_id}), 201
-            else:
-                return jsonify({"message": "publication non trouvée"}), 404
+        post = Publication.query.get(post_id)
+        if post:
+            if post.a_cacher_aux_nouveaux and (not current_user.est_baptise):
+                # Les non baptisés n'ont pas le droit de liker les posts cachés
+                return jsonify({"message": "publication non trouvé"}), 404
+            modify_like(post, current_user)
+            return jsonify({"message": "like modifié avec succès"}), 201
         else:
-            return jsonify({"message": "association non trouvée"}), 404
+            return jsonify({"message": "publication non trouvée"}), 404
+    except Exception as e:
+        return jsonify({"message": f"erreur lors de la modification de like: {e}"}), 500
+
+
+@controllers_publications.route("/creer_nouveau_commentaire/<int:post_id>", methods=['POST'])
+@login_required
+def route_creer_commentaire(post_id: int):
+    """
+    Ajoute un nouveau commentaire à la publication.
+    """
+    try:
+        post = Publication.query.get(post_id)
+        if post:
+            data = request.json
+            if post.a_cacher_aux_nouveaux and (not current_user.est_baptise):
+                # Les non baptisés n'ont pas le droit de commenter les posts cachés
+                return jsonify({"message": "publication non trouvé"}), 404
+            comment_id = add_comment(post, current_user, data.contenu)
+            return jsonify({"message": "commentaire créé avec succès", "comment_id": comment_id}), 201
+        else:
+            return jsonify({"message": "publication non trouvée"}), 404
     except Exception as e:
         return jsonify({"message": f"erreur lors de la création du commentaire: {e}"}), 500

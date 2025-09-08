@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { estUtilisateurDansAsso } from "../../api/api_associations";
-import { creerNouvellePublication, modifierPublication, obtenirPublicationsAsso, supprimerPublication } from "../../api/api_publications";
+import { creerNouvellePublication, modifierLike, modifierPublication, obtenirPublicationsAsso, supprimerPublication } from "../../api/api_publications";
+import { useLayout } from "../../layouts/Layout";
 
 function AssoPosts({ asso_id }) {
+    const { userData } = useLayout();
     const [isGestion, setIsGestion] = useState(false);
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
     const [isNewPost, setIsNewPost] = useState(false);
@@ -151,6 +153,16 @@ function AssoPosts({ asso_id }) {
         }
     }
 
+    const handleChangeLike = async (post_id) => {
+        try {
+            await modifierLike(post_id)
+            const postsData = await obtenirPublicationsAsso(asso_id);
+            setListePosts(postsData.publications);
+        } catch (erreur) {
+            console.error(erreur);
+        }
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -215,10 +227,17 @@ function AssoPosts({ asso_id }) {
                 {listePosts.map((post) =>
                     <div key={post.id} className='asso-bloc-interne'>
                         {/* Les publications existantes */}
-                        {idModifyPost != post.id && <>
+                        {idModifyPost !== post.id && <>
                             <h2>{post.titre}</h2>
                             <p>{post.contenu}</p>
                             <p className="publication-date">Publié le : {formatPublicationDate(post.date_publication)}</p>
+                            {!isGestion && <div className='buttons-container'>
+                                <div className='asso-button' onClick={() => handleChangeLike(post.id)}>
+                                    {post.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
+                                    {!post.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
+                                    <p>{post.likes.length}</p>
+                                </div>
+                            </div>}
                             {isGestion && <div className='buttons-container'>
                                 <div className='asso-button' onClick={() => handleSetIdModifyPost(post.id)}>
                                     <img src="/assets/icons/edit.svg" alt="Editer" />
@@ -232,7 +251,7 @@ function AssoPosts({ asso_id }) {
                         </>}
 
                         {/* Publication en cours d'édition */}
-                        {idModifyPost == post.id &&
+                        {idModifyPost === post.id &&
                             <>
                                 <h2>Titre : <input value={modifyPost.titre} name='titre' type='text' onChange={handleSetModifyPost} /></h2>
                                 <p>Autoriser les commentaires : <input type="checkbox" checked={modifyPost.is_commentable} name='is_commentable' onChange={handleSetModifyPost} /></p>

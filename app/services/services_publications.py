@@ -1,7 +1,7 @@
 from app.services import db
 from app.models import *
 from flask_login import current_user
-
+from sqlalchemy.orm.attributes import flag_modified
 
 from app.models.models_publications import Publication, Commentaire
 from app.models.models_associations import Association
@@ -91,6 +91,29 @@ def remove_like(publication: Publication, utilisateur: Utilisateur):
             likes = publication.likes
             likes.remove(utilisateur.id)
             publication.likes = likes
+        else:
+            raise ValueError("L'utilisateur n'existe pas'")
+    else:
+        raise ValueError("La publication n'existe pas")
+
+
+def modify_like(publication: Publication, utilisateur: Utilisateur):
+    """
+    Rajoute un like s'il n'est pas déjà présent
+    Sinon retire ce like
+    """
+    publication = Publication.query.get(publication.id)
+    if publication:
+        utilisateur = Utilisateur.query.get(utilisateur.id)
+        if utilisateur:
+            likes = publication.likes
+            if utilisateur.id in likes:
+                likes.remove(utilisateur.id)
+            else:
+                likes.append(utilisateur.id)
+            publication.likes = likes
+            flag_modified(publication, "likes")
+            db.session.commit()
         else:
             raise ValueError("L'utilisateur n'existe pas'")
     else:

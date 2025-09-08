@@ -65,3 +65,19 @@ export async function modifierPublication(id_asso, id_post, data) {
     throw erreur;
   }
 }
+
+export async function modifierLike(id_post) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/modifier_like/${id_post}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
