@@ -1,32 +1,20 @@
 import { useState, useEffect } from "react";
 
-import { obtenirQuestionsReponses, verifierSuperutilisateur, obtenirIDActuel, modifierQuestionsReponses } from "../../../api/api_utilisateurs";
+import { obtenirQuestionsReponses, modifierQuestionsReponses } from "../../../api/api_utilisateurs";
+import { useLayout } from "../../../layouts/Layout";
+import '../../../assets/styles/utilisateur.css';
 
-export default function TabQuestions({ id }) {
+export default function TabQuestions({ id, autoriseAModifier }) {
     const [questionsReponses, setQuestionsReponses] = useState({});
     const [isGestion, setIsGestion] = useState(false);
-    const [currentID, setCurrentID] = useState(-1);
-    const [autoriseAModifier, setAutoriseAModifier] = useState(false);
+    const { userData } = useLayout();
 
     useEffect(() => {// Obtention des données utilisateur à afficher
         const chargerUtilisateur = async () => {
             const data = await obtenirQuestionsReponses(id);
             setQuestionsReponses(data);
-            console.log(data)
         };
         chargerUtilisateur();
-        console.log(questionsReponses)
-    }, [id]);
-
-    useEffect(() => {// Obtention de l'id de l'utilisateur qui consulte
-        const fetchCurrentID = async () => {
-            const cuurId = await obtenirIDActuel();
-            setCurrentID(cuurId)
-            if (id === cuurId || (await verifierSuperutilisateur()).is_superuser) {
-                setAutoriseAModifier(true);
-            }
-        }
-        fetchCurrentID();
     }, [id]);
 
     const handleChange = (e) => {
@@ -50,29 +38,23 @@ export default function TabQuestions({ id }) {
             </div>
         </div>
         {!isGestion && <>
-            <div className='asso-bloc-interne'>
-                {Object.keys(questionsReponses).map(key => {
-                    return (<p>{key.slice(3, -1)} : {questionsReponses[key]}</p>)
-                })}
-            </div>
+            {Object.keys(questionsReponses).map(key => {
+                return (<p>{key.slice(3, -1)} : {questionsReponses[key]}</p>)
+            })}
         </>}
         {isGestion && <>
-            <div className='asso-bloc-interne'>
-                {Array.from(Object.keys(questionsReponses)).sort().map(key => {
-                    return (<p>
-                        {key.slice(3, -1)} : <input type="text" name={key} value={questionsReponses[key]} onChange={handleChange} ></input>
-                    </p>)
-                })}
+            {Array.from(Object.keys(questionsReponses)).sort().map(key => {
+                return (<p>
+                    {key.slice(3, -1)} : <input type="text" name={key} value={questionsReponses[key]} onChange={handleChange} ></input>
+                </p>)
+            })}
+            <div className='valider-button' onClick={validerModifierEvent}>
+                <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
+                <p>Ajouter</p>
             </div>
-            <div className='buttons-container'>
-                <div className='valider-button' onClick={validerModifierEvent}>
-                    <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                    <p>Ajouter</p>
-                </div>
-                <div className='annuler-button' onClick={() => setIsGestion(false)}>
-                    <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                    <p>Annuler</p>
-                </div>
+            <div className='annuler-button' onClick={() => setIsGestion(false)}>
+                <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
+                <p>Annuler</p>
             </div>
         </>}
         {/* {isGestion && <div className='asso-bloc-interne'>

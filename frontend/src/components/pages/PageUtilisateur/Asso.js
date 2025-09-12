@@ -18,7 +18,6 @@ export default function TabAsso({ id }) {
         const chargerAssos = async () => {
             const data = await obtenirAssosUtilisateur(id);
             setAssosActuelles(data.associations_actuelles);
-            console.log(assosActuelles)
         };
         chargerAssos();
     }, [id]);
