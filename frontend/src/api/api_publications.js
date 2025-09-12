@@ -48,3 +48,36 @@ export async function creerNouvellePublication(id_asso, data) {
     throw erreur;
   }
 }
+
+export async function modifierPublication(id_asso, id_post, data) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/${id_asso}/modifier_publication/${id_post}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data)
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
+
+export async function modifierLike(id_post) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/modifier_like/${id_post}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}

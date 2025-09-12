@@ -1,6 +1,7 @@
 from app.services import db
 from app.models import *
-
+from flask_login import current_user
+from sqlalchemy.orm.attributes import flag_modified
 
 from app.models.models_publications import Publication, Commentaire
 from app.models.models_associations import Association
@@ -9,38 +10,56 @@ from app.models.models_utilisateurs import Utilisateur
 # Gestion des publications
 
 
-def add_publication(association: Association, utilisateur: Utilisateur, titre: str, contenu: str, date: str, heure: str):
+def add_publication(association: Association, titre: str, contenu: str, is_commentable: bool, a_cacher_to_cycles: list, a_cacher_aux_nouveaux: bool, is_publication_interne: bool):
     """
     Ajoute une publication à l'association
     """
     association = Association.query.get(association.id)
     if association:
-        utilisateur = Utilisateur.query.get(utilisateur.id)
-        if utilisateur:
-            publication = Publication(titre=titre, contenu=contenu, auteur=utilisateur,
-                                      date=date, heure=heure, association=association)
-            db.session.add(publication)
-            db.session.commit()
-        else:
-            raise ValueError("L'utilisateur n'existe pas")
+        publication = Publication(association=association,
+                                  auteur=current_user,
+                                  titre=titre,
+                                  contenu=contenu,
+                                  date_publication=datetime.now(),
+                                  is_commentable=is_commentable,
+                                  a_cacher_to_cycles=a_cacher_to_cycles,
+                                  a_cacher_aux_nouveaux=a_cacher_aux_nouveaux,
+                                  is_publication_interne=is_publication_interne
+                                  )
+        db.session.add(publication)
+        db.session.commit()
+        return publication.id
     else:
         raise ValueError("L'association n'existe pas")
 
 
-def remove_publication(association: Association, publication: Publication):
+def modify_publication(publication: Publication, titre: str, contenu: str, is_commentable: bool, a_cacher_to_cycles: list, a_cacher_aux_nouveaux: bool, is_publication_interne: bool):
+    """
+    Ajoute une publication à l'association
+    """
+    publication = Publication.query.get(publication.id)
+    if publication:
+        publication.titre = titre
+        publication.contenu = contenu
+        publication.is_commentable = is_commentable
+        publication.a_cacher_to_cycles = a_cacher_to_cycles
+        publication.a_cacher_aux_nouveaux = a_cacher_aux_nouveaux
+        publication.is_publication_interne = is_publication_interne
+        db.session.commit()
+    else:
+        raise ValueError("La publication n'existe pas")
+
+
+def remove_publication(publication: Publication):
     """
     Retire une publication de l'association
     """
-    association = Association.query.get(association.id)
-    if association:
-        publication = Publication.query.get(publication.id)
-        if publication:
-            db.session.delete(publication)
-            db.session.commit()
-        else:
-            raise ValueError("La publication n'existe pas")
+    publication = Publication.query.get(publication.id)
+    if publication:
+        db.session.delete(publication)
+        db.session.commit()
     else:
-        raise ValueError("L'association n'existe pas")
+        raise ValueError("La publication n'existe pas")
 
 
 def add_like(publication: Publication, utilisateur: Utilisateur):
@@ -78,7 +97,30 @@ def remove_like(publication: Publication, utilisateur: Utilisateur):
         raise ValueError("La publication n'existe pas")
 
 
-def add_comment(publication: Publication, auteur: Utilisateur, contenu: str, date: datetime):
+def modify_like(publication: Publication, utilisateur: Utilisateur):
+    """
+    Rajoute un like s'il n'est pas déjà présent
+    Sinon retire ce like
+    """
+    publication = Publication.query.get(publication.id)
+    if publication:
+        utilisateur = Utilisateur.query.get(utilisateur.id)
+        if utilisateur:
+            likes = publication.likes
+            if utilisateur.id in likes:
+                likes.remove(utilisateur.id)
+            else:
+                likes.append(utilisateur.id)
+            publication.likes = likes
+            flag_modified(publication, "likes")
+            db.session.commit()
+        else:
+            raise ValueError("L'utilisateur n'existe pas'")
+    else:
+        raise ValueError("La publication n'existe pas")
+
+
+def add_comment(publication: Publication, auteur: Utilisateur, contenu: str):
     """
     Ajoute un commentaire à la publication
     """
@@ -90,11 +132,12 @@ def add_comment(publication: Publication, auteur: Utilisateur, contenu: str, dat
                 new_comment = Commentaire(
                     auteur=auteur,
                     contenu=contenu,
-                    date_creation=date,
+                    date_creation=datetime.now(),
                     publication=publication
                 )
                 db.session.add(new_comment)
                 db.session.commit()
+                return new_comment.id
             else:
                 raise ValueError("La publication n'est pas commentable")
         else:
@@ -135,8 +178,6 @@ def add_like_to_comment(utilisateur: Utilisateur, commentaire: Commentaire):
             raise ValueError("L'utilisateur n'existe pas")
     else:
         raise ValueError("Le commentaire n'existe pas")
-
-
 
 
 def remove_like_from_comment(utilisateur: Utilisateur, commentaire: Commentaire):

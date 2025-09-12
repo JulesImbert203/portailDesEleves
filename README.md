@@ -38,7 +38,7 @@ Nous avons dit que les controllers lançaient les requêtes dans la BDD : lorsqu
 
 **Exemple :** Ajout d'un utilisateur dans une association.
 
-Un bouton sur une page web mène à l'url de la route d'ajout d'un utilisateur. Cette route, dans `controllers/`, vérifie les permissions (voir plus loin), puis exécute la fonction `ajouter_membre(id_asso, id_membre, role)` de `services/`. Cette fonction ajoute l'association en question au tag `assos_actuelles` de l'utilisateur dans la table des utilisateurs, et ajoute l'utilisateur au tag `membres` de l'association dans la table des associations. Enfin, la fonction commit les changements dans la BDD. N'ayant pas déclenché d'erreur, la route renvoie un message de succès avec le code 200. Recevant ce message, la page web affiche un message de succès en HTML. 
+Un bouton sur une page web mène à l'url de la route d'ajout d'un utilisateur. Cette route, dans `controllers/`, vérifie les permissions (voir plus loin), puis exécute la fonction `ajouter_membre(id_asso, id_membre, role)` de `services/`. Cette fonction ajoute l'association en question au tag `associations_actuelles` de l'utilisateur dans la table des utilisateurs, et ajoute l'utilisateur au tag `membres` de l'association dans la table des associations. Enfin, la fonction commit les changements dans la BDD. N'ayant pas déclenché d'erreur, la route renvoie un message de succès avec le code 200. Recevant ce message, la page web affiche un message de succès en HTML. 
 
 #### 3) Les permissions 
 

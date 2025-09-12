@@ -197,7 +197,7 @@ def route_creer_asso():
         nouvelle_asso = Association(
             nom=data["nom"], description=data['description'], type_association=data["type_association"],
             ordre_importance=data["ordre_importance"], logo_path=data["logo_path"],
-            banniere_path=data["banniere_path"], est_sensible=data["est_sensible"]
+            banniere_path=data["banniere_path"], a_cacher_aux_nouveaux=data["a_cacher_aux_nouveaux"]
         )
         nouvelle_asso.create_association_folder()
         db.session.add(nouvelle_asso)
@@ -213,7 +213,7 @@ def route_get_assos():
     if current_user.est_baptise:
         assos = Association.query.all()
     else:
-        assos = Association.query.filter_by(est_sensible=False)
+        assos = Association.query.filter_by(a_cacher_aux_nouveaux=False)
 
     return jsonify([{"id": asso.id, "nom": asso.nom, "nom_dossier": asso.nom_dossier, "img": asso.logo_path, "ordre": asso.ordre_importance} for asso in assos])
 
@@ -224,7 +224,7 @@ def route_get_asso(association_id):
     if current_user.est_baptise:
         asso = Association.query.filter_by(id=association_id).first()
     else:
-        asso = Association.query.filter_by(est_sensible=False, id=association_id).first()
+        asso = Association.query.filter_by(a_cacher_aux_nouveaux=False, id=association_id).first()
 
     if not asso:
         return jsonify({"error": "Association not found"}), 404
