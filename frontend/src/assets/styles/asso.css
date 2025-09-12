@@ -267,7 +267,7 @@
 .asso-membres-position {
     color: var(--text-color);
     font-size: 0.9em;
-    margin-top:auto;
+    margin-top: auto;
     margin-bottom: 0;
 }
 
@@ -456,5 +456,30 @@
 .publication-date {
     color: grey;
     font-style: italic;
-    align-self: flex-end;
+    margin: 0;
+    margin-left: auto;
+    align-self: center;
+}
+
+.asso-bloc-comment {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    padding: var(--asso-padding);
+    padding-bottom: 0;
+    background-color: var(--asso-bloc-background);
+    border-radius: var(--asso-bloc-radius);
+    box-shadow: var(--asso-bloc-shadow);
+    border: var(--asso-bloc-border);
+
+}
+
+.asso-item-comment {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.asso-item-comment img {
+    max-width: 80px;
 }

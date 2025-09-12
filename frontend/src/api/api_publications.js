@@ -81,3 +81,20 @@ export async function modifierLike(id_post) {
     throw erreur;
   }
 }
+
+export async function creerNouveauCommentaire(id_post, comment) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/${id_post}/creer_nouveau_commentaire`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({"contenu" : comment})
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}

@@ -153,7 +153,7 @@ function AssoPosts({ asso_id }) {
         }
     }
 
-    const handleChangeLike = async (post_id) => {
+    const handleChangePostLike = async (post_id) => {
         try {
             await modifierLike(post_id)
             const postsData = await obtenirPublicationsAsso(asso_id);
@@ -226,18 +226,36 @@ function AssoPosts({ asso_id }) {
 
                 {listePosts.map((post) =>
                     <div key={post.id} className='asso-bloc-interne'>
+
                         {/* Les publications existantes */}
                         {idModifyPost !== post.id && <>
                             <h2>{post.titre}</h2>
                             <p>{post.contenu}</p>
-                            <p className="publication-date">Publié le : {formatPublicationDate(post.date_publication)}</p>
                             {!isGestion && <div className='buttons-container'>
-                                <div className='asso-button' onClick={() => handleChangeLike(post.id)}>
+                                <div className='asso-button' onClick={() => handleChangePostLike(post.id)}>
                                     {post.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
                                     {!post.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
                                     <p>{post.likes.length}</p>
                                 </div>
+                                <p className="publication-date">Publié le : {formatPublicationDate(post.date_publication)}</p>
                             </div>}
+
+                            {/* Les commentaires */}
+                            {post.commentaires.map((comment) => <div className="asso-bloc-comment">
+                                <div className="asso-item-comment">
+                                    <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
+                                    <p>{comment.contenu}</p>
+                                </div>
+                                <div className='buttons-container'>
+                                    <div className='asso-button' onClick={() => handleChangePostLike(post.id)}>
+                                        {post.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
+                                        {!post.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
+                                        <p>{post.likes.length}</p>
+                                    </div>
+                                    <p className="publication-date">Publié le : {formatPublicationDate(comment.date)}</p>
+                                </div>
+                            </div>)}
+
                             {isGestion && <div className='buttons-container'>
                                 <div className='asso-button' onClick={() => handleSetIdModifyPost(post.id)}>
                                     <img src="/assets/icons/edit.svg" alt="Editer" />

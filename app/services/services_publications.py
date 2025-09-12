@@ -132,7 +132,7 @@ def add_comment(publication: Publication, auteur: Utilisateur, contenu: str):
                 new_comment = Commentaire(
                     auteur=auteur,
                     contenu=contenu,
-                    date_creation=datetime.now(),
+                    date=datetime.now(),
                     publication=publication
                 )
                 db.session.add(new_comment)

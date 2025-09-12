@@ -130,7 +130,7 @@ def route_modifier_likes(post_id: int):
         return jsonify({"message": f"erreur lors de la modification de like: {e}"}), 500
 
 
-@controllers_publications.route("/creer_nouveau_commentaire/<int:post_id>", methods=['POST'])
+@controllers_publications.route("/<int:post_id>/creer_nouveau_commentaire", methods=['POST'])
 @login_required
 def route_creer_commentaire(post_id: int):
     """
@@ -143,7 +143,7 @@ def route_creer_commentaire(post_id: int):
             if post.a_cacher_aux_nouveaux and (not current_user.est_baptise):
                 # Les non baptisés n'ont pas le droit de commenter les posts cachés
                 return jsonify({"message": "publication non trouvé"}), 404
-            comment_id = add_comment(post, current_user, data.contenu)
+            comment_id = add_comment(post, current_user, data["contenu"])
             return jsonify({"message": "commentaire créé avec succès", "comment_id": comment_id}), 201
         else:
             return jsonify({"message": "publication non trouvée"}), 404
