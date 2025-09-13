@@ -26,7 +26,7 @@ function AssoPosts({ asso_id }) {
         "a_cacher_aux_nouveaux": false,
         "is_publication_interne": false
     })
-    const [isNewComment, setIsNewComment] = useState(false);
+    const [idNewComment, setIdNewComment] = useState(null);
     const [newComment, setNewComment] = useState("");
 
     const clearNewPost = () => {
@@ -133,11 +133,18 @@ function AssoPosts({ asso_id }) {
         }
     }
 
+    const handleSetIdNewComment = (comment_id) => {
+        if (comment_id !== idNewComment) {
+            setNewComment("")
+            setIdNewComment(comment_id)
+        }
+    }
+
     const validateNewComment = async (post_id) => {
         try {
             await creerNouveauCommentaire(post_id, newComment)
             setNewComment("");
-            setIsNewComment(false)
+            setIdNewComment(null)
             const postsData = await obtenirPublicationsAsso(asso_id);
             setListePosts(postsData.publications);
         } catch (erreur) {
@@ -261,7 +268,7 @@ function AssoPosts({ asso_id }) {
                                     {!post.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
                                     <p>{post.likes.length}</p>
                                 </div>
-                                <div className='asso-button' onClick={() => { setIsNewComment(true); setNewComment("") }}>
+                                <div className='asso-button' onClick={() => handleSetIdNewComment(post.id)}>
                                     <img src="/assets/icons/comment.svg" alt="commentaire" />
                                     <p>Commenter</p>
                                 </div>
@@ -285,7 +292,7 @@ function AssoPosts({ asso_id }) {
                             </div>)}
 
                             {/* Nouveau commentaire */}
-                            {isNewComment && <div className="asso-bloc-comment">
+                            {idNewComment === post.id && <div className="asso-bloc-comment">
                                 <div className="asso-item-comment">
                                     <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
                                     <textarea className="comment-input" value={newComment} type='text' placeholder="Écrivez votre commentaire ici" onChange={(e) => setNewComment(e.target.value)} />
@@ -295,7 +302,7 @@ function AssoPosts({ asso_id }) {
                                         <img src="/assets/icons/check-mark.svg" alt="Valider" />
                                         <p>Valider</p>
                                     </div>
-                                    <div className='annuler-button' onClick={() => setIsNewComment(false)}>
+                                    <div className='annuler-button' onClick={() => handleSetIdNewComment(null)}>
                                         <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
                                         <p>Annuler</p>
                                     </div>
