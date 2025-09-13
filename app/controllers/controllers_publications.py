@@ -110,11 +110,11 @@ def route_modifier_publication(association_id, publication_id):
         return jsonify({"message": "publication non trouvée"}), 404
 
 
-@controllers_publications.route("modifier_like/<int:post_id>", methods=['PATCH'])
+@controllers_publications.route("modifier_like_post/<int:post_id>", methods=['PATCH'])
 @login_required
-def route_modifier_likes(post_id: int):
+def route_modifier_likes_post(post_id: int):
     """
-    Ajoute un nouveau commentaire à la publication.
+    Rajoute ou retire un like sur la publication.
     """
     try:
         post = Publication.query.get(post_id)
@@ -122,10 +122,29 @@ def route_modifier_likes(post_id: int):
             if post.a_cacher_aux_nouveaux and (not current_user.est_baptise):
                 # Les non baptisés n'ont pas le droit de liker les posts cachés
                 return jsonify({"message": "publication non trouvé"}), 404
-            modify_like(post, current_user)
+            modify_like_post(post, current_user)
             return jsonify({"message": "like modifié avec succès"}), 201
         else:
             return jsonify({"message": "publication non trouvée"}), 404
+    except Exception as e:
+        return jsonify({"message": f"erreur lors de la modification de like: {e}"}), 500
+    
+@controllers_publications.route("modifier_like_comment/<int:comment_id>", methods=['PATCH'])
+@login_required
+def route_modifier_likes_comment(comment_id: int):
+    """
+    Rajoute ou retire un like sur le commentaire.
+    """
+    try:
+        comment = Commentaire.query.get(comment_id)
+        if comment:
+            if comment.publication.a_cacher_aux_nouveaux and (not current_user.est_baptise):
+                # Les non baptisés n'ont pas le droit de liker les posts de commentaires cachés
+                return jsonify({"message": "commentaire non trouvé"}), 404
+            modify_like_comment(comment, current_user)
+            return jsonify({"message": "like modifié avec succès"}), 201
+        else:
+            return jsonify({"message": "commentaire non trouvée"}), 404
     except Exception as e:
         return jsonify({"message": f"erreur lors de la modification de like: {e}"}), 500
 
@@ -149,3 +168,4 @@ def route_creer_commentaire(post_id: int):
             return jsonify({"message": "publication non trouvée"}), 404
     except Exception as e:
         return jsonify({"message": f"erreur lors de la création du commentaire: {e}"}), 500
+

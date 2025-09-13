@@ -483,3 +483,8 @@
 .asso-item-comment img {
     max-width: 80px;
 }
+
+.comment-input {
+    flex-grow: 1;
+    align-self: stretch;
+}

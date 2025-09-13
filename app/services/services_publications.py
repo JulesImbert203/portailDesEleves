@@ -97,10 +97,10 @@ def remove_like(publication: Publication, utilisateur: Utilisateur):
         raise ValueError("La publication n'existe pas")
 
 
-def modify_like(publication: Publication, utilisateur: Utilisateur):
+def modify_like_post(publication: Publication, utilisateur: Utilisateur):
     """
-    Rajoute un like s'il n'est pas déjà présent
-    Sinon retire ce like
+    Rajoute un like sur la publication s'il n'est pas déjà présent
+    Retire ce like sinon
     """
     publication = Publication.query.get(publication.id)
     if publication:
@@ -118,6 +118,28 @@ def modify_like(publication: Publication, utilisateur: Utilisateur):
             raise ValueError("L'utilisateur n'existe pas'")
     else:
         raise ValueError("La publication n'existe pas")
+    
+def modify_like_comment(commentaire: Commentaire, utilisateur: Utilisateur):
+    """
+    Rajoute un like sur le commentaire s'il n'est pas déjà présent
+    Retire ce like sinon
+    """
+    commentaire = Commentaire.query.get(commentaire.id)
+    if commentaire:
+        utilisateur = Utilisateur.query.get(utilisateur.id)
+        if utilisateur:
+            likes = commentaire.likes
+            if utilisateur.id in likes:
+                likes.remove(utilisateur.id)
+            else:
+                likes.append(utilisateur.id)
+            commentaire.likes = likes
+            flag_modified(commentaire, "likes")
+            db.session.commit()
+        else:
+            raise ValueError("L'utilisateur n'existe pas'")
+    else:
+        raise ValueError("Le commentaire n'existe pas")
 
 
 def add_comment(publication: Publication, auteur: Utilisateur, contenu: str):

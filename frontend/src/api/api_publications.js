@@ -66,9 +66,25 @@ export async function modifierPublication(id_asso, id_post, data) {
   }
 }
 
-export async function modifierLike(id_post) {
+export async function modifierLikePost(id_post) {
   try {
-    const res = await fetch(`${API_BASE_URL}/publications/modifier_like/${id_post}`, {
+    const res = await fetch(`${API_BASE_URL}/publications/modifier_like_post/${id_post}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
+
+export async function modifierLikeComment(id_comment) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/modifier_like_comment/${id_comment}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

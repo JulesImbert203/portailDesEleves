@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { estUtilisateurDansAsso } from "../../api/api_associations";
-import { creerNouvellePublication, modifierLike, modifierPublication, obtenirPublicationsAsso, supprimerPublication } from "../../api/api_publications";
+import { creerNouveauCommentaire, creerNouvellePublication, modifierLikeComment, modifierLikePost, modifierPublication, obtenirPublicationsAsso, supprimerPublication } from "../../api/api_publications";
 import { useLayout } from "../../layouts/Layout";
 
 function AssoPosts({ asso_id }) {
@@ -26,6 +26,8 @@ function AssoPosts({ asso_id }) {
         "a_cacher_aux_nouveaux": false,
         "is_publication_interne": false
     })
+    const [isNewComment, setIsNewComment] = useState(false);
+    const [newComment, setNewComment] = useState("");
 
     const clearNewPost = () => {
         setNewPost({
@@ -131,6 +133,18 @@ function AssoPosts({ asso_id }) {
         }
     }
 
+    const validateNewComment = async (post_id) => {
+        try {
+            await creerNouveauCommentaire(post_id, newComment)
+            setNewComment("");
+            setIsNewComment(false)
+            const postsData = await obtenirPublicationsAsso(asso_id);
+            setListePosts(postsData.publications);
+        } catch (erreur) {
+            console.error(erreur);
+        }
+    }
+
     const handleSetIdModifyPost = async (post_id) => {
         if (idModifyPost !== post_id) {
             clearModifyPost();
@@ -155,7 +169,17 @@ function AssoPosts({ asso_id }) {
 
     const handleChangePostLike = async (post_id) => {
         try {
-            await modifierLike(post_id)
+            await modifierLikePost(post_id)
+            const postsData = await obtenirPublicationsAsso(asso_id);
+            setListePosts(postsData.publications);
+        } catch (erreur) {
+            console.error(erreur);
+        }
+    }
+
+    const handleChangeCommentLike = async (comment_id) => {
+        try {
+            await modifierLikeComment(comment_id)
             const postsData = await obtenirPublicationsAsso(asso_id);
             setListePosts(postsData.publications);
         } catch (erreur) {
@@ -237,24 +261,46 @@ function AssoPosts({ asso_id }) {
                                     {!post.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
                                     <p>{post.likes.length}</p>
                                 </div>
+                                <div className='asso-button' onClick={() => { setIsNewComment(true); setNewComment("") }}>
+                                    <img src="/assets/icons/comment.svg" alt="commentaire" />
+                                    <p>Commenter</p>
+                                </div>
                                 <p className="publication-date">Publié le : {formatPublicationDate(post.date_publication)}</p>
                             </div>}
 
                             {/* Les commentaires */}
-                            {post.commentaires.map((comment) => <div className="asso-bloc-comment">
+                            {post.commentaires.map((comment) => <div className="asso-bloc-comment" key={comment.id}>
                                 <div className="asso-item-comment">
                                     <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
                                     <p>{comment.contenu}</p>
                                 </div>
                                 <div className='buttons-container'>
-                                    <div className='asso-button' onClick={() => handleChangePostLike(post.id)}>
-                                        {post.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
-                                        {!post.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
-                                        <p>{post.likes.length}</p>
+                                    <div className='asso-button' onClick={() => handleChangeCommentLike(comment.id)}>
+                                        {comment.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
+                                        {!comment.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
+                                        <p>{comment.likes.length}</p>
                                     </div>
                                     <p className="publication-date">Publié le : {formatPublicationDate(comment.date)}</p>
                                 </div>
                             </div>)}
+
+                            {/* Nouveau commentaire */}
+                            {isNewComment && <div className="asso-bloc-comment">
+                                <div className="asso-item-comment">
+                                    <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
+                                    <textarea className="comment-input" value={newComment} type='text' placeholder="Écrivez votre commentaire ici" onChange={(e) => setNewComment(e.target.value)} />
+                                </div>
+                                <div className='buttons-container'>
+                                    <div className='valider-button' onClick={() => validateNewComment(post.id)}>
+                                        <img src="/assets/icons/check-mark.svg" alt="Valider" />
+                                        <p>Valider</p>
+                                    </div>
+                                    <div className='annuler-button' onClick={() => setIsNewComment(false)}>
+                                        <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
+                                        <p>Annuler</p>
+                                    </div>
+                                </div>
+                            </div>}
 
                             {isGestion && <div className='buttons-container'>
                                 <div className='asso-button' onClick={() => handleSetIdModifyPost(post.id)}>
