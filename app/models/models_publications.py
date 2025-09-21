@@ -65,7 +65,7 @@ class Publication(db.Model):
 
     titre = db.Column(db.String(1000), nullable=True)
 
-    contenu = db.Column(db.String(10000), nullable=True)
+    contenu = db.Column(db.Text, nullable=True)
 
     date_publication = db.Column(db.String(100), nullable=True)
 

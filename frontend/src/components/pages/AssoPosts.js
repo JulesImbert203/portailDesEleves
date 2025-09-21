@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { estUtilisateurDansAsso } from "../../api/api_associations";
-import { creerNouveauCommentaire, creerNouvellePublication, modifierLikeComment, modifierLikePost, modifierPublication, obtenirPublicationsAsso, supprimerPublication } from "../../api/api_publications";
+import { creerNouveauCommentaire, creerNouvellePublication, modifierCommentaire, modifierLikeComment, modifierLikePost, modifierPublication, obtenirPublicationsAsso, supprimerCommentaire, supprimerPublication } from "../../api/api_publications";
 import { useLayout } from "../../layouts/Layout";
+import RichEditor, { RichTextDisplay } from "../blocs/RichEditor";
 
 function AssoPosts({ asso_id }) {
     const { userData } = useLayout();
@@ -26,6 +27,8 @@ function AssoPosts({ asso_id }) {
         "a_cacher_aux_nouveaux": false,
         "is_publication_interne": false
     })
+    const [idModifyComment, setIdModifyComment] = useState(null);
+    const [modifyComment, setModifyComment] = useState("");
     const [idNewComment, setIdNewComment] = useState(null);
     const [newComment, setNewComment] = useState("");
 
@@ -87,6 +90,13 @@ function AssoPosts({ asso_id }) {
         });
     };
 
+    const handleSetNewPostContent = (value) => {
+        setNewPost(prevState => ({
+            ...prevState,
+            contenu: value,
+        }))
+    }
+
     const handleSetModifyPost = (e) => {
         const { name, value, checked } = e.target;
         setModifyPost(prevState => {
@@ -111,9 +121,26 @@ function AssoPosts({ asso_id }) {
         });
     };
 
+    const handleSetModifyPostContent = (value) => {
+        setModifyPost(prevState => ({
+            ...prevState,
+            contenu: value,
+        }))
+    }
+
     const removePost = async (post_id) => {
         try {
             await supprimerPublication(asso_id, post_id);
+            const postsData = await obtenirPublicationsAsso(asso_id);
+            setListePosts(postsData.publications);
+        } catch (erreur) {
+            console.error(erreur);
+        }
+    }
+
+    const removeComment = async (post_id) => {
+        try {
+            await supprimerCommentaire(post_id);
             const postsData = await obtenirPublicationsAsso(asso_id);
             setListePosts(postsData.publications);
         } catch (erreur) {
@@ -156,9 +183,22 @@ function AssoPosts({ asso_id }) {
         if (idModifyPost !== post_id) {
             clearModifyPost();
             const post = listePosts.find(e => e.id === post_id);
-            const { titre, contenu, is_commentable } = post;
-            setModifyPost(prevState => ({ ...prevState, titre, contenu, is_commentable }));
+            if (post) {
+                const { titre, contenu, is_commentable } = post;
+                setModifyPost(prevState => ({ ...prevState, titre, contenu, is_commentable }));
+            }
             setIdModifyPost(post_id);
+        }
+    }
+
+    const handleSetIdModifyComment = async (comment_id) => {
+        if (idModifyComment !== comment_id) {
+            const postComments = listePosts.flatMap(post => post.commentaires);
+            const comment = postComments.find(c => c.id === comment_id);
+            if (comment) {
+                setModifyComment(comment.contenu);
+            }
+            setIdModifyComment(comment_id);
         }
     }
 
@@ -167,6 +207,18 @@ function AssoPosts({ asso_id }) {
             await modifierPublication(asso_id, idModifyPost, modifyPost);
             clearModifyPost();
             setIdModifyPost(null);
+            const postsData = await obtenirPublicationsAsso(asso_id);
+            setListePosts(postsData.publications);
+        } catch (erreur) {
+            console.error(erreur);
+        }
+    }
+
+    const validateModifyComment = async () => {
+        try {
+            await modifierCommentaire(idModifyComment, { "contenu": modifyComment })
+            setModifyComment("")
+            setIdModifyComment(null)
             const postsData = await obtenirPublicationsAsso(asso_id);
             setListePosts(postsData.publications);
         } catch (erreur) {
@@ -242,7 +294,8 @@ function AssoPosts({ asso_id }) {
                             </label>
                         ))}
                     </p>
-                    <p>Description : <textarea value={newPost.contenu} name='contenu' type='text' onChange={handleSetNewPost} /></p>
+                    <p>Description :</p>
+                    <RichEditor value={newPost.contenu} onChange={handleSetNewPostContent} />
                     <div className='buttons-container'>
                         <div className='valider-button' onClick={validateNewPost}>
                             <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
@@ -261,7 +314,7 @@ function AssoPosts({ asso_id }) {
                         {/* Les publications existantes */}
                         {idModifyPost !== post.id && <>
                             <h2>{post.titre}</h2>
-                            <p>{post.contenu}</p>
+                            <RichTextDisplay content={post.contenu} />
                             {!isGestion && <div className='buttons-container'>
                                 <div className='asso-button' onClick={() => handleChangePostLike(post.id)}>
                                     {post.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
@@ -274,22 +327,16 @@ function AssoPosts({ asso_id }) {
                                 </div>
                                 <p className="publication-date">Publié le : {formatPublicationDate(post.date_publication)}</p>
                             </div>}
-
-                            {/* Les commentaires */}
-                            {post.commentaires.map((comment) => <div className="asso-bloc-comment" key={comment.id}>
-                                <div className="asso-item-comment">
-                                    <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
-                                    <p>{comment.contenu}</p>
+                            {isGestion && <div className='buttons-container'>
+                                <div className='asso-button' onClick={() => handleSetIdModifyPost(post.id)}>
+                                    <img src="/assets/icons/edit.svg" alt="Editer" />
+                                    <p>Editer</p>
                                 </div>
-                                <div className='buttons-container'>
-                                    <div className='asso-button' onClick={() => handleChangeCommentLike(comment.id)}>
-                                        {comment.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
-                                        {!comment.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
-                                        <p>{comment.likes.length}</p>
-                                    </div>
-                                    <p className="publication-date">Publié le : {formatPublicationDate(comment.date)}</p>
+                                <div className='annuler-button' onClick={() => removePost(post.id)}>
+                                    <img src="/assets/icons/delete.svg" alt="Supprimer" />
+                                    <p>Supprimer</p>
                                 </div>
-                            </div>)}
+                            </div>}
 
                             {/* Nouveau commentaire */}
                             {idNewComment === post.id && <div className="asso-bloc-comment">
@@ -309,16 +356,51 @@ function AssoPosts({ asso_id }) {
                                 </div>
                             </div>}
 
-                            {isGestion && <div className='buttons-container'>
-                                <div className='asso-button' onClick={() => handleSetIdModifyPost(post.id)}>
-                                    <img src="/assets/icons/edit.svg" alt="Editer" />
-                                    <p>Editer</p>
-                                </div>
-                                <div className='annuler-button' onClick={() => removePost(post.id)}>
-                                    <img src="/assets/icons/delete.svg" alt="Supprimer" />
-                                    <p>Supprimer</p>
-                                </div>
-                            </div>}
+                            {post.commentaires.map((comment) => <div className="asso-bloc-comment" key={comment.id}>
+
+                                {/* Les commentaires */}
+                                {comment.id !== idModifyComment && <>
+                                    <div className="asso-item-comment">
+                                        <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
+                                        <p>{comment.contenu}</p>
+                                    </div>
+                                    <div className='buttons-container'>
+                                        <div className='asso-button' onClick={() => handleChangeCommentLike(comment.id)}>
+                                            {comment.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
+                                            {!comment.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
+                                            <p>{comment.likes.length}</p>
+                                        </div>
+                                        {comment.id_auteur == userData.id &&
+                                            <div className='asso-button' onClick={() => handleSetIdModifyComment(comment.id)}>
+                                                <img src="/assets/icons/edit.svg" alt="Editer" />
+                                                <p>Editer</p>
+                                            </div>}
+                                        {(isGestion || comment.id_auteur == userData.id) && <div className='annuler-button' onClick={() => removeComment(comment.id)}>
+                                            <img src="/assets/icons/delete.svg" alt="Supprimer" />
+                                            <p>Supprimer</p>
+                                        </div>}
+                                        <p className="publication-date">Publié le : {formatPublicationDate(comment.date)}</p>
+                                    </div>
+                                </>}
+
+                                {/* commentaire en cours d'édition */}
+                                {comment.id === idModifyComment && <>
+                                    <div className="asso-item-comment">
+                                        <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
+                                        <textarea className="comment-input" value={modifyComment} type='text' placeholder="Écrivez votre commentaire ici" onChange={(e) => setModifyComment(e.target.value)} />
+                                    </div>
+                                    <div className='buttons-container'>
+                                        <div className='valider-button' onClick={() => validateModifyComment(comment.id)}>
+                                            <img src="/assets/icons/check-mark.svg" alt="Valider" />
+                                            <p>Valider</p>
+                                        </div>
+                                        <div className='annuler-button' onClick={() => handleSetIdModifyComment(null)}>
+                                            <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
+                                            <p>Annuler</p>
+                                        </div>
+                                    </div>
+                                </>}
+                            </div>)}
                         </>}
 
                         {/* Publication en cours d'édition */}
@@ -337,7 +419,8 @@ function AssoPosts({ asso_id }) {
                                         </label>
                                     ))}
                                 </p>
-                                <p>Description : <textarea value={modifyPost.contenu} name='contenu' type='text' onChange={handleSetModifyPost} /></p>
+                                <p>Description :</p>
+                                <RichEditor value={modifyPost.contenu} onChange={handleSetModifyPostContent} />
                                 <div className='buttons-container'>
                                     <div className='valider-button' onClick={validateModifyPost}>
                                         <img src="/assets/icons/check-mark.svg" alt="Ajouter" />

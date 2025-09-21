@@ -7,7 +7,7 @@ from app.models.models_publications import Publication, Commentaire
 from app.models.models_associations import Association
 from app.models.models_utilisateurs import Utilisateur
 
-# Gestion des publications
+# Gestion de publications
 
 
 def add_publication(association: Association, titre: str, contenu: str, is_commentable: bool, a_cacher_to_cycles: list, a_cacher_aux_nouveaux: bool, is_publication_interne: bool):
@@ -48,6 +48,17 @@ def modify_publication(publication: Publication, titre: str, contenu: str, is_co
         db.session.commit()
     else:
         raise ValueError("La publication n'existe pas")
+
+def modify_comment(commentaire: Commentaire, contenu: str):
+    """
+    Modifie le commentaire
+    """
+    commentaire = Commentaire.query.get(commentaire.id)
+    if commentaire:
+        commentaire.contenu = contenu
+        db.session.commit()
+    else:
+        raise ValueError("Le commentaire n'existe pas")
 
 
 def remove_publication(publication: Publication):
@@ -118,7 +129,10 @@ def modify_like_post(publication: Publication, utilisateur: Utilisateur):
             raise ValueError("L'utilisateur n'existe pas'")
     else:
         raise ValueError("La publication n'existe pas")
-    
+
+# Les commentaires
+
+
 def modify_like_comment(commentaire: Commentaire, utilisateur: Utilisateur):
     """
     Rajoute un like sur le commentaire s'il n'est pas déjà présent
@@ -168,20 +182,16 @@ def add_comment(publication: Publication, auteur: Utilisateur, contenu: str):
         raise ValueError("La publication n'existe pas")
 
 
-def remove_comment(publication: Publication, commentaire: Commentaire):
+def remove_comment(commentaire: Commentaire):
     """
     Retire un commentaire de la publication
     """
-    publication = Publication.query.get(publication.id)
-    if publication:
-        commentaire = Commentaire.query.get(commentaire.id)
-        if commentaire:
-            db.session.delete(commentaire)
-            db.session.commit()
-        else:
-            raise ValueError("Le commentaire n'existe pas")
+    commentaire = Commentaire.query.get(commentaire.id)
+    if commentaire:
+        db.session.delete(commentaire)
+        db.session.commit()
     else:
-        raise ValueError("La publication n'existe pas")
+        raise ValueError("Le commentaire n'existe pas")
 
 
 def add_like_to_comment(utilisateur: Utilisateur, commentaire: Commentaire):

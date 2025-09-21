@@ -44,10 +44,10 @@ body {
 /* Main content (contient les 3 zones) */
 .main-content-global {
   display: flex;
+  flex-grow: 1;
   justify-content: space-between;
   padding: var(--global-style-padding);
   margin-top: var(--global-style-margin-centrale); /* Pour éviter que le contenu ne soit caché sous le header */
-  min-height: 100vh;
 }
 
 /* Sidebar (gauche et droite) */
@@ -58,7 +58,6 @@ body {
   flex-direction: column;
   align-items: center;
   padding: var(--global-style-padding);
-  overflow-y: auto;
   min-height: calc(100vh - var(--global-style-header-height)); /* Remplir toute la hauteur */
   flex: 1;
 }

@@ -32,6 +32,22 @@ export async function supprimerPublication(asso_id, publication_id) {
   }
 }
 
+export async function supprimerCommentaire(comment_id) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/supprimer_commentaire/${comment_id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur)
+    throw erreur;
+  }
+}
+
 export async function creerNouvellePublication(id_asso, data) {
   try {
     const res = await fetch(`${API_BASE_URL}/publications/${id_asso}/creer_nouvelle_publication`, {
@@ -52,6 +68,23 @@ export async function creerNouvellePublication(id_asso, data) {
 export async function modifierPublication(id_asso, id_post, data) {
   try {
     const res = await fetch(`${API_BASE_URL}/publications/${id_asso}/modifier_publication/${id_post}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data)
+    })
+    return handleResponse(res);
+  } catch (erreur) {
+    console.error("Erreur réseau :", erreur);
+    throw erreur;
+  }
+}
+
+export async function modifierCommentaire(id_comment, data) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/publications/modifier_commentaire/${id_comment}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

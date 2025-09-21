@@ -75,13 +75,34 @@ def route_supprimer_publication(association_id, publication_id):
     Ainsi que toutes les commentaires associés
     """
     publication = Publication.query.get(publication_id)
+    if not publication:
+        return jsonify({"message": "publication non trouvé"}), 404
     if publication.a_cacher_aux_nouveaux and (not current_user.est_baptise):
         # Les non baptisés n'ont pas le droit de supprimer les posts cachés
         return jsonify({"message": "publication non trouvé"}), 404
-    if not publication:
-        return jsonify({"message": "publication non trouvé"}), 404
     remove_publication(publication)
     return jsonify({"message": "publication supprimée avec succès"}), 200
+
+
+@controllers_publications.route("/supprimer_commentaire/<int:comment_id>", methods=["DELETE"])
+@login_required
+def route_supprimer_commentaire(comment_id):
+    """
+    Supprime la publication
+    Ainsi que toutes les commentaires associés
+    """
+    commentaire = Commentaire.query.get(comment_id)
+    if not commentaire:
+        return jsonify({"message": "commentaire non trouvé"}), 404
+    publication = commentaire.publication
+    if publication.a_cacher_aux_nouveaux and (not current_user.est_baptise):
+        # Les non baptisés n'ont pas le droit de supprimer les posts cachés
+        return jsonify({"message": "commentaire non trouvé"}), 404
+    if current_user.est_superutilisateur or (publication.id_association in current_user.associations_actuelles.keys()) or commentaire.id_ateur == current_user.id:
+        remove_comment(commentaire)
+        return jsonify({"message": "publication supprimée avec succès"}), 200
+    else:
+        return jsonify({"message": "vous devez être auteur ou membre de l'association pour supprimer ce commentaire"}), 403
 
 
 @controllers_publications.route("<int:association_id>/modifier_publication/<int:publication_id>", methods=["PUT"])
@@ -128,7 +149,8 @@ def route_modifier_likes_post(post_id: int):
             return jsonify({"message": "publication non trouvée"}), 404
     except Exception as e:
         return jsonify({"message": f"erreur lors de la modification de like: {e}"}), 500
-    
+
+
 @controllers_publications.route("modifier_like_comment/<int:comment_id>", methods=['PATCH'])
 @login_required
 def route_modifier_likes_comment(comment_id: int):
@@ -168,4 +190,20 @@ def route_creer_commentaire(post_id: int):
             return jsonify({"message": "publication non trouvée"}), 404
     except Exception as e:
         return jsonify({"message": f"erreur lors de la création du commentaire: {e}"}), 500
-
+    
+@controllers_publications.route("modifier_commentaire/<int:comment_id>", methods=["PUT"])
+@login_required
+def route_modifier_commentaire(comment_id):
+    """
+    Modifie le commentaire
+    """
+    commentaire = Commentaire.query.get(comment_id)
+    if commentaire:
+        data = request.json
+        if commentaire.id_auteur == current_user.id :
+            modify_comment(commentaire, data["contenu"])
+            return jsonify({"message": "commentaire modifié avec succès"}), 200
+        else :
+            return jsonify({"message": "seul l'auteur peut modifier ce commentaire"}), 403
+    else:
+        return jsonify({"message": "commentaire non trouvé"}), 404
