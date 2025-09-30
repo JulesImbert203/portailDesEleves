@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useLayout } from './../../layouts/Layout';  
 import Home from './Home';
 import { obtenirSondagesEnAttente, validerSondage, supprimerSondage, sondageSuivant } from '../../api/api_sondages';
+import { useNavigate } from "react-router-dom";
 
 function GererSondages() {
-    const { setCurrentComponent, reloadBlocSondage} = useLayout();
+    const { reloadBlocSondage} = useLayout();
     const [sondagesEnAttente, setSondagesEnAttente] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     const suivantEtReload = async () => {
         await sondageSuivant(); 
@@ -54,7 +56,7 @@ function GererSondages() {
             <div>
                 <h1>Gestion des sondages en attente</h1>
                 <p>Chargement des sondages ... </p>
-                <button onClick={() => setCurrentComponent(<Home />)}>Retour</button>
+                <button onClick={() => navigate("/")}>Retour</button>
             </div>
         );
     }
@@ -104,7 +106,7 @@ function GererSondages() {
             )}
             <button onClick={() => suivantEtReload()} >Passer au sondage suivant
             </button>
-            <button onClick={() => setCurrentComponent(<Home />)}>Retour</button>
+            <button onClick={() => navigate("/")}>Retour</button>
         </div>
     );
 }

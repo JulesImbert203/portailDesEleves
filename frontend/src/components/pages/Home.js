@@ -3,11 +3,10 @@ import React, { useState, useEffect } from "react";
 import {useLayout} from './../../layouts/Layout';  
 import ListeAssos from './ListeAssos';
 import AccueilSoifguard from "./AccueilSoifguard";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { verifierSuperutilisateur } from "../../api/api_utilisateurs";
 
  function Home() {
-  const { setCurrentComponent } = useLayout();
   const navigate = useNavigate();
   const [isSuperUser, setIsSuperUser] = useState(false);
   useEffect(() => {
@@ -21,10 +20,10 @@ import { verifierSuperutilisateur } from "../../api/api_utilisateurs";
   return (
     <div>
       <h1>Accueil</h1>
-      <button onClick={() => setCurrentComponent(<ListeAssos />)}>
+      <button onClick={() => navigate("/assos")}>
         Aller vers Asso
       </button>
-      <button onClick={() => setCurrentComponent(<AccueilSoifguard />)}>
+      <button onClick={() => navigate("/soifguard/accueil")}>
         Aller vers Soifguard
       </button>
       {isSuperUser && (
@@ -32,6 +31,7 @@ import { verifierSuperutilisateur } from "../../api/api_utilisateurs";
           Accès administrateur
         </button>
       )}
+      <Outlet />
     </div>
   );
 }

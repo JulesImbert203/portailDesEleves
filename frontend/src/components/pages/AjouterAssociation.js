@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useLayout } from './../../layouts/Layout';  
 import { ajouterAsso } from '../../api/api_associations';  // Importation de la fonction ajouterAsso
 import LISTE_ASSOS from "./ListeAssos" ;
+import { useNavigate } from "react-router-dom";
 
 function AjouterAssociation() {
-  const { setCurrentComponent } = useLayout();
+  const navigate = useNavigate();
   const [nom, setNom] = useState("");
   const [description, setDescription] = useState("");
   const [typeAssociation, setTypeAssociation] = useState("");
@@ -101,7 +102,7 @@ function AjouterAssociation() {
       {message && <p>{message}</p>}
       {erreur && <p style={{ color: "red" }}>{erreur}</p>}
 
-      <button onClick={() => setCurrentComponent(<LISTE_ASSOS/>)}>Retour</button>
+      <button onClick={() => navigate("/assos")}>Retour</button>
     </div>
   );
 }

@@ -6,12 +6,14 @@ import { obtenirIdUser } from '../../api/api_global';
 import {useLayout} from './../../layouts/Layout';  
 import ProposerSondage from '../pages/ProposerSondage';
 import GererSondages from '../pages/GererSondages';
+import { useNavigate } from 'react-router-dom';
 
 export default function BlocSondage({ reloadSondage }) {
   const [sondage, setSondage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { setCurrentComponent, reloadBlocSondage} = useLayout();
+  const { reloadBlocSondage} = useLayout();
   const [voteUser, setVoteUser] = useState(null);
+  const navigate = useNavigate();
   const voterEtReload = async (id_vote) => {
     try {
       await voterSondage(id_vote);  // Attendre la fin du vote
@@ -102,7 +104,7 @@ export default function BlocSondage({ reloadSondage }) {
     content = (
       <>
         <h3 className='sondage_question'>Pas de sondage aujourd'hui</h3>
-        <div className='sondage_gros_plus_container' onClick={() => setCurrentComponent(<ProposerSondage />)}>
+        <div className='sondage_gros_plus_container' onClick={() => navigate("/sondage/proposer")}>
           <img className='sondage_gros_plus' src="assets/icons/plus.svg" alt="Bouton en forme de plus"/>
         </div>
       </>
@@ -115,13 +117,13 @@ export default function BlocSondage({ reloadSondage }) {
       <div className="gestion_sondage_container">
         <button
           className="gestion_sondage_button"
-          onClick={() => setCurrentComponent(<ProposerSondage />)}
+          onClick={() => navigate("/sondage/proposer")}
         >
           <img src="assets/icons/plus.svg" className='sondage_icon_button' alt="Bouton en forme de plus"/>
         </button>
         <button
           className="gestion_sondage_button"
-          onClick={() => setCurrentComponent(<GererSondages />)}
+          onClick={() => navigate("/sondage/gerer")}
         >
           <img src="assets/icons/manage.svg" className='sondage_icon_button' alt="Bouton en forme de plus"/>
         </button>

@@ -1,21 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../assets/styles/liste_assos.css'; 
-import {useLayout} from '../../layouts/Layout'; 
 import Asso from './Asso';
 import AjouterAssociation from "./AjouterAssociation";
 import { verifierSuperutilisateur } from '../../api/api_utilisateurs';
 import { chargerListeAssos } from '../../api/api_associations';
+import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../api/base';
 
 export default function ListeAssos() {
 
   const [assos, setAssos] = useState([]);
-  const { setCurrentComponent } = useLayout();
   const [isSuperUser, setIsSuperUser] = useState(false);
+  const navigate = useNavigate ();
   
   
   const handleClick = (asso) => {
     //selectAsso(asso); // Stocke les infos de l'asso sélectionnée
-    setCurrentComponent(<Asso id = {asso}/>); // Change de composant
+    console.log (asso)
+    navigate(`/assos/get/${asso}`); // Change de composant
   };
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function ListeAssos() {
               onClick={() => handleClick(asso.id)}
             >
               <img 
-                src={`http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`} 
+                src={`${BASE_URL}/upload/associations/${asso.nom_dossier}/${asso.img}`} 
                 alt={asso.nom} 
                 className="liste-assos__image"
               />
@@ -49,7 +51,7 @@ export default function ListeAssos() {
             </div>
           ))}
           {isSuperUser && <div className='liste-assos__grid-item'>
-            <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="liste-assos__image" onClick={() => setCurrentComponent(<AjouterAssociation/>)}/>
+            <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="liste-assos__image" onClick={() => navigate("/assos/ajouter")}/>
           </div>}
 
         </div>

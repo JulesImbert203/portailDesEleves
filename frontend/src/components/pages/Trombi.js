@@ -3,10 +3,11 @@ import {useLayout} from './../../layouts/Layout';
 import '../../assets/styles/trombi.css'; 
 import TrombiPromo from './TrombiPromo';
 import { obtenirListeDesPromos } from '../../api/api_utilisateurs';
+import { useNavigate } from 'react-router-dom';
 
 function Trombi() {
     const [listePromos, setListePromos] = useState(null);
-    const { setCurrentComponent } = useLayout();
+    const navigate = useNavigate();
     
     useEffect(() => {
         const fetchData = async () => {
@@ -34,7 +35,7 @@ function Trombi() {
                     <div 
                         className='promo_dans_liste' 
                         key={index} 
-                        onClick={() => setCurrentComponent(<TrombiPromo promo = {promo}/>)}
+                        onClick={() => navigate(`/trombi/get/${promo}`)}
                     >
                         {promo}
                     </div>

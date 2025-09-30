@@ -7,12 +7,13 @@ import { useLayout } from "../../../layouts/Layout";
 import { obtenirAssosUtilisateur } from "../../../api/api_utilisateurs";
 import { BASE_URL } from "../../../api/base";
 import Asso from "../Asso";
+import { useNavigate } from "react-router-dom";
 
 
 export default function TabAsso({ id }) {
     const [assosActuelles, setAssosActuelles] = useState([]);
     const [assosAnciennes, setAssosAnciennes] = useState([]);
-    const { setCurrentComponent } = useLayout();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const chargerAssos = async () => {
@@ -24,7 +25,7 @@ export default function TabAsso({ id }) {
 
     const handleClick = (asso) => {
         //selectAsso(asso); // Stocke les infos de l'asso sélectionnée
-        setCurrentComponent(<Asso id={asso} />); // Change de composant
+        navigate(`/assos/get/${asso}`); // Change de composant
     };
 
     return (<>

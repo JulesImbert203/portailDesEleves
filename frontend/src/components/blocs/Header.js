@@ -12,7 +12,7 @@ import PageUtilisateur from "../pages/PageUtilisateur";
 import { seDeconnecter } from '../../api/api_global';
 
 export default function Header() {
-  const { setCurrentComponent, userData } = useLayout();
+  const { userData } = useLayout();
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -26,17 +26,17 @@ export default function Header() {
       <div className="global-header-dropdown">
         <button className="global-header-dropdown-btn">Menu</button>
         <div className="global-header-menu">
-          <button onClick={() => setCurrentComponent(<Home />)}>Accueil</button>
-          <button onClick={() => setCurrentComponent(<ListeAssos />)}>Assos</button>
-          <button onClick={() => setCurrentComponent(<PlanningAsso />)}>Planning associatif</button>
-          <button onClick={() => setCurrentComponent(<Trombi />)}>Trombinoscope</button>
+          <button onClick={() => navigate("/")}>Accueil</button>
+          <button onClick={() => navigate("/assos")}>Assos</button>
+          <button onClick={() => navigate("/assos/planning")}>Planning associatif</button>
+          <button onClick={() => navigate("/trombi")}>Trombinoscope</button>
         </div>
       </div>
 
       {/* Titre centré */}
       <div className="global-header-centered-container">
         <h1
-          onClick={() => setCurrentComponent(<Home />)}
+          onClick={() => navigate("/")}
           style={{ cursor: "pointer" }}>Portail des élèves</h1>
       </div>
 
@@ -44,7 +44,7 @@ export default function Header() {
         <button className="global-header-dropdown-btn">{userData ? userData.nom_utilisateur : "Chargement..."}</button>
         <div className="global-header-menu">
           <button onClick={() => handleLogout()} className="bloc-global-button">Se déconnecter</button>
-          <button onClick={() => setCurrentComponent(<PageUtilisateur id={userData.id} />)} className="bloc-global-button">Ma page</button>
+          <button onClick={() => navigate(`utilisateur/${userData.id}`)} className="bloc-global-button">Ma page</button>
         </div>
       </div>
     </div>

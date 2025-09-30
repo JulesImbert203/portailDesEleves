@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLayout } from "../../layouts/Layout";  
 import Home from "./Home";
 import { useNavigate } from "react-router-dom";
 import { verifierPermission } from "../../api/api_soifguard";
 
 function AccueilSoifguard() {
-  const { setCurrentComponent } = useLayout();
   const navigate = useNavigate();
   const [hasPermission, setHasPermission] = useState(false);
 
@@ -35,7 +34,7 @@ function AccueilSoifguard() {
         <p>Vous n'avez pas les permissions nécessaires pour accéder à Soifguard.</p>
       )}
 
-      <button onClick={() => setCurrentComponent(<Home />)}>
+      <button onClick={() => navigate("/")}>
         Retour
       </button>
     </div>
