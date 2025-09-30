@@ -371,12 +371,12 @@ function AssoPosts({ asso_id }) {
                                             {!comment.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
                                             <p>{comment.likes.length}</p>
                                         </div>
-                                        {comment.id_auteur == userData.id &&
+                                        {comment.id_auteur === userData.id &&
                                             <div className='asso-button' onClick={() => handleSetIdModifyComment(comment.id)}>
                                                 <img src="/assets/icons/edit.svg" alt="Editer" />
                                                 <p>Editer</p>
                                             </div>}
-                                        {(isGestion || comment.id_auteur == userData.id) && <div className='annuler-button' onClick={() => removeComment(comment.id)}>
+                                        {(isGestion || comment.id_auteur === userData.id) && <div className='annuler-button' onClick={() => removeComment(comment.id)}>
                                             <img src="/assets/icons/delete.svg" alt="Supprimer" />
                                             <p>Supprimer</p>
                                         </div>}

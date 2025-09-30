@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, retirerMembre } from "../../api/api_associations";
 import { obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo } from "../../api/api_utilisateurs";
-import { useLayout } from "../../layouts/Layout";
-import PageUtilisateur from "./PageUtilisateur";
 import { BASE_URL } from "../../api/base";
 import { useNavigate } from "react-router-dom";
 

@@ -1,8 +1,5 @@
 // src/pages/Home.js
 import React, { useState, useEffect } from "react";
-import {useLayout} from './../../layouts/Layout';  
-import ListeAssos from './ListeAssos';
-import AccueilSoifguard from "./AccueilSoifguard";
 import { Outlet, useNavigate } from "react-router-dom";
 import { verifierSuperutilisateur } from "../../api/api_utilisateurs";
 

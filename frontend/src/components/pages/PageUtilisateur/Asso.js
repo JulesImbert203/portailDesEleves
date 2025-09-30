@@ -3,10 +3,8 @@ import { useState, useEffect } from "react";
 import '../../../assets/styles/liste_assos.css';
 import '../../../assets/styles/asso.css';
 
-import { useLayout } from "../../../layouts/Layout";
 import { obtenirAssosUtilisateur } from "../../../api/api_utilisateurs";
 import { BASE_URL } from "../../../api/base";
-import Asso from "../Asso";
 import { useNavigate } from "react-router-dom";
 
 

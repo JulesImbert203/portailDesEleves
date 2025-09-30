@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useLayout } from './../../layouts/Layout';  
-import Trombi from './Trombi';
-import PageUtilisateur from './PageUtilisateur';
 import { obtenirListeDesUtilisateurs } from '../../api/api_utilisateurs';
 import { useNavigate, useParams } from 'react-router-dom';
 
