@@ -1,3 +1,5 @@
+import "../assets/styles/formulaire_connexion.css"
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { seConnecter } from "../api/api_global";
@@ -20,19 +22,21 @@ export default function FormulaireConnexion() {
   }
 
   return (
-    <div>
+    <div className="connexion-main-container">
       <h2>Connexion</h2>
       {erreur && <p style={{ color: "red" }}>{erreur}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="connexion-form">
+        <label for="norm">Nom d'utilisateur</label>
         <input
+          name="nom"
           type="text"
-          placeholder="Nom d'utilisateur"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+        <label for="mdp">Mot de passe</label>
         <input
+          name="mdp"
           type="password"
-          placeholder="Mot de passe"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

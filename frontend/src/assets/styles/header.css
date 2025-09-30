@@ -15,8 +15,9 @@
 .global-header-header {
     background-color: var(--global-header-bg-color);
     color: var(--global-header-text-color);
-    display: flex;
-    justify-content: space-between; /* Pour aligner le menu et le titre */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    justify-content: space-evenly; /* Pour aligner le menu et le titre */
     align-items: center; /* Pour centrer verticalement */
     padding: 10px 20px; /* Espacement global */
     height: 60px; /* Hauteur du header */
@@ -49,7 +50,6 @@
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
     background-color: var(--global-header-dropdown-bg-color);
     border-radius: var(--global-header-border-radius);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -83,7 +83,6 @@
 
 /* Titre centré */
 .global-header-centered-container {
-    flex-grow: 1; /* Permet au titre de prendre de l'espace pour être centré */
     text-align: center;
 }
 
@@ -91,4 +90,17 @@
 .global-header-centered-container h1 {
     font-size: 24px;
     margin: 0;
+}
+
+/* Les boutons à gauche */
+.global-header-left-container {
+    display: flex;
+    gap: 1em;
+}
+
+/* les boutons à droite */
+.global-header-right-container {
+    display: flex;
+    gap: 1em;
+    justify-content: flex-end;
 }
