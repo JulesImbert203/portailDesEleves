@@ -6,8 +6,10 @@ import AssoMembres from './AssoMembres';
 import { useLayout } from '../../layouts/Layout';
 import AssoEvents from './AssoEvents';
 import AssoPosts from './AssoPosts';
+import { useNavigate, useParams } from 'react-router-dom';
+import { BASE_URL } from '../../api/base';
 
-function Asso({ id }) {
+function Asso() {
     const [asso, setAsso] = useState(null);
     const [isMembreDansAsso, setIsMembreDansAsso] = useState(null);
     const [isMembreAutorise, setIsMembreAutorise] = useState(null);
@@ -17,7 +19,9 @@ function Asso({ id }) {
     const [isBannerDarkened, setIsBannerDarkened] = useState(false);
     const [isPhotoDarkened, setIsPhotoDarkened] = useState(false);
 
-    const { setCurrentComponent } = useLayout();
+    const navigate = useNavigate ();
+
+    const { id } = useParams();
 
     const changerPhotoLogoOuBanniere = (type_photo) => {
         document.getElementById('file-upload').setAttribute("data-type", type_photo);
@@ -34,9 +38,9 @@ function Asso({ id }) {
                 await ajouterContenu(id, file); // Téléversement 
                 try {
                     await changerPhoto(id, type_photo, file.name);
-                    setCurrentComponent(null);
+                    navigate ("");
                     setTimeout(() => {
-                        setCurrentComponent(<Asso key={Date.now()} id={id} />);
+                        navigate (`/assos/get/${id}`);
                     }, 0);
                 } catch (error) {
                     console.error(`Erreur : ${error}`);
@@ -83,7 +87,7 @@ function Asso({ id }) {
                 className="asso-banner"
                 style={{
                     backgroundImage: asso.banniere_path
-                        ? `url(http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.banniere_path})`
+                        ? `url(${BASE_URL}/upload/associations/${asso.nom_dossier}/${asso.banniere_path})`
                         : 'none', // Si la bannière n'existe pas, pas d'image de fond
                     backgroundColor: asso.banniere_path ? 'transparent' : 'var(--global-style-secondary-color)', // Si la bannière n'existe pas, couleur de fond
                 }}
@@ -106,7 +110,7 @@ function Asso({ id }) {
                     className="asso-logo"
                     src={
                         asso.img
-                            ? `http://127.0.0.1:5000/upload/associations/${asso.nom_dossier}/${asso.img}`
+                            ? `${BASE_URL}/upload/associations/${asso.nom_dossier}/${asso.img}`
                             : '/assets/icons/group.svg'
                     }
                     alt={asso.nom}

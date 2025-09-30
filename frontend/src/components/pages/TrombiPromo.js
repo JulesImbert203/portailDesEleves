@@ -3,13 +3,15 @@ import { useLayout } from './../../layouts/Layout';
 import Trombi from './Trombi';
 import PageUtilisateur from './PageUtilisateur';
 import { obtenirListeDesUtilisateurs } from '../../api/api_utilisateurs';
+import { useNavigate, useParams } from 'react-router-dom';
 
-function TrombiPromo({ promo }) {
-    const { setCurrentComponent } = useLayout();
+function TrombiPromo() {
     const [cyclesSelectionnes, setCyclesSelectionnes] = useState(["ic", "ast", "ev", "vs"]); // Les cycles sont pré-cochés
     const [utilisateurs, setUtilisateurs] = useState([]);
+    const navigate = useNavigate();
 
     const cyclesDisponibles = ["ic", "ast", "ev", "vs", "isup"];
+    const { promo } = useParams();
 
     // Charger les utilisateurs lorsque les cycles sélectionnés changent
     useEffect(() => {
@@ -22,6 +24,7 @@ function TrombiPromo({ promo }) {
             setUtilisateurs(data);
         };
         chargerUtilisateurs();
+        console.log (promo)
     }, [promo, cyclesSelectionnes]);
 
     const toggleCycle = (cycle) => {
@@ -51,7 +54,7 @@ function TrombiPromo({ promo }) {
                 <div className='liste_utilisateurs_grid'>
                     <div className='liste_utilisateurs_grid_container'>
                         {utilisateurs.map(user => (
-                            <div className='liste_utilisateurs_grid_item' key={user.id} onClick={() => setCurrentComponent(<PageUtilisateur id={user.id} />)}>
+                            <div className='liste_utilisateurs_grid_item' key={user.id} onClick={() => navigate(`/utilisateur/${user.id}`)}>
                                 {user.prenom} {user.surnom ? `'${user.surnom}'` : ''} {user.nom_de_famille}
                                 <br />
                                 {user.cycle} {user.promotion}
@@ -63,7 +66,7 @@ function TrombiPromo({ promo }) {
                 <div className='liste_utilisateurs'></div> // Affiche une page blanche si aucune case n'est cochée
             )}
 
-            <button onClick={() => setCurrentComponent(<Trombi />)}>Retour</button>
+            <button onClick={() => navigate("/trombi")}>Retour</button>
         </div>
     );
 }

@@ -7,6 +7,7 @@ import BlocAnniversaire from '../components/blocs/blocAnniversaire';
 import '../assets/styles/layout.css';  // Import du CSS global du layout
 import { obtenirIdUser } from '../api/api_global';
 import { obtenirDataUser } from '../api/api_utilisateurs';
+import { Outlet } from 'react-router-dom';
 
 const LayoutContext = createContext();
 
@@ -53,7 +54,7 @@ function Layout({ reloadSondage }) {
           <BlocSondage reloadSondage={reloadSondage} />
         </div>
         <div className="content-global">
-          {currentComponent}
+          <Outlet/>
         </div>
         <div className="sidebar-global right">
           <div className="bloc-global" style={{ height: "30vh" }}>

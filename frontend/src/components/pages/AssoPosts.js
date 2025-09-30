@@ -3,6 +3,7 @@ import { estUtilisateurDansAsso } from "../../api/api_associations";
 import { creerNouveauCommentaire, creerNouvellePublication, modifierCommentaire, modifierLikeComment, modifierLikePost, modifierPublication, obtenirPublicationsAsso, supprimerCommentaire, supprimerPublication } from "../../api/api_publications";
 import { useLayout } from "../../layouts/Layout";
 import RichEditor, { RichTextDisplay } from "../blocs/RichEditor";
+import { BASE_URL } from "../../api/base";
 
 function AssoPosts({ asso_id }) {
     const { userData } = useLayout();
@@ -341,7 +342,7 @@ function AssoPosts({ asso_id }) {
                             {/* Nouveau commentaire */}
                             {idNewComment === post.id && <div className="asso-bloc-comment">
                                 <div className="asso-item-comment">
-                                    <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
+                                    <img src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={`${post.auteur}`} />
                                     <textarea className="comment-input" value={newComment} type='text' placeholder="Écrivez votre commentaire ici" onChange={(e) => setNewComment(e.target.value)} />
                                 </div>
                                 <div className='buttons-container'>
@@ -361,7 +362,7 @@ function AssoPosts({ asso_id }) {
                                 {/* Les commentaires */}
                                 {comment.id !== idModifyComment && <>
                                     <div className="asso-item-comment">
-                                        <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
+                                        <img src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={`${post.auteur}`} />
                                         <p>{comment.contenu}</p>
                                     </div>
                                     <div className='buttons-container'>
@@ -386,7 +387,7 @@ function AssoPosts({ asso_id }) {
                                 {/* commentaire en cours d'édition */}
                                 {comment.id === idModifyComment && <>
                                     <div className="asso-item-comment">
-                                        <img src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg" alt={`${post.auteur}`} />
+                                        <img src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={`${post.auteur}`} />
                                         <textarea className="comment-input" value={modifyComment} type='text' placeholder="Écrivez votre commentaire ici" onChange={(e) => setModifyComment(e.target.value)} />
                                     </div>
                                     <div className='buttons-container'>

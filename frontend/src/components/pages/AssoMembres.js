@@ -3,6 +3,8 @@ import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMem
 import { obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo } from "../../api/api_utilisateurs";
 import { useLayout } from "../../layouts/Layout";
 import PageUtilisateur from "./PageUtilisateur";
+import { BASE_URL } from "../../api/base";
+import { useNavigate } from "react-router-dom";
 
 function AssoMembres({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
@@ -16,8 +18,7 @@ function AssoMembres({ asso_id }) {
     const [idMembreModifier, setIdMembreModifier] = useState(null);
     const [nouveauRole, setNouveauRole] = useState(null);
     const [nouvellePosition, setNouvellePosition] = useState("");
-
-    const { setCurrentComponent } = useLayout();
+    const navigate = useNavigate();
 
     const handleSetIsGestionMembres = (newState) => {
         if (!newState) {
@@ -144,10 +145,10 @@ function AssoMembres({ asso_id }) {
                                 <img src="/assets/icons/edit.svg" alt="modification de rôle" />
                             </div>)}
                             <img
-                                src="http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg"
+                                src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`}
                                 alt={`${user.nom_utilisateur}`}
                                 className="asso-membres-photo"
-                                onClick={() => setCurrentComponent(<PageUtilisateur id={user.id} />)}
+                                onClick={() => navigate(`/utilisateur/${user.id}`)}
                             />
                         </div>
                         <p className="asso-membres-name">{user.nom_utilisateur}</p>

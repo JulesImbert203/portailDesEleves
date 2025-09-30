@@ -6,14 +6,16 @@ import { useLayout } from '../../layouts/Layout';
 import TabInfo from './PageUtilisateur/Info';
 import TabAsso from './PageUtilisateur/Asso';
 import TabQuestions from './PageUtilisateur/Question';
-import { useResolvedPath } from 'react-router-dom';
+import { useParams, useResolvedPath } from 'react-router-dom';
 import { verifierSuperutilisateur } from "../../api/api_utilisateurs";
+import { BASE_URL } from '../../api/base';
 
-function PageUtilisateur({ id }) {
+function PageUtilisateur() {
     const [donneesUtilisateur, setDonneesUtilisateur] = useState([]);
     const [activeTab, setActiveTab] = useState("info");
     const { userData } = useLayout();
     const [autoriseAModifier, setAutoriseAModifier] = useState(false);
+    const { id } = useParams();
 
     useEffect(() => {
         const chargerUtilisateur = async () => {
@@ -29,8 +31,8 @@ function PageUtilisateur({ id }) {
     return (
         <div className="user-container">
             {/* Bannière avec photo de profil */}
-            <div className="user-banner" style={{ backgroundImage: `url(http://127.0.0.1:5000/upload/utilisateurs/minesvert.jpg)` }}>
-                <img className="user-pic" src={`http://127.0.0.1:5000/upload/utilisateurs/09brique.jpg`} alt={donneesUtilisateur.nom_utilisateur} />
+            <div className="user-banner" style={{ backgroundImage: `url(${BASE_URL}/upload/utilisateurs/minesvert.jpg)` }}>
+                <img className="user-pic" src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={donneesUtilisateur.nom_utilisateur} />
             </div>
 
             <div className='user-dessous-banniere'>

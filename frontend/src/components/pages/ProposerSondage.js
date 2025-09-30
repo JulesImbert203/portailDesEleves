@@ -3,9 +3,10 @@ import { useLayout } from './../../layouts/Layout';
 import { requeteProposerSondage } from './../../api/api_sondages';  // Importation de la fonction proposerSondage
 import Home from './Home';
 import '../../assets/styles/proposer_sondage.css';  // Import du CSS global du layout
+import { useNavigate } from "react-router-dom";
 
 function ProposerSondage() {
-  const { setCurrentComponent } = useLayout();
+  const navigate = useNavigate();
 
   // États pour la question et les réponses
   const [question, setQuestion] = useState("");
@@ -117,7 +118,7 @@ function ProposerSondage() {
       )}
 
       <button
-        onClick={() => setCurrentComponent(<Home />)}
+        onClick={() => navigate("/")}
         className="proposer_sondage_retour"
       >
         Retour
