@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 
 import { obtenirQuestionsReponses, modifierQuestionsReponses } from "../../../api/api_utilisateurs";
-import { useLayout } from "../../../layouts/Layout";
 import '../../../assets/styles/utilisateur.css';
 
 export default function TabQuestions({ id, autoriseAModifier }) {
     const [questionsReponses, setQuestionsReponses] = useState({});
     const [isGestion, setIsGestion] = useState(false);
-    const { userData } = useLayout();
 
     useEffect(() => {// Obtention des données utilisateur à afficher
         const chargerUtilisateur = async () => {

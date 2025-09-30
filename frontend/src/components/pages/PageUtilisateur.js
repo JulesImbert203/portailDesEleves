@@ -6,7 +6,7 @@ import { useLayout } from '../../layouts/Layout';
 import TabInfo from './PageUtilisateur/Info';
 import TabAsso from './PageUtilisateur/Asso';
 import TabQuestions from './PageUtilisateur/Question';
-import { useParams, useResolvedPath } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { verifierSuperutilisateur } from "../../api/api_utilisateurs";
 import { BASE_URL } from '../../api/base';
 
@@ -23,7 +23,7 @@ function PageUtilisateur() {
             setDonneesUtilisateur(data);
         };
         chargerUtilisateur();
-        setAutoriseAModifier(userData.id == id || verifierSuperutilisateur().is_superuser);
+        setAutoriseAModifier(userData.id === id || verifierSuperutilisateur().is_superuser);
     }, [id]);
 
     if (donneesUtilisateur === null) { return (<p>Chargement...</p>); }

@@ -3,11 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import '../../assets/styles/header.css';
 import { useLayout } from '../../layouts/Layout';
-import Home from '../pages/Home';
-import ListeAssos from "../pages/ListeAssos";
-import PlanningAsso from "../pages/PlanningAsso";
-import Trombi from "../pages/Trombi";
-import PageUtilisateur from "../pages/PageUtilisateur";
 
 import { seDeconnecter } from '../../api/api_global';
 import { verifierSuperutilisateur } from '../../api/api_utilisateurs';

@@ -3,9 +3,7 @@ import { useEffect, useState } from 'react';
 import {obtenirDataUser } from '../../api/api_utilisateurs';
 import {obtenirSondageDuJour, voterSondage} from '../../api/api_sondages';
 import { obtenirIdUser } from '../../api/api_global';
-import {useLayout} from './../../layouts/Layout';  
-import ProposerSondage from '../pages/ProposerSondage';
-import GererSondages from '../pages/GererSondages';
+import {useLayout} from './../../layouts/Layout';
 import { useNavigate } from 'react-router-dom';
 
 export default function BlocSondage({ reloadSondage }) {

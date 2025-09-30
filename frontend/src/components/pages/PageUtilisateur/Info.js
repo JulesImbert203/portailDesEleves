@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import { useLayout } from "../../../layouts/Layout";
 import '../../../assets/styles/utilisateur.css';
 
 

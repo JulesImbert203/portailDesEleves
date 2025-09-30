@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import '../../assets/styles/liste_assos.css'; 
-import Asso from './Asso';
-import AjouterAssociation from "./AjouterAssociation";
 import { verifierSuperutilisateur } from '../../api/api_utilisateurs';
 import { chargerListeAssos } from '../../api/api_associations';
 import { useNavigate } from 'react-router-dom';

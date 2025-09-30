@@ -1,7 +1,6 @@
 import { io } from 'socket.io-client';
 import { useState, useEffect, useRef } from 'react';
 import { SOCKET_BASE_URL } from '../../api/base';
-import { useLayout } from '../../layouts/Layout';
 import "../../assets/styles/chat.css"
 import { obtenirPlusDeMessages } from '../../api/api_chat';
 
