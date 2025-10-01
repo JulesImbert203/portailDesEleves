@@ -2,7 +2,6 @@
 // Gere les routes principales
 
 import { Routes, Route, Navigate } from "react-router-dom";
-import Accueil from "./pages/Accueil";
 import Direction from "./pages/Direction";
 import AppPage from "./pages/AppPage";
 import Soifguard from "./pages/Soifguard";
@@ -22,24 +21,25 @@ import AjouterAssociation from "./components/pages/AjouterAssociation";
 export default function App() {
   return (
     <Routes>
+      <Route index element={<Direction />} />
       <Route path="/" element={<AppPage />}>
-        <Route path="/" element={<Home />} />
+        <Route path="home" element={<Home />} />
         <Route path="assos">
           <Route path="" element={<ListeAssos />} />
           <Route path="get/:id" element={<Asso />} />
           <Route path="planning" element={<PlanningAsso />} />
-          <Route path="ajouter" element={<AjouterAssociation/>} />
+          <Route path="ajouter" element={<AjouterAssociation />} />
         </Route>
         <Route path="trombi">
           <Route path="" element={<Trombi />} />
           <Route path="get/:promo" element={<TrombiPromo />} />
         </Route>
         <Route path="sondage">
-          <Route path="proposer" element={<ProposerSondage/>} />
-          <Route path="gerer" element={<GererSondages/>} />
+          <Route path="proposer" element={<ProposerSondage />} />
+          <Route path="gerer" element={<GererSondages />} />
         </Route>
         <Route path="utilisateur">
-          <Route path=":id" element={<PageUtilisateur/>} />
+          <Route path=":id" element={<PageUtilisateur />} />
         </Route>
       </Route>
       <Route path="soifguard">

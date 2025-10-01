@@ -13,7 +13,7 @@ export default function Direction() {
 
   useEffect(() => {
     estAuthentifie().then((auth) => {
-      if (auth) navigate("/app");
+      if (auth) navigate("/home");
       else setFormVisible(true);
     });
   }, [navigate]);
