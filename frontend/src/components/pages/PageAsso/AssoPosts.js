@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { estUtilisateurDansAsso } from "../../api/api_associations";
-import { creerNouveauCommentaire, creerNouvellePublication, modifierCommentaire, modifierLikeComment, modifierLikePost, modifierPublication, obtenirPublicationsAsso, supprimerCommentaire, supprimerPublication } from "../../api/api_publications";
-import { useLayout } from "../../layouts/Layout";
-import RichEditor, { RichTextDisplay } from "../blocs/RichEditor";
-import { BASE_URL } from "../../api/base";
+import { estUtilisateurDansAsso } from "../../../api/api_associations";
+import { creerNouveauCommentaire, creerNouvellePublication, modifierCommentaire, modifierLikeComment, modifierLikePost, modifierPublication, obtenirPublicationsAsso, supprimerCommentaire, supprimerPublication } from "../../../api/api_publications";
+import { useLayout } from "../../../layouts/Layout";
+import RichEditor, { RichTextDisplay } from "../../blocs/RichEditor";
+import { BASE_URL } from "../../../api/base";
 
 function AssoPosts({ asso_id }) {
     const { userData } = useLayout();

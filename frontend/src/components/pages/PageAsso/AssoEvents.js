@@ -4,8 +4,8 @@ import {
     modifierEvenement,
     obtenirEvenementsAsso,
     supprimerEvenement
-} from "../../api/api_evenements";
-import { estUtilisateurDansAsso } from "../../api/api_associations";
+} from "../../../api/api_evenements";
+import { estUtilisateurDansAsso } from "../../../api/api_associations";
 
 function AssoEvents({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import '../../assets/styles/asso.css';
 import { chargerAsso, estUtilisateurDansAsso, ajouterContenu, changerPhoto } from './../../api/api_associations';
-import AssoInfo from './AssoInfo';
-import AssoMembres from './AssoMembres';
-import AssoEvents from './AssoEvents';
-import AssoPosts from './AssoPosts';
+import AssoInfo from './PageAsso/AssoInfo';
+import AssoMembres from './PageAsso/AssoMembres';
+import AssoEvents from './PageAsso/AssoEvents';
+import AssoPosts from './PageAsso/AssoPosts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL } from '../../api/base';
 

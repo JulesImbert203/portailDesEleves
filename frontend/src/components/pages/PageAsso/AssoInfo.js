@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { chargerAsso, estUtilisateurDansAsso, modifierDescriptionAsso } from "../../api/api_associations";
-import RichEditor, { RichTextDisplay } from '../blocs/RichEditor';
+import { chargerAsso, estUtilisateurDansAsso, modifierDescriptionAsso } from "../../../api/api_associations";
+import RichEditor, { RichTextDisplay } from '../../blocs/RichEditor';
 
 function AssoInfo({ asso_id }) {
     const [isEdition, setIsEdition] = useState(false);
