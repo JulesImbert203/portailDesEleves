@@ -143,6 +143,7 @@ def obtenir_infos_profil(user_id:int) :
             "co_nom": utilisateur.co_nom,
             "fillots_dict": utilisateur.fillots_dict,
             "vote_sondaj_du_jour" : utilisateur.vote_sondaj_du_jour,
+            "is_superuser": utilisateur.est_superutilisateur
         }
         return jsonify(infos_utilisateur), 200
 

@@ -47,7 +47,7 @@ class Utilisateur(db.Model, UserMixin) :
 
     # Modifiable par l'utilisateur
     email = db.Column(db.String(1000), nullable=False)
-    date_de_naissance = db.Column(db.String(100), nullable=True)
+    date_de_naissance = db.Column(db.Date(), nullable=True)
     surnom = db.Column(db.String(1000), nullable=True)
     ville_origine = db.Column(db.String(1000), nullable=True)
     telephone = db.Column(db.String(100), nullable=True)

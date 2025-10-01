@@ -34,39 +34,30 @@ export function LayoutProvider({ children, defaultComponent }) {
     }
     fetchUserData();
   }, []);
+
   return (
     <LayoutContext.Provider value={{ currentComponent, setCurrentComponent, userData, reloadBlocSondage }}>
-      <Layout reloadSondage={reloadSondage} />
-      {children}
-    </LayoutContext.Provider>
-  );
-}
-
-function Layout({ reloadSondage }) {
-  const { currentComponent, userData } = useContext(LayoutContext);
-
-
-  return (
-    <div className="layout">
-      <Header className="header-global" />
-      <div className="main-content-global">
-        <div className="sidebar-global left">
-          <BlocSondage reloadSondage={reloadSondage} />
-        </div>
-        <div className="content-global">
-          <Outlet/>
-        </div>
-        <div className="sidebar-global right">
-          <div className="bloc-global" style={{ height: "30vh" }}>
-            <BlocChat />
+      <div className="layout">
+        <Header className="header-global" />
+        <div className="main-content-global">
+          <div className="sidebar-global left">
+            <BlocSondage reloadSondage={reloadSondage} />
           </div>
-          {/* <div className="bloc-global">
+          <div className="content-global">
+            <Outlet />
+          </div>
+          <div className="sidebar-global right">
+            <div className="bloc-global" style={{ height: "30vh" }}>
+              <BlocChat />
+            </div>
+            {/* <div className="bloc-global">
             <BlocAnniversaire />
           </div> */}
+          </div>
         </div>
       </div>
-    </div>
-
+      {children}
+    </LayoutContext.Provider>
   );
 }
 
@@ -74,5 +65,3 @@ function Layout({ reloadSondage }) {
 export function useLayout() {
   return useContext(LayoutContext);
 }
-
-export default Layout;

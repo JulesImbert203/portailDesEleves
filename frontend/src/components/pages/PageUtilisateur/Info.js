@@ -1,19 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Select from "react-select";
+
 
 import '../../../assets/styles/utilisateur.css';
+import { chargerUtilisateursParPromo } from "../../../api/api_utilisateurs";
+
+function DropDownSelect({ options, open, setOpen, selected, setSelected }) {
+    return (<div>
+        {/* Button to open dropdown */}
+        <button
+            onClick={() => setOpen((prev) => !prev)}
+            style={{ padding: "0.5rem 1rem", width: "100%" }}
+        >
+            {selected.length === 0 ? "Select options..." : selected.map((opt) => opt.label).join(", ")}
+        </button>
+
+        {/* Dropdown menu */}
+        {open && (
+            <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, }}                    >
+                <Select
+                    options={options}
+                    value={selected}
+                    onChange={(opt) => {
+                        setSelected(opt);
+                        setOpen(false); // close on selection
+                    }}
+                    isMulti
+                    autoFocus
+                    placeholder="Search..."
+                    menuIsOpen={true} // always open inside the popover
+                    styles={{
+                        menu: (provided) => ({ ...provided, position: "relative" }),
+                    }}
+                />
+            </div>
+        )}
+    </div>);
+}
 
 
 export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
     const [isGestion, setIsGestion] = useState(false);
-    const [userInfos, setUserInfos] = useState({
-        "000Promo ": donneesUtilisateur.promotion,
-        "010Date de naissance ": donneesUtilisateur.date_de_naissance,
-        "020Chambre ": donneesUtilisateur.chambre,
-        "030Ville d'origine ": donneesUtilisateur.ville_origine,
-        "040Instruments joués ": donneesUtilisateur.instruments,
-        "050Co ": donneesUtilisateur.co_nom,
-        "060Parrainne ": donneesUtilisateur.marrain_nom,
-    });
+    const [userInfos, setUserInfos] = useState([
+        ["Promo ", donneesUtilisateur.promotion, "text"],
+        ["Date de naissance ", donneesUtilisateur.date_de_naissance, "date"],
+        ["Chambre ", donneesUtilisateur.chambre, "text"],
+        ["Ville d'origine ", donneesUtilisateur.ville_origine, "text"],
+        ["Instruments joués ", donneesUtilisateur.instruments, "text"],
+    ]);
 
     const copyToClipboard = (text) => {
         if (navigator.clipboard) {
@@ -26,14 +60,39 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (ind, e) => {
         const { name, value } = e.target;
-        setUserInfos({ ...userInfos, [name]: value })
+        console.log(name, value)
+        userInfos[ind][1] = value;
     };
 
-    const validerModifierEvent = () => {
+    const validerModifierInfos = () => {
 
     }
+
+    const [openP, setOpenP] = useState(false);
+    const [selectedP, setSelectedP] = useState([]);
+    const [optionsP, setOptionsP] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await chargerUtilisateursParPromo(donneesUtilisateur.promotion - 1);
+            setOptionsP(data.map(elt => ({ value: elt.nom_utilisateur, label: elt.prenom + " " + elt.nom_de_famille })));
+        };
+        fetchData();
+    }, []);
+
+    const [openC, setOpenC] = useState(false);
+    const [selectedC, setSelectedC] = useState([]);
+    const [optionsC, setOptionsC] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await chargerUtilisateursParPromo(donneesUtilisateur.promotion);
+            setOptionsC(data.map(elt => ({ value: elt.nom_utilisateur, label: elt.prenom + " " + elt.nom_de_famille })));
+        };
+        fetchData();
+    }, []);
 
     return (<>
         {autoriseAModifier && <div className='asso-button' id="asso-description-button" onClick={() => setIsGestion(!isGestion)}>
@@ -67,18 +126,20 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
 
 
         {!isGestion && <>
-            {Object.keys(userInfos).map(key => {
-                return (<p>{key.slice(3, -1)} : {userInfos[key]}</p>)
+            {userInfos.map(elt => {
+                return (<p>{elt[0]} : {elt[1]}</p>)
             })}
         </>}
         {isGestion && <>
-            {Array.from(Object.keys(userInfos)).sort().map(key => {
+            {userInfos.map((elt, ind) => {
                 return (<p>
-                    {key.slice(3, -1)} : <input type="text" name={key} value={userInfos[key]} onChange={handleChange} ></input>
+                    {elt[0]} : <input type={elt[2]} name={elt[0]} value={elt[1]} onChange={e => handleChange(ind, e)} ></input>
                 </p>)
             })}
+            Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC}/>
+            Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP}/>
             <div className='buttons-container'>
-                <div className='valider-button' onClick={validerModifierEvent}>
+                <div className='valider-button' onClick={validerModifierInfos}>
                     <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
                     <p>Ajouter</p>
                 </div>

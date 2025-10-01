@@ -18,12 +18,7 @@ function PageUtilisateur() {
     const { id } = useParams();
 
     useEffect(() => {
-        const chargerUtilisateur = async () => {
-            const data = await obtenirDataUser(id);
-            setDonneesUtilisateur(data);
-        };
-        chargerUtilisateur();
-        setAutoriseAModifier(userData.id === id || verifierSuperutilisateur().is_superuser);
+        setAutoriseAModifier(userData.id == id || userData.is_superuser);
     }, [id]);
 
     if (donneesUtilisateur === null) { return (<p>Chargement...</p>); }
@@ -47,7 +42,7 @@ function PageUtilisateur() {
                 {/* Contenu des onglets */}
                 <div className="user-tab-content">
                     <div className='asso-bloc-interne'>
-                        {activeTab === "info" && <TabInfo donneesUtilisateur={donneesUtilisateur} autoriseAModifier={autoriseAModifier} />}
+                        {activeTab === "info" && <TabInfo donneesUtilisateur={userData} autoriseAModifier={autoriseAModifier} />}
                         {activeTab === "assos" && <TabAsso id={id} />}
                         {activeTab === "questions" && <TabQuestions id={id} autoriseAModifier={autoriseAModifier} />}
                     </div>
