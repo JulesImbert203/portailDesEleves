@@ -2,8 +2,6 @@
 // Gere les routes principales
 
 import { Routes, Route, Navigate } from "react-router-dom";
-import Direction from "./pages/Direction";
-import AppPage from "./pages/AppPage";
 import Soifguard from "./pages/Soifguard";
 import Admin from "./pages/Admin";
 import ListeAssos from "./components/pages/ListeAssos";
@@ -47,7 +45,6 @@ export default function App() {
         <Route path="" element={<Soifguard />} />
       </Route>
       <Route path="/administration" element={<Admin />} />
-      <Route path="/direction" element={<Direction />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

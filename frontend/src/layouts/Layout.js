@@ -61,9 +61,9 @@ export function LayoutProvider() {
                 <div className="bloc-global" style={{ height: "30vh" }}>
                   <BlocChat />
                 </div>
-                {/* <div className="bloc-global">
-            <BlocAnniversaire />
-          </div> */}
+                <div className="bloc-global">
+                  <BlocAnniversaire />
+                </div>
               </div>
             </div>
           </div>}
