@@ -52,7 +52,7 @@ function TrombiPromo() {
                     <div className='liste_utilisateurs_grid_container'>
                         {utilisateurs.map(user => (
                             <div className='liste_utilisateurs_grid_item' key={user.id} onClick={() => navigate(`/utilisateur/${user.id}`)}>
-                                {user.prenom} {user.surnom ? `'${user.surnom}'` : ''} {user.nom_de_famille}
+                                {user.prenom} {user.surnom ? `'${user.surnom}'` : ''} {user.nom}
                                 <br />
                                 {user.cycle} {user.promotion}
                             </div>

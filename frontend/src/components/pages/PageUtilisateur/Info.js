@@ -5,14 +5,15 @@ import Select from "react-select";
 import '../../../assets/styles/utilisateur.css';
 import { chargerUtilisateursParPromo } from "../../../api/api_utilisateurs";
 
-function DropDownSelect({ options, open, setOpen, selected, setSelected }) {
+function DropDownSelect({ options, open, setOpen, selected, setSelected, single }) {
     return (<div>
         {/* Button to open dropdown */}
         <button
             onClick={() => setOpen((prev) => !prev)}
             style={{ padding: "0.5rem 1rem", width: "100%" }}
         >
-            {selected.length === 0 ? "Select options..." : selected.map((opt) => opt.label).join(", ")}
+            {single ? selected.label :
+            selected.length === 0 ? "Select options..." : selected.map((opt) => opt.label).join(", ")}
         </button>
 
         {/* Dropdown menu */}
@@ -25,7 +26,7 @@ function DropDownSelect({ options, open, setOpen, selected, setSelected }) {
                         setSelected(opt);
                         setOpen(false); // close on selection
                     }}
-                    isMulti
+                    isMulti={!single}
                     autoFocus
                     placeholder="Search..."
                     menuIsOpen={true} // always open inside the popover
@@ -77,7 +78,7 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
     useEffect(() => {
         const fetchData = async () => {
             const data = await chargerUtilisateursParPromo(donneesUtilisateur.promotion - 1);
-            setOptionsP(data.map(elt => ({ value: elt.nom_utilisateur, label: elt.prenom + " " + elt.nom_de_famille })));
+            setOptionsP(data.map(elt => ({ value: elt.id, label: elt.prenom + " " + elt.nom })));
         };
         fetchData();
     }, []);
@@ -89,7 +90,7 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
     useEffect(() => {
         const fetchData = async () => {
             const data = await chargerUtilisateursParPromo(donneesUtilisateur.promotion);
-            setOptionsC(data.map(elt => ({ value: elt.nom_utilisateur, label: elt.prenom + " " + elt.nom_de_famille })));
+            setOptionsC(data.map(elt => ({ value: elt.id, label: elt.prenom + " " + elt.nom })));
         };
         fetchData();
     }, []);
@@ -100,7 +101,7 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
             <p id="texteCopier">Éditer</p>
         </div>}
         <h2 className='user-nom'>
-            {donneesUtilisateur.prenom} {donneesUtilisateur.surnom !== null && `'${donneesUtilisateur.surnom}'`} {donneesUtilisateur.nom_de_famille}
+            {donneesUtilisateur.prenom} {donneesUtilisateur.surnom !== null && `'${donneesUtilisateur.surnom}'`} {donneesUtilisateur.nom}
         </h2>
         <div className='user-info-contact'>
             {/* Section Téléphone */}
@@ -136,8 +137,8 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
                     {elt[0]} : <input type={elt[2]} name={elt[0]} value={elt[1]} onChange={e => handleChange(ind, e)} ></input>
                 </p>)
             })}
-            Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC}/>
-            Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP}/>
+            Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC} single={true}/>
+            Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP} single={false}/>
             <div className='buttons-container'>
                 <div className='valider-button' onClick={validerModifierInfos}>
                     <img src="/assets/icons/check-mark.svg" alt="Ajouter" />

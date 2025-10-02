@@ -3,6 +3,7 @@ from app.models import Association
 from app.models import Utilisateur
 import unicodedata
 import random
+from datetime import date
 
 _, app = create_app()
 
@@ -55,19 +56,22 @@ with app.app_context():
     utilisateurs = [(random.choice(prenoms), nom, random.choice(promotions), random.choice(cycles))
                     for nom in noms]  # On parcourt directement la liste des noms uniques
 
-    for prenom, nom_de_famille, promotion, cycle in utilisateurs:
-        nom_utilisateur = f"{promotion}{unicodedata.normalize('NFKD', nom_de_famille).encode('ascii', 'ignore').decode().lower()}"
+    i = 1
+    for prenom, nom, promotion, cycle in utilisateurs:
+        nom_utilisateur = f"{promotion}{unicodedata.normalize('NFKD', nom).encode('ascii', 'ignore').decode().lower()}"
         email = f"{nom_utilisateur}@example.com" 
         utilisateur = Utilisateur(
             nom_utilisateur=nom_utilisateur, 
             prenom=prenom, 
-            nom_de_famille=nom_de_famille,  
+            nom=nom,  
             promotion=promotion, 
             email=email, 
             cycle=cycle,
-            mot_de_passe_en_clair="1234"
+            mot_de_passe_en_clair="1234",
+            date_de_naissance=date(year=2025, month=9 + i//30, day=i%29 + 1)
         )
         db.session.add(utilisateur)
+        i += 1
 
     db.session.commit()
 

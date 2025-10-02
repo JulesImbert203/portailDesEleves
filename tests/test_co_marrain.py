@@ -12,9 +12,9 @@ def test_creer_utilisateur():
 
         try:
             # CREATION DE BASE DE TEST ICI -------------------------------------
-            jules = Utilisateur(nom_utilisateur="23imbert", prenom="Jules", nom_de_famille="Imbert", promotion=23, email="jules@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
-            achille = Utilisateur(nom_utilisateur="23fruchard", prenom="Achille", nom_de_famille="Fruchard", promotion=23, email="achille@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
-            louise = Utilisateur(nom_utilisateur="24deferran", prenom="Louise", nom_de_famille="De Ferran", promotion=24, email="louise@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
+            jules = Utilisateur(nom_utilisateur="23imbert", prenom="Jules", nom="Imbert", promotion=23, email="jules@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
+            achille = Utilisateur(nom_utilisateur="23fruchard", prenom="Achille", nom="Fruchard", promotion=23, email="achille@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
+            louise = Utilisateur(nom_utilisateur="24deferran", prenom="Louise", nom="De Ferran", promotion=24, email="louise@exemple.com", cycle="ic", mot_de_passe_en_clair="1234")
 
             db.session.add(jules)
             db.session.add(achille)
@@ -34,7 +34,7 @@ def test_creer_utilisateur():
                 fillots = "pas de fillots"
                 if utilisateur.fillots_dict :
                     fillots = ", ".join([f"({id_f}) " + utilisateur.fillots_dict[id_f] for id_f in utilisateur.fillots_dict])
-                print(f"({utilisateur.id}) {utilisateur.prenom} {utilisateur.nom_de_famille} - marrain : {marrain_nom}, fillot(s) : {fillots}")
+                print(f"({utilisateur.id}) {utilisateur.prenom} {utilisateur.nom} - marrain : {marrain_nom}, fillot(s) : {fillots}")
                 
 
             print_marrain_fillot(louise)
@@ -62,7 +62,7 @@ def test_creer_utilisateur():
                 co_nom = "pas de co"
                 if utilisateur.co_id :
                     co_nom = f"({utilisateur.co_id}){utilisateur.co_nom}"
-                print(f"({utilisateur.id}) {utilisateur.prenom} {utilisateur.nom_de_famille} - co : {co_nom}")
+                print(f"({utilisateur.id}) {utilisateur.prenom} {utilisateur.nom} - co : {co_nom}")
                 
             print_co(jules)
             print_co(louise)

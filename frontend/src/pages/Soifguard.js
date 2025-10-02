@@ -262,7 +262,7 @@ export default function SoifGuard() {
                   className={`soifguard-grid-item ${selectedUser === user.id ? "soifguard-selected" : ""}`}  // Appliquer la classe de surbrillance
                   onClick={() => handleSelectUser(user.id)}  // Clic pour sélectionner/désélectionner
                 >
-                  <strong>{user.prenom} {user.nom_de_famille}</strong>
+                  <strong>{user.prenom} {user.nom}</strong>
                   <br />
                   {categorie === "octo" && <span>Solde Octo : {user.solde_octo}€</span>}
                   {categorie === "biero" && <span>Solde Biero : {user.solde_biero}€</span>}

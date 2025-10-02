@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.ext.mutable import MutableDict
 from flask_login import UserMixin # pour faire le lien entre la class utilisateur et flask_login
 from werkzeug.security import generate_password_hash # Pour hacher les mdp 
+from datetime import date
 
 # verification du format des donnees :
 from ..utils.verification_format import *
@@ -34,7 +35,7 @@ class Utilisateur(db.Model, UserMixin) :
     id = db.Column(db.Integer, primary_key=True)  # Clef primaire
     nom_utilisateur = db.Column(db.String(100), nullable=False, unique=True)
     prenom = db.Column(db.String(1000), nullable=False)
-    nom_de_famille = db.Column(db.String(1000), nullable=False)
+    nom = db.Column(db.String(1000), nullable=False)
     promotion = db.Column(db.String(4), nullable=True)
     cycle = db.Column(db.String(10), nullable=False) # Parmi 'ic', 'ast', 'vs', 'ev', 'isup', 'de'
     est_nouveau_a_la_mine = db.Column(db.Boolean, nullable=False, default=True)
@@ -97,7 +98,7 @@ class Utilisateur(db.Model, UserMixin) :
     # Commentaires
     commentaires = db.relationship('Commentaire', back_populates='auteur')
 
-    def __init__(self, nom_utilisateur:str, prenom:str, nom_de_famille:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str) :
+    def __init__(self, nom_utilisateur:str, prenom:str, nom:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str, date_de_naissance=date(year=2000, month=1, day=1)) :
         """
         Cree un nouvel utilisateur
         cycle doit etre "ic", "ast", "isup", "vs", "ev" ou "de" # pour matmaz
@@ -110,10 +111,10 @@ class Utilisateur(db.Model, UserMixin) :
             self.prenom = prenom
         else :
             raise ValueError(f"Prenom invalide : {prenom}")
-        if verifier_chaine_prenom_nom(nom_de_famille) :
-            self.nom_de_famille = nom_de_famille
+        if verifier_chaine_prenom_nom(nom) :
+            self.nom = nom
         else :
-            raise ValueError(f"Nom de famille invalide : {nom_de_famille}")
+            raise ValueError(f"Nom de famille invalide : {nom}")
         self.promotion = promotion
         if cycle in {'ic', 'ast', 'vs', 'isup', 'ev', 'de'} :
             self.cycle = cycle 
@@ -134,6 +135,7 @@ class Utilisateur(db.Model, UserMixin) :
         self.meilleur_score_2048 = 0
 
         self.questions_reponses_du_portail = default_questions
+        self.date_de_naissance = date_de_naissance
     
     def __repr__(self):
         """
@@ -158,7 +160,7 @@ class Utilisateur(db.Model, UserMixin) :
         - nom_utilisateur : str
             Au format 23nomdefamille. La mise sous ce format et ces regles precises ne sont pas verifiees par cette fonction.
         - prenom : str
-        - nom_de_famille : str
+        - nom : str
             Contient les tirets, espaces, apostrophes, et accents. Premiere lettre de chaque nom en majscule. Autres caracteres interdits.
         - surnom : str
             Contient les tirets, espaces, apostrophes, et accents. Majuscules ou minuscules. Autres caracteres interdits.
@@ -238,9 +240,9 @@ class Utilisateur(db.Model, UserMixin) :
                     self.prenom = value
                 else :
                     raise ValueError(f"Non modifie. Le prenom '{value}' est invalide.")
-            elif key == "nom_de_famille" :
+            elif key == "nom" :
                 if value != None and verifier_chaine_prenom_nom(value) :
-                    self.nom_de_famille = value
+                    self.nom = value
                 else :
                     raise ValueError(f"Non modifie. Le nom de famille '{value}' est invalide.")
             elif key == "promotion" : 

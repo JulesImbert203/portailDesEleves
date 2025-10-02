@@ -100,3 +100,11 @@ export async function obtenirListeDesUtilisateursParPromo(promo) {
   const data = await res.json();
   return data;
 }
+
+
+export async function obtenirProchainsAnnivs() {
+  let url = `${API_BASE_URL}/users/prochains_anniv`;
+  const res = await fetch(url, { credentials: "include" });
+  const data = await res.json();
+  return data;
+}

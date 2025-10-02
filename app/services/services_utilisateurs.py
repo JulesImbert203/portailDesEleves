@@ -2,6 +2,8 @@
 from app.services import db
 from app.models import *
 
+from datetime import date, timedelta
+
 # Erreur levee si l'une de ces fonctions echoue
 class ErreurDeLienUtilisateurs(Exception):
     def __init__(self, message):
@@ -35,8 +37,8 @@ def creer_co(utilisateur1:Utilisateur, utilisateur2:Utilisateur):
     Si l'un des deux utilisateurs avait deja un co, le lien precedent est detruit. 
     """
     if utilisateur1.co_id == None and utilisateur2.co_id == None : # les deux sont libres : on cree le lien
-        utilisateur1.update(co_id=utilisateur2.id, co_nom=f"{utilisateur2.prenom} {utilisateur2.nom_de_famille}")
-        utilisateur2.update(co_id=utilisateur1.id, co_nom=f"{utilisateur1.prenom} {utilisateur1.nom_de_famille}")         
+        utilisateur1.update(co_id=utilisateur2.id, co_nom=f"{utilisateur2.prenom} {utilisateur2.nom}")
+        utilisateur2.update(co_id=utilisateur1.id, co_nom=f"{utilisateur1.prenom} {utilisateur1.nom}")         
     else :
         if utilisateur1.co_id != None : # 1 a un co : on le supprime
             co_utilisateur1 = db.session.get(Utilisateur, utilisateur1.co_id)
@@ -45,8 +47,8 @@ def creer_co(utilisateur1:Utilisateur, utilisateur2:Utilisateur):
             co_utilisateur2 = db.session.get(Utilisateur, utilisateur2.co_id)
             supprimer_co(utilisateur2, co_utilisateur2)
         # Les deux sont libres : on met a jour
-        utilisateur1.update(co_id=utilisateur2.id, co_nom=f"{utilisateur2.prenom} {utilisateur2.nom_de_famille}")
-        utilisateur2.update(co_id=utilisateur1.id, co_nom=f"{utilisateur1.prenom} {utilisateur1.nom_de_famille}")
+        utilisateur1.update(co_id=utilisateur2.id, co_nom=f"{utilisateur2.prenom} {utilisateur2.nom}")
+        utilisateur2.update(co_id=utilisateur1.id, co_nom=f"{utilisateur1.prenom} {utilisateur1.nom}")
     db.session.commit()       
 
 # PARRAINAGE
@@ -61,14 +63,14 @@ def ajouter_fillots_a_la_famille(marrain:Utilisateur, liste_fillots:Utilisateur)
         # verification que chaque fillot est libre 
         for fillot in liste_fillots :
             if fillot.marrain_id != None or fillot.marrain_nom != None :
-                raise ErreurDeLienUtilisateurs(f"Erreur : {fillot.prenom} {fillot.nom_de_famille} a deja un marrain.")
+                raise ErreurDeLienUtilisateurs(f"Erreur : {fillot.prenom} {fillot.nom} a deja un marrain.")
 
         # modification
         fillots_dict = dict()
         marrain_id = marrain.id
         for fillot in liste_fillots :
-            fillot.update(marrain_id=marrain_id, marrain_nom=f"{marrain.prenom} {marrain.nom_de_famille}")
-            fillots_dict[fillot.id] = f"{fillot.prenom} {fillot.nom_de_famille}"
+            fillot.update(marrain_id=marrain_id, marrain_nom=f"{marrain.prenom} {marrain.nom}")
+            fillots_dict[fillot.id] = f"{fillot.prenom} {fillot.nom}"
         marrain.update(fillots_dict=fillots_dict)
         db.session.commit()
     else :
@@ -93,3 +95,19 @@ def supprimer_fillots(marrain:Utilisateur) :
                 raise ErreurDeLienUtilisateurs(f"le fillot d'id {fillot_id}, present dans la liste des fillots de {marrain.nom_utilisateur} n'existe pas.")
         marrain.update(fillots_dict=None)   
         db.session.commit()
+
+
+def prochains_anniv():
+    def comp(d, beg, end):
+        if beg.year == end.year:
+            return beg <= date(2000, month=d.month, day=d.day) < end
+        else:
+            # TODO : à faire correctement
+            return beg <= date(2001, month=d.month, day=d.day) < end
+
+    begin = date(year=2000, month=date.today().month, day=date.today().day)
+    end = begin + timedelta(days=7)
+
+    users = db.session.query(Utilisateur.nom, Utilisateur.date_de_naissance).all()
+    ret = [user._asdict() for user in users if comp(user.date_de_naissance, begin, end)]
+    return ret

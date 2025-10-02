@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
+from datetime import datetime
 
 from app.services import *
 from app.utils.decorators import * 
@@ -30,7 +31,7 @@ def obtenir_liste_utilisateurs(promo:int, cycles:str):
         Utilisateur.nom_utilisateur, 
         Utilisateur.prenom, 
         Utilisateur.surnom, 
-        Utilisateur.nom_de_famille, 
+        Utilisateur.nom, 
         Utilisateur.promotion, 
         Utilisateur.cycle
     ).filter(
@@ -44,7 +45,7 @@ def obtenir_liste_utilisateurs(promo:int, cycles:str):
             "nom_utilisateur": u.nom_utilisateur,
             "prenom": u.prenom,
             "surnom": u.surnom,
-            "nom_de_famille": u.nom_de_famille,
+            "nom": u.nom,
             "promotion": u.promotion,
             "cycle": u.cycle
         }
@@ -76,7 +77,7 @@ def charger_utilisateurs_par_promo(promo: int):
             "id": utilisateur.id,
             "nom_utilisateur": utilisateur.nom_utilisateur,
             "prenom": utilisateur.prenom,
-            "nom_de_famille": utilisateur.nom_de_famille,
+            "nom": utilisateur.nom,
             "promotion": utilisateur.promotion,
             "solde_octo": utilisateur.solde_octo,
             "solde_biero": utilisateur.solde_biero,
@@ -127,7 +128,7 @@ def obtenir_infos_profil(user_id:int) :
             "id": utilisateur.id,
             "nom_utilisateur": utilisateur.nom_utilisateur,
             "prenom": utilisateur.prenom,
-            "nom_de_famille": utilisateur.nom_de_famille,
+            "nom": utilisateur.nom,
             "surnom": utilisateur.surnom,
             "promotion": utilisateur.promotion,
             "cycle": utilisateur.cycle,
@@ -266,6 +267,17 @@ def route_supprimer_fillots() :
         return jsonify({"message": "Fillot(s) supprime(s) avec succes"}), 200  
     except Exception as e:
         return jsonify({"message": f"Erreur lors de la suppression des fillots : {str(e)}"}), 500
+
+
+# Ajouter un decorateur qui verifie si on a le droit de modifier sa genealogie (variable globale mise a True pendant le parrainnage)
+@controllers_utilisateurs.route('/prochains_anniv', methods=['GET'])
+@login_required
+def route_get_anniv() :
+    """
+    Renvoie la liste des prochains anniversaires
+    """
+    ret = prochains_anniv()
+    return jsonify(ret)
 
 
 @controllers_utilisateurs.get('/id_actuel')
