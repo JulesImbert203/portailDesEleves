@@ -17,13 +17,13 @@ import ProposerSondage from "./components/pages/ProposerSondage";
 import GererSondages from "./components/pages/GererSondages";
 import PageUtilisateur from "./components/pages/PageUtilisateur";
 import AjouterAssociation from "./components/pages/AjouterAssociation";
+import { LayoutProvider } from "./layouts/Layout";
 
 export default function App() {
   return (
     <Routes>
-      <Route index element={<Direction />} />
-      <Route path="/" element={<AppPage />}>
-        <Route path="home" element={<Home />} />
+      <Route path="/" element={<LayoutProvider />}>
+        <Route path="/" element={<Home />} />
         <Route path="assos">
           <Route path="" element={<ListeAssos />} />
           <Route path="get/:id" element={<Asso />} />

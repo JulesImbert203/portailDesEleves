@@ -15,7 +15,7 @@ export default function FormulaireConnexion() {
     const success = await seConnecter(username, password);
     
     if (success) {
-      navigate("/app"); // Redirige si connexion réussie
+      navigate("/"); // Redirige si connexion réussie
     } else {
       setErreur("Identifiants incorrects");
     }
