@@ -20,8 +20,8 @@ export default function BlocAnniversaire() {
         <h1>Anniversaires</h1>
         {annivs.map(elt => {
             return(
-            <div>{elt.nom},
-                {new Date(elt.date_de_naissance).toLocaleString("fr-FR", { day: "numeric", month: "long" })}
+            <div><p>{new Date(elt[0]).toLocaleString("fr-FR", { day: "numeric", month: "long" })}</p>
+                {elt[1].map(nom => {return <div>{nom}</div>})}
             </div>)
         })}
     </>

@@ -3,6 +3,7 @@ from app.services import db
 from app.models import *
 
 from datetime import date, timedelta
+from itertools import groupby
 
 # Erreur levee si l'une de ces fonctions echoue
 class ErreurDeLienUtilisateurs(Exception):
@@ -105,9 +106,12 @@ def prochains_anniv():
             # TODO : à faire correctement
             return beg <= date(2001, month=d.month, day=d.day) < end
 
-    begin = date(year=2000, month=date.today().month, day=date.today().day)
+    begin = date(year=2000, month=date.today().month, day=date.today().day - 1)
     end = begin + timedelta(days=7)
 
     users = db.session.query(Utilisateur.nom, Utilisateur.date_de_naissance).all()
-    ret = [user._asdict() for user in users if comp(user.date_de_naissance, begin, end)]
+    ret = sorted([(user.date_de_naissance, user.nom) for user in users if comp(user.date_de_naissance, begin, end)])
+    ret = [(k, list(map(lambda x: x[1], list(g)))) for k, g in groupby(ret, lambda x: x[0])]
+    print (ret)
     return ret
+    
