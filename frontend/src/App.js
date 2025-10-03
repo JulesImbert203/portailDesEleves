@@ -16,10 +16,12 @@ import GererSondages from "./components/pages/GererSondages";
 import PageUtilisateur from "./components/pages/PageUtilisateur";
 import AjouterAssociation from "./components/pages/AjouterAssociation";
 import { LayoutProvider } from "./layouts/Layout";
+import FormulaireConnexion from "./components/FormulaireConnexion";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/login" element={<FormulaireConnexion />}/>
       <Route path="/" element={<LayoutProvider />}>
         <Route path="/" element={<Home />} />
         <Route path="assos">
