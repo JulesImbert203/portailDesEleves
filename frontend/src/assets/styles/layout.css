@@ -175,3 +175,52 @@ body {
   transform: scale(1.2);
   cursor: pointer;
 }
+
+/* ---------------------------------------------------------------------- */
+/* ADAPTATION MOBILE (max-width: 768px) */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    /* .main-content-global */
+    .main-content-global {
+        flex-direction: column;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    /* .content-global, .sidebar-global */
+    .content-global,
+    .sidebar-global {
+        width: 100%;
+        flex: none;
+        margin: 0;
+        padding: 10px 0;
+    }
+    
+    /* .content-global */
+    .content-global {
+        order: 2; /* Contenu principal en deuxième position */
+        margin-bottom: 20px;
+        box-shadow: none;
+        padding: 20px 10px; /* Ajout de padding horizontal pour le contenu principal */
+    }
+
+    /* .bloc-global */
+    .bloc-global {
+        width: auto;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    /* .sidebar-global.left */
+    .sidebar-global.left {
+        order: 1; /* Sidebar Gauche (Sondage) en première position */
+        min-height: auto;
+    }
+
+    /* .sidebar-global.right */
+    .sidebar-global.right {
+        order: 3; /* Sidebar Droite (Chat, Anniversaire) en dernière position */
+        min-height: auto;
+    }
+}
