@@ -39,12 +39,12 @@ export function LayoutProvider() {
 
   useEffect(() => {
     estAuthentifie().then((auth) => {
-      if (auth) setEstCo(false);
+      if (auth) setEstCo(true);
     });
   }, []);
 
   return (
-    estCo ?
+    !estCo ?
       <FormulaireConnexion /> :
       <LayoutContext.Provider value={{ userData, reloadBlocSondage }}>
         {userData &&
