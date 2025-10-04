@@ -43,6 +43,15 @@ export async function modifierQuestionsReponses(id_utilisateur, new_QR) {
   });
 }
 
+export async function modifierInfos(id_utilisateur, new_info) {
+  await fetch(`${API_BASE_URL}/users/infos/${id_utilisateur}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(new_info)
+  });
+}
+
 
 export async function verifierSuperutilisateur() {
   try {

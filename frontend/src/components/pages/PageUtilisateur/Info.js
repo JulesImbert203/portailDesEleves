@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
-
-
 import '../../../assets/styles/utilisateur.css';
-import { chargerUtilisateursParPromo } from "../../../api/api_utilisateurs";
+import { chargerUtilisateursParPromo, modifierInfos } from "../../../api/api_utilisateurs";
 
 function DropDownSelect({ options, open, setOpen, selected, setSelected, single }) {
     return (<div>
@@ -13,7 +11,7 @@ function DropDownSelect({ options, open, setOpen, selected, setSelected, single 
             style={{ padding: "0.5rem 1rem", width: "100%" }}
         >
             {single ? selected.label :
-            selected.length === 0 ? "Select options..." : selected.map((opt) => opt.label).join(", ")}
+                selected.length === 0 ? "Select options..." : selected.map((opt) => opt.label).join(", ")}
         </button>
 
         {/* Dropdown menu */}
@@ -40,15 +38,15 @@ function DropDownSelect({ options, open, setOpen, selected, setSelected, single 
 }
 
 
-export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
+export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
     const [isGestion, setIsGestion] = useState(false);
-    const [userInfos, setUserInfos] = useState([
-        ["Promo ", donneesUtilisateur.promotion, "text"],
-        ["Date de naissance ", donneesUtilisateur.date_de_naissance, "date"],
-        ["Chambre ", donneesUtilisateur.chambre, "text"],
-        ["Ville d'origine ", donneesUtilisateur.ville_origine, "text"],
-        ["Instruments joués ", donneesUtilisateur.instruments, "text"],
-    ]);
+    const [userInfos, setUserInfos] = useState({
+        promo: donneesUtilisateur.promotion,
+        date_de_naissance: donneesUtilisateur.date_de_naissance,
+        chambre: donneesUtilisateur.chambre,
+        ville_origine: donneesUtilisateur.ville_origine,
+        instruments: donneesUtilisateur.instruments
+    });
 
     const copyToClipboard = (text) => {
         if (navigator.clipboard) {
@@ -61,14 +59,14 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
         }
     };
 
-    const handleChange = (ind, e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(name, value)
-        userInfos[ind][1] = value;
+        setUserInfos({ ...userInfos, [name]: value })
     };
 
     const validerModifierInfos = () => {
-
+        modifierInfos(id, userInfos);
+        setIsGestion(false);
     }
 
     const [openP, setOpenP] = useState(false);
@@ -127,18 +125,18 @@ export default function TabInfo({ donneesUtilisateur, autoriseAModifier }) {
 
 
         {!isGestion && <>
-            {userInfos.map(elt => {
-                return (<p>{elt[0]} : {elt[1]}</p>)
-            })}
+            <p>Promo : {userInfos.promo}</p>
+            <p>Ville d'origine : {userInfos.ville_origine}</p>
+            <p>Chambre : {userInfos.chambre}</p>
+            <p>Instruments : {userInfos.instruments}</p>
         </>}
         {isGestion && <>
-            {userInfos.map((elt, ind) => {
-                return (<p>
-                    {elt[0]} : <input type={elt[2]} name={elt[0]} value={elt[1]} onChange={e => handleChange(ind, e)} ></input>
-                </p>)
-            })}
-            Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC} single={true}/>
-            Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP} single={false}/>
+            <p>Promo : {userInfos.promo}</p>
+            <p>Ville d'origine : <input type="text" name="ville_origine" value={userInfos.ville_origine} onChange={e => handleChange(e)} ></input></p>
+            <p>Chambre : <input type="text" name="chambre" value={userInfos.chambre} onChange={e => handleChange(e)} ></input></p>
+            <p>Instruments : <input type="text" name="instruments" value={userInfos.instruments} onChange={e => handleChange(e)} ></input></p>
+            Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC} single={true} />
+            Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP} single={false} />
             <div className='buttons-container'>
                 <div className='valider-button' onClick={validerModifierInfos}>
                     <img src="/assets/icons/check-mark.svg" alt="Ajouter" />

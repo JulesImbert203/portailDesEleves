@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from datetime import datetime
+from datetime import datetime, date
 
 from app.services import *
 from app.utils.decorators import * 
@@ -131,6 +131,7 @@ def obtenir_infos_profil(user_id:int) :
             "nom": utilisateur.nom,
             "surnom": utilisateur.surnom,
             "promotion": utilisateur.promotion,
+            "chambre": utilisateur.chambre,
             "cycle": utilisateur.cycle,
             "email": utilisateur.email,
             "telephone": utilisateur.telephone,
@@ -196,7 +197,35 @@ def questions_reponses(user_id: int):
         db.session.add(utilisateur)
         db.session.commit()
         return jsonify({"message": "Reponses patchées"}), 200
-        
+
+
+@controllers_utilisateurs.route('/infos/<int:user_id>', methods=['POST'])
+@login_required
+def set_user_infos(user_id: int):
+    """
+    Renvoie ou modifie les réponses au questions du portail
+    """
+    utilisateur = get_utilisateur(user_id)
+    if not utilisateur:
+        return jsonify({"message": "Utilisateur non trouvé"}), 404
+
+    if not (user_id == current_user.id or current_user.est_superutilisateur):
+        return jsonify({"message": "Pas le droit"}), 401
+    
+    data = request.get_json()
+    # if not valider_questions_du_portail (data):
+    #     return jsonify({"message": "Reponses mal formées"}), 400
+
+    # utilisateur.date_de_naissance = date.fromisoformat(data[1][1])
+    utilisateur.ville_origine = data["ville_origine"]
+    utilisateur.chambre = data["chambre"]
+    utilisateur.instruments = data["instruments"]
+    print(utilisateur.chambre)
+
+    db.session.add(utilisateur)
+    db.session.commit()
+    return jsonify({"message": "Reponses patchées"}), 200
+
 
 @controllers_utilisateurs.route('/supprimer_co', methods=['POST'])
 @login_required

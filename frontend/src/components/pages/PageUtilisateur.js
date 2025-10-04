@@ -42,7 +42,7 @@ function PageUtilisateur() {
                 {/* Contenu des onglets */}
                 <div className="user-tab-content">
                     <div className='asso-bloc-interne'>
-                        {activeTab === "info" && <TabInfo donneesUtilisateur={userData} autoriseAModifier={autoriseAModifier} />}
+                        {activeTab === "info" && <TabInfo id={id} donneesUtilisateur={userData} autoriseAModifier={autoriseAModifier} />}
                         {activeTab === "assos" && <TabAsso id={id} />}
                         {activeTab === "questions" && <TabQuestions id={id} autoriseAModifier={autoriseAModifier} />}
                     </div>
