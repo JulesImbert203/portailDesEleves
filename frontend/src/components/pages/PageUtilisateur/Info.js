@@ -45,7 +45,7 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
         date_de_naissance: donneesUtilisateur.date_de_naissance,
         chambre: donneesUtilisateur.chambre,
         ville_origine: donneesUtilisateur.ville_origine,
-        instruments: donneesUtilisateur.instruments
+        instruments: donneesUtilisateur.instruments ? donneesUtilisateur.instruments : []
     });
 
     const copyToClipboard = (text) => {
@@ -93,6 +93,30 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
         fetchData();
     }, []);
 
+    const handleInstruChange = (e) => {
+        const { name, value } = e.target;
+        console.log(name, value)
+        let temp = userInfos.instruments;
+        console.log(temp[name])
+        temp[name] = [userInfos.instruments[name][0], value];
+        console.log(`temp: ${temp}`)
+        setUserInfos({ ...userInfos, instruments: temp })
+        console.log(userInfos.instruments)
+    }
+
+    const handleInstruNameChange = (e) => {
+        const { name, value } = e.target;
+        var temp = userInfos.instruments;
+        temp[name] = [value, userInfos.instruments[name][1]];
+        setUserInfos({ ...userInfos, instruments: temp })
+        console.log(userInfos.instruments)
+    }
+
+    const ajouterInstru = () => {
+        setUserInfos({ ...userInfos, instruments: [...userInfos.instruments, ("Piano", "1 an")] })
+        console.log(userInfos.instruments)
+    }
+
     return (<>
         {autoriseAModifier && <div className='asso-button' id="asso-description-button" onClick={() => setIsGestion(!isGestion)}>
             <img src="/assets/icons/edit.svg" alt="Copy" />
@@ -115,7 +139,7 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
             {/* Section Email */}
             <div className="user-contact">
                 <img src="/assets/icons/mail.svg" alt="Mail" className="user-icon" />
-                <div className='copyButton'>
+                <div className='cophandleInstruNameChangeyButton'>
                     <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon copy" onClick={() => copyToClipboard(donneesUtilisateur.email || 'example@mail.com')} />
                     <p id="texteCopier">copier</p>
                 </div>
@@ -123,31 +147,42 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
             </div>
         </div>
 
+        {!isGestion ?
+            <>
+                <p>Promo : {userInfos.promo}</p>
+                <p>Ville d'origine : {userInfos.ville_origine}</p>
+                <p>Chambre : {userInfos.chambre}</p>
+                <div><h3>Instruments</h3>
+                    <ul>
+                        {userInfos.instruments.map(elt => (<li>{elt[0]} : {elt[1]}</li>))}
+                    </ul>
+                </div>
+            </>
+            :
+            <>
+                <p>Promo : {userInfos.promo}</p>
+                <p>Ville d'origine : <input type="text" name="ville_origine" value={userInfos.ville_origine} onChange={e => handleChange(e)} ></input></p>
+                <p>Chambre : <input type="text" name="chambre" value={userInfos.chambre} onChange={e => handleChange(e)} ></input></p>
+                <div><h3>Instruments</h3>
+                    <ul>
+                        {userInfos.instruments.map((elt, ind) => (<li><input value={elt[0]} name={ind} onChange={handleInstruNameChange}></input> : <input value={elt[1]} name={ind} onChange={handleInstruChange}></input></li>))}
+                    </ul>
+                    <button onClick={ajouterInstru}>Ajouter instrument</button>
+                </div>
+                Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC} single={true} />
+                Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP} single={false} />
 
-        {!isGestion && <>
-            <p>Promo : {userInfos.promo}</p>
-            <p>Ville d'origine : {userInfos.ville_origine}</p>
-            <p>Chambre : {userInfos.chambre}</p>
-            <p>Instruments : {userInfos.instruments}</p>
-        </>}
-        {isGestion && <>
-            <p>Promo : {userInfos.promo}</p>
-            <p>Ville d'origine : <input type="text" name="ville_origine" value={userInfos.ville_origine} onChange={e => handleChange(e)} ></input></p>
-            <p>Chambre : <input type="text" name="chambre" value={userInfos.chambre} onChange={e => handleChange(e)} ></input></p>
-            <p>Instruments : <input type="text" name="instruments" value={userInfos.instruments} onChange={e => handleChange(e)} ></input></p>
-            Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC} single={true} />
-            Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP} single={false} />
-            <div className='buttons-container'>
-                <div className='valider-button' onClick={validerModifierInfos}>
-                    <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                    <p>Ajouter</p>
+                <div className='buttons-container'>
+                    <div className='valider-button' onClick={validerModifierInfos}>
+                        <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
+                        <p>Ajouter</p>
+                    </div>
+                    <div className='annuler-button' onClick={() => setIsGestion(false)}>
+                        <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
+                        <p>Annuler</p>
+                    </div>
                 </div>
-                <div className='annuler-button' onClick={() => setIsGestion(false)}>
-                    <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                    <p>Annuler</p>
-                </div>
-            </div>
-        </>}
+            </>}
     </>
     );
 }

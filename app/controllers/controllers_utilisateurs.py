@@ -220,7 +220,6 @@ def set_user_infos(user_id: int):
     utilisateur.ville_origine = data["ville_origine"]
     utilisateur.chambre = data["chambre"]
     utilisateur.instruments = data["instruments"]
-    print(utilisateur.chambre)
 
     db.session.add(utilisateur)
     db.session.commit()

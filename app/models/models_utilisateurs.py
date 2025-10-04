@@ -1,5 +1,5 @@
 from app import db
-from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.ext.mutable import MutableDict, MutableList
 from flask_login import UserMixin # pour faire le lien entre la class utilisateur et flask_login
 from werkzeug.security import generate_password_hash # Pour hacher les mdp 
 from datetime import date
@@ -54,7 +54,7 @@ class Utilisateur(db.Model, UserMixin) :
     telephone = db.Column(db.String(100), nullable=True)
     chambre = db.Column(db.String(1000), nullable=True)
     sports = db.Column(db.String(1000), nullable=True)
-    instruments = db.Column(db.String(1000), nullable=True)
+    instruments = db.Column(MutableList.as_mutable(db.JSON), nullable=True)
    
     # Gestion du parrainnage :
     # Une fonction sera prevue pour mofifier son marrain et fillot et faire en sorte que son parrain et fillot soit modifie en consequence. N'est pas mofifiable tel quel
