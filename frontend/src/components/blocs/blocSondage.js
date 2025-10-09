@@ -123,7 +123,7 @@ export default function BlocSondage({ reloadSondage }) {
           className="gestion_sondage_button"
           onClick={() => navigate("/sondage/gerer")}
         >
-          <img src="/assets/icons/manage.svg" className='sondage_icon_button' alt="Bouton en forme de plus"/>
+          <img src="/assets/icons/manage.svg" className='sondage_icon_button' alt="Bouton en rouage"/>
         </button>
       </div>
     </div>

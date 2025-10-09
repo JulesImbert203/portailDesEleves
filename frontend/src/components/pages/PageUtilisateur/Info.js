@@ -113,7 +113,7 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
     }
 
     const ajouterInstru = () => {
-        setUserInfos({ ...userInfos, instruments: [...userInfos.instruments, ("Piano", "1 an")] })
+        setUserInfos({ ...userInfos, instruments: [...userInfos.instruments, ["Piano", "1 an"]] })
         console.log(userInfos.instruments)
     }
 
