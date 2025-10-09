@@ -58,15 +58,14 @@ class Utilisateur(db.Model, UserMixin) :
    
     # Gestion du parrainnage :
     # Une fonction sera prevue pour mofifier son marrain et fillot et faire en sorte que son parrain et fillot soit modifie en consequence. N'est pas mofifiable tel quel
-    marrain_id = db.Column(db.Integer, nullable=True)
-    marrain_nom = db.Column(db.String(1000), nullable=True)
-    fillots_dict = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
-    # le dictionnaire {fillot1_id : fillot_1_nom, fillot2_id : fillot2_nom, etc.}
+    marrain_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=True)
+    marrain = db.relationship('Utilisateur', remote_side=[id], back_populates='fillots')
+    fillots = db.relationship('Utilisateur', back_populates='marrain')
     est_baptise = db.Column(db.Boolean, nullable=False)
 
     # Gestion des colocations - meme commentaire
-    co_id = db.Column(db.Integer, nullable=True)
-    co_nom = db.Column(db.String(1000), nullable=True)
+    co_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=True)
+    co = db.relationship('Utilisateur', remote_side=[id], uselist=False)
 
     # Questions du portail - modifiable avec un formulaire
     questions_reponses_du_portail = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
@@ -98,7 +97,7 @@ class Utilisateur(db.Model, UserMixin) :
     # Commentaires
     commentaires = db.relationship('Commentaire', back_populates='auteur')
 
-    def __init__(self, nom_utilisateur:str, prenom:str, nom:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str, date_de_naissance=date(year=2000, month=1, day=1)) :
+    def __init__(self, nom_utilisateur:str, prenom:str, nom:str, promotion:int, email:str, cycle:str, mot_de_passe_en_clair:str, date_de_naissance:date=date(year=2000, month=1, day=1)) :
         """
         Cree un nouvel utilisateur
         cycle doit etre "ic", "ast", "isup", "vs", "ev" ou "de" # pour matmaz
@@ -203,14 +202,14 @@ class Utilisateur(db.Model, UserMixin) :
 
         - marrain_id : int
             L'id du marrain dans la table des utilisateurs
-        - marrain_nom : str
-            le nom du marrain au format "Prenom Nom". Aucune verification sur la correspondance id-nom n'est effectuee
-        - fillots_dict : Le dictionnaire des fillots : {id : prenom nom}
-            les noms des fillots au format "Prenom Nom". Aucune verification sur la correspondance id-nom n'est effectuee        
+        - marrain : Utilisateur
+            Le marrain de l'utilisateur
+        - fillots : liste d'Utilisateurs
+            Les fillots de l'utilisateur
         - co_id : int 
             L'id du co. None pour les PAMs
-        - co_nom : str
-            Meme format que les autres noms
+        - co_nom : Utilisateur
+            Le co de l'utilisateur
 
         - questions_reponses_du_portail : dict
             Les questions et les reponses au format {question1 : reponse1, question2 : reponse2, ...}
@@ -308,29 +307,6 @@ class Utilisateur(db.Model, UserMixin) :
                     self.instruments = value
                 else :
                     raise ValueError(f"Non modifie. Caracteres interdits dans '{value}'.")
-            elif key=="fillots_dict" :
-                if value==None or valider_dict_fillots(value) :
-                    self.fillots_dict = value
-            elif key=="marrain_id" :
-                if value==None or isinstance(value, int) :
-                    self.marrain_id = value
-                else :
-                    raise ValueError(f"Non modifie. marrain_id doit etre un int")
-            elif key=="co_id" :
-                if value==None or isinstance(value, int) :
-                    self.co_id = value
-                else :
-                    raise ValueError(f"Non modifie. co_id doit etre un int")
-            elif key=="marrain_nom" :
-                if value==None or verifier_chaine_prenom_nom(value) :
-                    self.marrain_nom = value
-                else :
-                    raise ValueError(f"Non modifie. {value} ne respecte pas le format de nom.")
-            elif key=="co_nom" :
-                if value==None or verifier_chaine_prenom_nom(value) :
-                    self.co_nom = value
-                else :
-                    raise ValueError(f"Non modifie. {value} ne respecte pas le format de nom.")
             elif key=="questions_reponses_du_portail" :
                 if value == None or valider_questions_du_portail(value) :
                     self.questions_reponses_du_portail = value
@@ -351,6 +327,15 @@ class Utilisateur(db.Model, UserMixin) :
             elif key=="mot_de_passe_non_hache" : 
                 if value != None :
                     self.mot_de_passe = generate_password_hash(value)
+            elif key == "co" :
+                if value != None :
+                    self.co = value
+            elif key == "marrain" :
+                if value != None :
+                    self.marrain = value
+            elif key == "fillots" :
+                if value != None :
+                    self.fillots = value
             else :
-                raise KeyError("L'attribut {key} n'existe pas.")
+                raise KeyError(f"L'attribut {key} n'existe pas.")
 

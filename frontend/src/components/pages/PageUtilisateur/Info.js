@@ -122,28 +122,25 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
             <img src="/assets/icons/edit.svg" alt="Copy" />
             <p id="texteCopier">Éditer</p>
         </div>}
-        <h2 className='user-nom'>
-            {donneesUtilisateur.prenom} {donneesUtilisateur.surnom !== null && `'${donneesUtilisateur.surnom}'`} {donneesUtilisateur.nom}
-        </h2>
         <div className='user-info-contact'>
             {/* Section Téléphone */}
             <div className="user-contact">
                 <img src="/assets/icons/phone.svg" alt="Phone" className="user-icon" />
+                <p className='user-donnee-contact'>{donneesUtilisateur.telephone || '01 23 45 67 89'}</p> {/* Mettre le numéro réel ici */}
                 <div className='asso-button'>
                     <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon" onClick={() => copyToClipboard(donneesUtilisateur.telephone || '01 23 45 67 89')} />
                     <p id="texteCopier">copier</p>
                 </div>
-                <p className='user-donnee-contact'>{donneesUtilisateur.telephone || '01 23 45 67 89'}</p> {/* Mettre le numéro réel ici */}
             </div>
 
             {/* Section Email */}
             <div className="user-contact">
                 <img src="/assets/icons/mail.svg" alt="Mail" className="user-icon" />
-                <div className='cophandleInstruNameChangeyButton'>
+                <p className='user-donnee-contact'>{donneesUtilisateur.email || 'example@mail.com'}</p> {/* Mettre l'email réel ici */}
+                <div className='asso-button'>
                     <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon copy" onClick={() => copyToClipboard(donneesUtilisateur.email || 'example@mail.com')} />
                     <p id="texteCopier">copier</p>
                 </div>
-                <p className='user-donnee-contact'>{donneesUtilisateur.email || 'example@mail.com'}</p> {/* Mettre l'email réel ici */}
             </div>
         </div>
 

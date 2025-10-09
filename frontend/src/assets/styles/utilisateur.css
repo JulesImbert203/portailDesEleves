@@ -48,13 +48,17 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
+/* Infos principales */
 
-.user-dessous-banniere {
-    padding-right: var(--global-style-padding);
-    padding-left: var(--global-style-padding);
+.user-infos-principales {
+    display: flex;
+    align-items: center;
 }
 
-/* Infos principales */
+.user-nom {
+    margin-left: calc(var(--logo-page-asso-size) * 1.5);
+    margin-right: calc(var(--logo-page-asso-size) * 0.5);
+}
 
 .user-info-contact {
     display: flex;
@@ -129,9 +133,9 @@
 .user-tabs {
     display: flex;
     justify-content: space-around;
-    margin-top: var(--user-padding);
     border-bottom: 2px solid var(--secondary-color);
 }
+
 
 .user-tab {
     padding: 10px var(--user-padding);
@@ -149,6 +153,8 @@
 }
 
 .user-tab-content {
-    position: relative;
-    padding: var(--padding);
+    padding-top: calc(var(--asso-padding)/2);
+    padding-left: var(--asso-padding);
+    padding-bottom: var(--asso-padding);
+    padding-right: var(--asso-padding);
 }

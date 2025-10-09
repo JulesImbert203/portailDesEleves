@@ -89,7 +89,7 @@ function ProposerSondage() {
                   className="proposer_sondage_button"
                   title="Retirer"
                 >
-                  <img src="assets/icons/delete.svg" alt="Bouton en forme de poubelle"/>
+                  <img src="/assets/icons/delete.svg" alt="Bouton en forme de poubelle"/>
                 </button>
               )}
             </div>
@@ -100,7 +100,7 @@ function ProposerSondage() {
             className="proposer_sondage_button"
             title="Ajouter une réponse"
           >
-            <img src="assets/icons/plus.svg" alt="Bouton en forme de plus"/> 
+            <img src="/assets/icons/plus.svg" alt="Bouton en forme de plus"/> 
           </button>
         </div>
 

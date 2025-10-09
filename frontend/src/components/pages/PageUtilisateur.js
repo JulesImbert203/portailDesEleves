@@ -30,23 +30,22 @@ function PageUtilisateur() {
                 <img className="user-pic" src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={donneesUtilisateur.nom_utilisateur} />
             </div>
 
-            <div className='user-dessous-banniere'>
+            <div className='user-infos-principales'>
+                <h2 className='user-nom'>{userData.prenom} {userData.nom}</h2>
+            </div>
 
-                {/* Menu */}
-                <div className="user-tabs">
-                    <div className={`user-tab ${activeTab === "info" ? "active" : ""}`} onClick={() => setActiveTab("info")}>Infos</div>
-                    <div className={`user-tab ${activeTab === "assos" ? "active" : ""}`} onClick={() => setActiveTab("assos")}>Associations</div>
-                    <div className={`user-tab ${activeTab === "questions" ? "active" : ""}`} onClick={() => setActiveTab("questions")}>Questions du portail</div>
-                </div>
+            {/* Menu */}
+            <div className="user-tabs">
+                <div className={`user-tab ${activeTab === "info" ? "active" : ""}`} onClick={() => setActiveTab("info")}>Infos</div>
+                <div className={`user-tab ${activeTab === "assos" ? "active" : ""}`} onClick={() => setActiveTab("assos")}>Associations</div>
+                <div className={`user-tab ${activeTab === "questions" ? "active" : ""}`} onClick={() => setActiveTab("questions")}>Questions du portail</div>
+            </div>
 
-                {/* Contenu des onglets */}
-                <div className="user-tab-content">
-                    <div className='asso-bloc-interne'>
-                        {activeTab === "info" && <TabInfo id={id} donneesUtilisateur={userData} autoriseAModifier={autoriseAModifier} />}
-                        {activeTab === "assos" && <TabAsso id={id} />}
-                        {activeTab === "questions" && <TabQuestions id={id} autoriseAModifier={autoriseAModifier} />}
-                    </div>
-                </div>
+            {/* Contenu des onglets */}
+            <div className="user-tab-content">
+                    {activeTab === "info" && <TabInfo id={id} donneesUtilisateur={userData} autoriseAModifier={autoriseAModifier} />}
+                    {activeTab === "assos" && <TabAsso id={id} />}
+                    {activeTab === "questions" && <TabQuestions id={id} autoriseAModifier={autoriseAModifier} />}
             </div>
 
         </div>

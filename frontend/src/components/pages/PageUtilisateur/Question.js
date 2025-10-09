@@ -37,12 +37,12 @@ export default function TabQuestions({ id, autoriseAModifier }) {
         </div>
         {!isGestion && <>
             {Object.keys(questionsReponses).map(key => {
-                return (<p>{key.slice(3, -1)} : {questionsReponses[key]}</p>)
+                return (<p key={key}>{key.slice(3, -1)} : {questionsReponses[key]}</p>)
             })}
         </>}
         {isGestion && <>
             {Array.from(Object.keys(questionsReponses)).sort().map(key => {
-                return (<p>
+                return (<p key={key}>
                     {key.slice(3, -1)} : <input type="text" name={key} value={questionsReponses[key]} onChange={handleChange} ></input>
                 </p>)
             })}

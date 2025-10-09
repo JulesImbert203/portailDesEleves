@@ -66,8 +66,8 @@ export default function Header() {
         <div className="global-header-dropdown">
           <button className="global-header-dropdown-btn">{userData ? userData.nom_utilisateur : "Chargement..."}</button>
           <div className="global-header-menu" style={{right : 0}}>
-            <button onClick={() => handleLogout()} className="bloc-global-button">Se déconnecter</button>
             <button onClick={() => navigate(`utilisateur/${userData.id}`)} className="bloc-global-button">Ma page</button>
+            <button onClick={() => handleLogout()} className="bloc-global-button">Se déconnecter</button>
           </div>
         </div>
       </div>
