@@ -117,3 +117,27 @@ export async function obtenirProchainsAnnivs() {
   const data = await res.json();
   return data;
 }
+
+export async function selectFillots(fillots_ids) {
+  const response = await fetch(`${API_BASE_URL}/users/select_fillots`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ fillots_ids: fillots_ids }),
+  });
+  return handleResponse(response);
+}
+
+export async function changerMarrain(marrain_id, fillot_id) {
+  const response = await fetch(`${API_BASE_URL}/users/changer_marrain`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ marrain_id: marrain_id, fillot_id: fillot_id }),
+  });
+  return handleResponse(response);
+}

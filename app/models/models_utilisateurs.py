@@ -59,13 +59,13 @@ class Utilisateur(db.Model, UserMixin) :
     # Gestion du parrainnage :
     # Une fonction sera prevue pour mofifier son marrain et fillot et faire en sorte que son parrain et fillot soit modifie en consequence. N'est pas mofifiable tel quel
     marrain_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=True)
-    marrain = db.relationship('Utilisateur', remote_side=[id], back_populates='fillots')
-    fillots = db.relationship('Utilisateur', back_populates='marrain')
+    marrain = db.relationship('Utilisateur', remote_side=[id], back_populates='fillots', foreign_keys=[marrain_id])
+    fillots = db.relationship('Utilisateur', back_populates='marrain', foreign_keys=[marrain_id])
     est_baptise = db.Column(db.Boolean, nullable=False)
 
     # Gestion des colocations - meme commentaire
     co_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=True)
-    co = db.relationship('Utilisateur', remote_side=[id], uselist=False)
+    co = db.relationship('Utilisateur', remote_side=[id], uselist=False, foreign_keys=[co_id])
 
     # Questions du portail - modifiable avec un formulaire
     questions_reponses_du_portail = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
