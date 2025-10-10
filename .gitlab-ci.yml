@@ -1,10 +1,7 @@
 pages:
   stage: deploy
   script:
-    - cd frontend
-    - npm i
-    - CI=false npm run build
-    - echo "The site will be copied to Gaia"
-    - /usr/bin/rsync -atv --delete --progress ./build rezal@10.20.1.20:/var/www/html/site
+    - /usr/bin/rsync -e 'ssh -p 2223' -atv --delete --progress --exclude 'frontend/node_modules' ./* rezal@10.20.1.20:/home/rezal/site
+
   rules:
     - if: $CI_COMMIT_BRANCH == "prod"

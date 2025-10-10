@@ -1,8 +1,0 @@
-Flask
-Flask-SQLAlchemy
-Flask-Login
-Flask-Cors
-Flask-SocketIO
-Flask-Apscheduler
-pytest
-requests
