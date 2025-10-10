@@ -1,0 +1,3 @@
+deploy:
+  stage: deploy
+  script: touch test.txt
