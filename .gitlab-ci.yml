@@ -1,3 +1,9 @@
-deploy:
+pages:
   stage: deploy
-  script: touch test.txt
+  script:
+    - cd frontend
+    - npm run build
+    - echo "The site will be copied to Gaia"
+    - /usr/bin/rsync -atv --delete --progress ./build rezal@10.20.1.20:/var/www/html/site
+  rules:
+    - if: $CI_COMMIT_BRANCH == "prod"
