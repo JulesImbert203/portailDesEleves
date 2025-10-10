@@ -227,7 +227,7 @@ def set_user_infos(user_id: int):
     return jsonify({"message": "Reponses patchées"}), 200
 
 
-@controllers_utilisateurs.route('/supprimer_co', methods=['POST'])
+@controllers_utilisateurs.route('/supprimer_co', methods=['DELETE'])
 @login_required
 def route_supprimer_co():
     """

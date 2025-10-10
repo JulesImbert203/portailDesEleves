@@ -118,7 +118,7 @@ export async function obtenirProchainsAnnivs() {
   return data;
 }
 
-export async function selectFillots(fillots_ids) {
+export async function selectionnerFillots(fillots_ids) {
   const response = await fetch(`${API_BASE_URL}/users/select_fillots`, {
     method: "POST",
     headers: {
@@ -138,6 +138,14 @@ export async function changerMarrain(marrain_id, fillot_id) {
     },
     credentials: "include",
     body: JSON.stringify({ marrain_id: marrain_id, fillot_id: fillot_id }),
+  });
+  return handleResponse(response);
+}
+
+export async function supprimerCo() {
+  const response = await fetch(`${API_BASE_URL}/users/supprimer_co`, {
+    method: "DELETE",
+    credentials: "include",
   });
   return handleResponse(response);
 }
