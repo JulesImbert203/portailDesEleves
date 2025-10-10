@@ -1,186 +1,45 @@
-:root {
-    /* Variables globales simplifiées */
-    --global-header-bg-color: #000; /* Fond noir */
-    --global-header-text-color: #fff; /* Texte blanc */
-    --global-header-dropdown-bg-color: #fff; /* Fond du menu déroulant */
-    --global-header-button-bg-color: #007bff; /* Fond des boutons */
-    --global-header-button-hover-bg-color: #0056b3; /* Fond au survol des boutons */
-    --global-header-border-radius: 8px; /* Rayon de bordure */
-    --global-header-padding: 10px 20px; /* Espacement des boutons */
-    --global-header-font-size: 16px; /* Taille de police des boutons */
-    --global-header-transition-duration: 0.3s; /* Durée de transition */
-}
 
-/* Conteneur du bandeau */
+// Import Bootstrap functions and variables to override them
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+
+/* Variables globales simplifiées */
+$primary: #007bff;
+$secondary: #6c757d;
+$info: #17a2b8;
+$danger: #dc3545;
+
 .global-header-header {
-    background-color: var(--global-header-bg-color);
-    color: var(--global-header-text-color);
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    justify-content: space-evenly; /* Pour aligner le menu et le titre */
-    align-items: center; /* Pour centrer verticalement */
-    padding: 10px 20px; /* Espacement global */
-    height: 60px; /* Hauteur du header */
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    height: 60px;
+
+    h1 {
+        font-size: 24px;
+        margin: 0;
+        color: #fff;
+    }
 }
 
-/* Conteneur du menu déroulant */
-.global-header-dropdown {
-    position: relative;
-}
-
-/* Bouton du menu déroulant */
-.global-header-dropdown-btn {
-    background-color: var(--global-header-button-bg-color);
-    color: var(--global-header-text-color);
-    border: none;
-    padding: var(--global-header-padding);
-    font-size: var(--global-header-font-size);
-    cursor: pointer;
-    border-radius: var(--global-header-border-radius);
-    transition: background-color var(--global-header-transition-duration);
-}
-
-/* Bouton du menu déroulant au survol */
-.global-header-dropdown-btn:hover {
-    background-color: var(--global-header-button-hover-bg-color);
-}
-
-/* Menu déroulant */
-.global-header-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    background-color: var(--global-header-dropdown-bg-color);
-    border-radius: var(--global-header-border-radius);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    min-width: 150px;
-    z-index: 1;
-}
-
-/* Montrer le menu lorsque l'on survole */
-.global-header-dropdown:hover .global-header-menu {
-    display: block;
-}
-
-/* Boutons du menu déroulant */
-.global-header-menu button {
-    background-color: var(--global-header-dropdown-bg-color);
-    color: var(--global-header-button-bg-color);
-    padding: var(--global-header-padding);
-    border: none;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    transition: background-color var(--global-header-transition-duration);
-    border-radius: var(--global-header-border-radius);
-}
-
-/* Effet au survol sur les onglets du menu */
-.global-header-menu button:hover {
-    background-color: var(--global-header-button-bg-color);
-    color: var(--global-header-text-color);
-}
-
-/* Titre centré */
-.global-header-centered-container {
-    text-align: center;
-}
-
-/* Titre du header */
-.global-header-centered-container h1 {
-    font-size: 24px;
-    margin: 0;
-}
-
-/* Les boutons à gauche */
-.global-header-left-container {
-    display: flex;
-    gap: 1em;
-}
-
-/* les boutons à droite */
-.global-header-right-container {
-    display: flex;
-    gap: 1em;
-    justify-content: flex-end;
-}
-
-/* ---------------------------------------------------------------------- */
-/* AJOUTS POUR MOBILES */
-/* ---------------------------------------------------------------------- */
-
-@media (max-width: 768px) {
-    /* Header principal */
+@include media-breakpoint-down(md) {
     .global-header-header {
-        grid-template-columns: 1fr;
         height: auto;
         padding: 15px 10px;
-    }
 
-    /* Titre centré */
-    .global-header-centered-container {
-        order: -3;
-        width: 100%;
-        margin-bottom: 15px;
-    }
+        .row {
+            flex-direction: column;
+        }
 
-    .global-header-centered-container h1 {
-        font-size: 20px;
-    }
+        .col {
+            text-align: center !important;
+            margin-bottom: 10px;
+        }
 
-    /* Conteneurs de boutons (Gauche et Droite) */
-    .global-header-left-container,
-    .global-header-right-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-    
-    /* Boutons de niveau supérieur pour une taille uniforme et cliquable */
-    .global-header-dropdown-btn,
-    .global-header-left-container > button:not(.global-header-dropdown-btn), /* Cible les boutons Soifguard/Administration */
-    .global-header-right-container > button:not(.global-header-dropdown-btn) {
-        width: 80%; /* Taille uniforme */
-        max-width: 300px;
-        text-align: center;
-        /* Ajout de margin auto pour centrer si le parent n'est pas un flex-container */
-        margin: 0 auto;
-    }
-    
-    /* Conteneur de menu déroulant */
-    .global-header-dropdown {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Menu déroulant */
-    .global-header-menu {
-        left: 50%;
-        transform: translateX(-50%);
-        right: auto !important;
-        min-width: 80%; /* Aligner la largeur du menu avec les boutons */
-        max-width: 300px;
-        box-sizing: border-box;
-    }
-    
-    /* Boutons dans le menu déroulant */
-    .global-header-menu button {
-        width: 100%;
-        text-align: center;
-    }
-    
-    /* Ordre des sections */
-    .global-header-left-container {
-        order: -2;
-    }
-    
-    .global-header-right-container {
-        order: -1;
+        .col-auto {
+            margin-bottom: 10px;
+        }
     }
 }

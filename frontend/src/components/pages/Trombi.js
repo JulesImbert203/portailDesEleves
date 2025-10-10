@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../../assets/styles/trombi.css';
+import '../../assets/styles/trombi.scss';
 import { obtenirListeDesPromos } from '../../api/api_utilisateurs';
 import { useNavigate } from 'react-router-dom';
 

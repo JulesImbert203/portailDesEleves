@@ -4,7 +4,7 @@ import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
 import BlocChat from '../components/blocs/blocChat';
 import BlocAnniversaire from '../components/blocs/blocAnniversaire';
-import '../assets/styles/layout.css';  // Import du CSS global du layout
+import '../assets/styles/layout.scss';  // Import du CSS global du layout
 import { obtenirIdUser, estAuthentifie } from '../api/api_global';
 import { obtenirDataUser } from '../api/api_utilisateurs';
 import { Outlet, useNavigate } from 'react-router-dom';

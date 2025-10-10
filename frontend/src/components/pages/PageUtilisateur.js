@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { obtenirDataUser } from '../../api/api_utilisateurs';
-import '../../assets/styles/utilisateur.css';
+import '../../assets/styles/utilisateur.scss';
 
 import { useLayout } from '../../layouts/Layout';
 import TabInfo from './PageUtilisateur/Info';

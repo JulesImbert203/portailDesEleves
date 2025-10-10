@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { obtenirQuestionsReponses, modifierQuestionsReponses } from "../../../api/api_utilisateurs";
-import '../../../assets/styles/utilisateur.css';
+import '../../../assets/styles/utilisateur.scss';
 
 export default function TabQuestions({ id, autoriseAModifier }) {
     const [questionsReponses, setQuestionsReponses] = useState({});

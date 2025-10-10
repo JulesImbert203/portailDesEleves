@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import '../../../assets/styles/utilisateur.css';
+import '../../../assets/styles/utilisateur.scss';
 import { chargerUtilisateursParPromo, modifierInfos} from "../../../api/api_utilisateurs";
 
 function DropDownSelect({ options, open, setOpen, selected, setSelected, single }) {
