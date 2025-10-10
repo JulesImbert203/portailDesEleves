@@ -10,7 +10,8 @@ export default function BlocChat() {
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(null);
   const [loadNewMessages, setLoadNewMessages] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messageDisplayRef = useRef(null);
+  const isAtBottomRef = useRef(true); // Ref to track if user is at the bottom
 
   useEffect(() => {
     const newSocket = io(`${SOCKET_BASE_URL}`, {
@@ -38,9 +39,12 @@ export default function BlocChat() {
     };
   }, []);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive, but only if user was already at the bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const messageDisplay = messageDisplayRef.current;
+    if (messageDisplay && isAtBottomRef.current) {
+      messageDisplay.scrollTop = messageDisplay.scrollHeight;
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -59,40 +63,47 @@ export default function BlocChat() {
     const message = { text: input };
     socket.emit("message", message);
     setInput("");
+    // After sending a message, always scroll to the bottom
+    const messageDisplay = messageDisplayRef.current;
+    if (messageDisplay) {
+      messageDisplay.scrollTop = messageDisplay.scrollHeight;
+    }
   };
 
   const handleScroll = e => {
-    let element = e.target;
-    if (element.scrollTop === 0) {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    // Check if user is at the very bottom (with a small tolerance)
+    isAtBottomRef.current = scrollHeight - scrollTop <= clientHeight + 1; // +1 for tolerance
+
+    if (scrollTop === 0) {
       setLoadNewMessages(true)
     }
   }
 
   return (
-    <Card id="chat-container" className="fixed-bottom m-4 shadow-lg" style={{ width: '350px', right: '0', bottom: '0' }}>
+    <Card id="chat-container" className='mw-100'>
       <Card.Header as="h5" className="text-center">Chat</Card.Header>
       <Card.Body>
-        <div id="message-display" className="overflow-auto mb-3" onScroll={handleScroll}>
+        <div ref={messageDisplayRef} id="message-display" className="overflow-auto mb-3" onScroll={handleScroll}>
           {messages.map((msg, idx) => (
-            <div key={idx} className="p-2 rounded-lg bg-light">
-              <span className="text-muted" style={{ fontSize: "0.7em" }}>{msg.time}</span>{" "}
+            <div key={idx} className="p-1 rounded-lg bg-light" style={{ fontSize: "0.8em" }}>
+              <span className="text-muted">{msg.time}</span>{" "}
               <span style={{ color: msg.is_you ? "blue" : "gray" }}>
                 {msg.author}
               </span>{" "}
-              : {msg.text}
+              :{" "}
+              <span>{msg.text}</span>
             </div>
           ))}
-          <div ref={messagesEndRef} />
         </div>
-        <InputGroup>
-          <Form.Control
+        <InputGroup >
+          <Form.Control style={{ fontSize: "0.8em" }}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Type a message..."
+            placeholder="Parle moi !!!"
           />
-          <Button variant="primary" onClick={sendMessage}>Send</Button>
         </InputGroup>
       </Card.Body>
     </Card>

@@ -9,10 +9,10 @@
   --global-style-bloc-bloc: #bababa;
   --global-style-text-color: #333333; /* Couleur du texte principal */
   --global-style-border-radius: 15px; /* Border radius pour arrondir les coins */
-  --global-style-padding: 20px; /* Padding général */
+  --global-style-padding: 10px; /* Padding général */
   --global-style-sidebar-width: 250px; /* Largeur des sidebars */
   --global-style-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre pour un effet moderne */
-  --global-style-margin-centrale: 20px;
+  --global-style-margin-centrale: 10px;
   --global-style-button-color: hsl(20, 73%, 54%);
   --global-style-button-color-hover: hsl(20, 73%, 80%);
   --global-style-small-space: 20px;
@@ -69,6 +69,7 @@ body {
   border-radius: var(--global-style-border-radius);
   box-shadow: var(--global-style-box-shadow);
   margin-left: var(--global-style-margin-centrale);
+  padding: var(--global-style-padding);
   margin-right: var(--global-style-margin-centrale);
 }
 

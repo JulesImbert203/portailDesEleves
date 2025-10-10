@@ -54,9 +54,7 @@ export function LayoutProvider() {
               <Outlet />
             </div>
             <div className="sidebar-global right">
-              <div className="bloc-global" style={{ height: "30vh" }}>
                 <BlocChat />
-              </div>
               <div className="bloc-global">
                 <BlocAnniversaire />
               </div>
