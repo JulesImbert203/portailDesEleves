@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-import '../../../assets/styles/liste_assos.css';
-import '../../../assets/styles/asso.css';
+import '../../../assets/styles/liste_assos.scss';
+import '../../../assets/styles/asso.scss';
 
 import { obtenirAssosUtilisateur } from "../../../api/api_utilisateurs";
 import { BASE_URL } from "../../../api/base";

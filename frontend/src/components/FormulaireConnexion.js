@@ -1,8 +1,9 @@
-import "../assets/styles/formulaire_connexion.css"
+import "../assets/styles/formulaire_connexion.scss"
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { seConnecter } from "../api/api_global";
+import { Container, Form, Button, Alert } from "react-bootstrap";
 
 export default function FormulaireConnexion() {
   const [username, setUsername] = useState("");
@@ -22,26 +23,23 @@ export default function FormulaireConnexion() {
   }
 
   return (
-    <div className="connexion-main-container">
+    <Container className="connexion-main-container d-flex flex-column align-items-center justify-content-center vh-100">
       <h2>Connexion</h2>
-      {erreur && <p style={{ color: "red" }}>{erreur}</p>}
-      <form onSubmit={handleSubmit} className="connexion-form">
-        <label for="norm">Nom d'utilisateur</label>
-        <input
-          name="nom"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <label for="mdp">Mot de passe</label>
-        <input
-          name="mdp"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Se connecter</button>
-      </form>
-    </div>
+      {erreur && <Alert variant="danger">{erreur}</Alert>}
+      <Form onSubmit={handleSubmit} className="connexion-form">
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Nom d'utilisateur</Form.Label>
+          <Form.Control type="text" placeholder="Entrer le nom d'utilisateur" value={username} onChange={(e) => setUsername(e.target.value)} />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Mot de passe</Form.Label>
+          <Form.Control type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Se connecter
+        </Button>
+      </Form>
+    </Container>
   );
 }

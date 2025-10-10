@@ -1,0 +1,45 @@
+
+// Import Bootstrap functions and variables to override them
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+
+/* Variables globales simplifiées */
+$primary: #007bff;
+$secondary: #6c757d;
+$info: #17a2b8;
+$danger: #dc3545;
+
+.global-header-header {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    height: 60px;
+
+    h1 {
+        font-size: 24px;
+        margin: 0;
+        color: #fff;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .global-header-header {
+        height: auto;
+        padding: 15px 10px;
+
+        .row {
+            flex-direction: column;
+        }
+
+        .col {
+            text-align: center !important;
+            margin-bottom: 10px;
+        }
+
+        .col-auto {
+            margin-bottom: 10px;
+        }
+    }
+}

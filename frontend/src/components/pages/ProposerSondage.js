@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { requeteProposerSondage } from './../../api/api_sondages';  // Importation de la fonction proposerSondage
-import '../../assets/styles/proposer_sondage.css';  // Import du CSS global du layout
+import '../../assets/styles/proposer_sondage.scss';  // Import du CSS global du layout
 import { useNavigate } from "react-router-dom";
 
 function ProposerSondage() {

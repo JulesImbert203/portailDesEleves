@@ -1,3 +1,4 @@
+import "../assets/styles/soifguard.scss";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -18,7 +19,6 @@ import {
 import {
   chargerUtilisateursParPromo, 
 } from "../api/api_utilisateurs"
-import "../assets/styles/soifguard.css";
 
 export default function SoifGuard() {
   const navigate = useNavigate();
