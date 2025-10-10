@@ -3,13 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 import { SOCKET_BASE_URL } from '../../api/base';
 import "../../assets/styles/chat.scss"
 import { obtenirPlusDeMessages } from '../../api/api_chat';
-import { Card, Form, Button, InputGroup } from 'react-bootstrap';
+import { Card, Form, InputGroup } from 'react-bootstrap';
 
 export default function BlocChat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(null);
-  const [loadNewMessages, setLoadNewMessages] = useState(false);
   const messageDisplayRef = useRef(null);
   const isAtBottomRef = useRef(true); // Ref to track if user is at the bottom
 
@@ -47,17 +46,6 @@ export default function BlocChat() {
     }
   }, [messages]);
 
-  useEffect(() => {
-    async function fecthNewMessages() {
-      if (messages.length > 0) {
-        const new_messages = await obtenirPlusDeMessages(messages[0].id)
-        setMessages(new_messages.concat(messages))
-      }
-    };
-    fecthNewMessages();
-    setLoadNewMessages(false);
-  }, [loadNewMessages])
-
   const sendMessage = () => {
     if (!input.trim()) return;
     const message = { text: input };
@@ -76,12 +64,18 @@ export default function BlocChat() {
     isAtBottomRef.current = scrollHeight - scrollTop <= clientHeight + 1; // +1 for tolerance
 
     if (scrollTop === 0) {
-      setLoadNewMessages(true)
+      async function fecthNewMessages() {
+        if (messages.length > 0) {
+          const new_messages = await obtenirPlusDeMessages(messages[0].id)
+          setMessages(new_messages.concat(messages))
+        }
+      };
+      fecthNewMessages();
     }
   }
 
   return (
-    <Card id="chat-container" className='mw-100'>
+    <Card id="chat-container" className='mw-100 mb-3'>
       <Card.Header as="h5" className="text-center">Chat</Card.Header>
       <Card.Body>
         <div ref={messageDisplayRef} id="message-display" className="overflow-auto mb-3" onScroll={handleScroll}>
