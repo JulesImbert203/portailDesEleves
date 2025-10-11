@@ -103,13 +103,6 @@ export async function obtenirListeDesUtilisateurs(promo, cycles) {
   return data;
 }
 
-export async function obtenirListeDesUtilisateursParPromo(promo) {
-  let url = `${API_BASE_URL}/users/charger_utilisateurs_par_promo/${promo}`;
-  const res = await fetch(url, { credentials: "include" });
-  const data = await res.json();
-  return data;
-}
-
 
 export async function obtenirProchainsAnnivs() {
   let url = `${API_BASE_URL}/users/prochains_anniv`;

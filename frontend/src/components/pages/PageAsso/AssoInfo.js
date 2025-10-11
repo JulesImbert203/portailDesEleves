@@ -15,7 +15,7 @@ function AssoInfo({ asso_id }) {
                 setDescription(newDescription);
                 setIsEdition(false);
             } catch (error) {
-                console.log(error);
+                console.err(error);
             }
         }
     };

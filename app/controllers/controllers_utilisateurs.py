@@ -71,8 +71,7 @@ def charger_utilisateurs_par_promo(promo: int):
     Charge la liste des utilisateurs d'une promo donnée pour Soifguard
     """
     utilisateurs = Utilisateur.query.filter_by(promotion=promo).all()
-    if not utilisateurs:
-        return jsonify({"message": "Aucun utilisateur trouvé pour cette promo"}), 404
+
     liste_utilisateurs = [
         {
             "id": utilisateur.id,
@@ -87,6 +86,7 @@ def charger_utilisateurs_par_promo(promo: int):
         }
         for utilisateur in utilisateurs
     ]
+
     return jsonify(liste_utilisateurs), 200
 
 

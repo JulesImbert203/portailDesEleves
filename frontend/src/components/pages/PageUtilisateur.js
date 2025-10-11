@@ -11,7 +11,7 @@ import { verifierSuperutilisateur } from "../../api/api_utilisateurs";
 import { BASE_URL } from '../../api/base';
 
 function PageUtilisateur() {
-    const [donneesUtilisateur, setDonneesUtilisateur] = useState([]);
+    const [donneesUtilisateur, setDonneesUtilisateur] = useState({});
     const [activeTab, setActiveTab] = useState("info");
     const { userData } = useLayout();
     const [autoriseAModifier, setAutoriseAModifier] = useState(false);
@@ -19,6 +19,17 @@ function PageUtilisateur() {
 
     useEffect(() => {
         setAutoriseAModifier(userData.id == id || userData.is_superuser);
+    }, [id]);
+
+    useEffect(() => {// Obtention des données utilisateur à afficher
+        const fetchData = async () => {
+            var data = await obtenirDataUser(id);
+            setDonneesUtilisateur({
+                prenom: data.prenom,
+                nom: data.nom
+            });
+        };
+        fetchData();
     }, [id]);
 
     if (donneesUtilisateur === null) { return (<p>Chargement...</p>); }
@@ -31,7 +42,7 @@ function PageUtilisateur() {
             </div>
 
             <div className='user-infos-principales'>
-                <h2 className='user-nom'>{userData.prenom} {userData.nom}</h2>
+                <h2 className='user-nom'>{donneesUtilisateur.prenom} {donneesUtilisateur.nom}</h2>
             </div>
 
             {/* Menu */}
@@ -43,9 +54,9 @@ function PageUtilisateur() {
 
             {/* Contenu des onglets */}
             <div className="user-tab-content">
-                    {activeTab === "info" && <TabInfo id={id} donneesUtilisateur={userData} autoriseAModifier={autoriseAModifier} />}
-                    {activeTab === "assos" && <TabAsso id={id} />}
-                    {activeTab === "questions" && <TabQuestions id={id} autoriseAModifier={autoriseAModifier} />}
+                {activeTab === "info" && <TabInfo id={id} donneesUtilisateur={userData} autoriseAModifier={autoriseAModifier} />}
+                {activeTab === "assos" && <TabAsso id={id} />}
+                {activeTab === "questions" && <TabQuestions id={id} autoriseAModifier={autoriseAModifier} />}
             </div>
 
         </div>

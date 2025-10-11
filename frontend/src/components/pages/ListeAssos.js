@@ -14,7 +14,6 @@ export default function ListeAssos() {
   
   const handleClick = (asso) => {
     //selectAsso(asso); // Stocke les infos de l'asso sélectionnée
-    console.log (asso)
     navigate(`/assos/get/${asso}`); // Change de composant
   };
 

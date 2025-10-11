@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMembre, modifierRoleMembre, retirerMembre } from "../../../api/api_associations";
-import { obtenirListeDesPromos, obtenirListeDesUtilisateursParPromo } from "../../../api/api_utilisateurs";
+import { obtenirListeDesPromos, chargerUtilisateursParPromo } from "../../../api/api_utilisateurs";
 import { BASE_URL } from "../../../api/base";
 import { useNavigate } from "react-router-dom";
 
@@ -63,7 +63,7 @@ function AssoMembres({ asso_id }) {
     const handleSetPromoAjoutMembre = async (promo) => {
         if (promo !== "") {
             try {
-                const listeMembres = await obtenirListeDesUtilisateursParPromo(promo);
+                const listeMembres = await chargerUtilisateursParPromo(promo);
                 setListeNouveauxMembres(listeMembres);
                 setPromoAjoutMembre(promo);
             } catch (erreur) {

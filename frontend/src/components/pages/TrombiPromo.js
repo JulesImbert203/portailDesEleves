@@ -21,7 +21,6 @@ function TrombiPromo() {
             setUtilisateurs(data);
         };
         chargerUtilisateurs();
-        console.log (promo)
     }, [promo, cyclesSelectionnes]);
 
     const toggleCycle = (cycle) => {

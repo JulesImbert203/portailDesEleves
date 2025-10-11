@@ -11,7 +11,6 @@ export default function BlocAnniversaire() {
         const fetchData = async () => {
             const data = await obtenirProchainsAnnivs();
             setAnnivs(data.sort((x, y) => new Date(x.date_de_naissance) - new Date(y.date_de_naissance)));
-            console.log(data)
         };
         fetchData();
     }, []);

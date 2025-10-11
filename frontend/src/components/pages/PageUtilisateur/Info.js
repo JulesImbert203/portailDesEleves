@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import '../../../assets/styles/utilisateur.scss';
-import { chargerUtilisateursParPromo, modifierInfos} from "../../../api/api_utilisateurs";
+import { chargerUtilisateursParPromo, modifierInfos, obtenirDataUser } from "../../../api/api_utilisateurs";
+import { useLayout } from "../../../layouts/Layout";
 
 function DropDownSelect({ options, open, setOpen, selected, setSelected, single }) {
     return (<div>
@@ -38,15 +39,49 @@ function DropDownSelect({ options, open, setOpen, selected, setSelected, single 
 }
 
 
-export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
+export default function TabInfo({ id, autoriseAModifier }) {
+    const { userData } = useLayout();
     const [isGestion, setIsGestion] = useState(false);
-    const [userInfos, setUserInfos] = useState({
-        promo: donneesUtilisateur.promotion,
-        date_de_naissance: donneesUtilisateur.date_de_naissance,
-        chambre: donneesUtilisateur.chambre,
-        ville_origine: donneesUtilisateur.ville_origine,
-        instruments: donneesUtilisateur.instruments ? donneesUtilisateur.instruments : []
-    });
+    const [userInfos, setUserInfos] = useState(
+        {
+            promo: 2,
+            date_de_naissance: "0",
+            chambre: "0",
+            ville_origine: "Lens",
+            instruments: []
+        }
+    );
+
+    const [openP, setOpenP] = useState(false);
+    const [selectedP, setSelectedP] = useState([]);
+    const [optionsP, setOptionsP] = useState([]);
+
+    const [openC, setOpenC] = useState(false);
+    const [selectedC, setSelectedC] = useState([]);
+    const [optionsC, setOptionsC] = useState([]);
+
+    useEffect(() => {// Obtention des données utilisateur à afficher
+        const fetchData = async () => {
+            var data = await obtenirDataUser(id);
+            setUserInfos({
+                email: data.email,
+                telephone: data.telephone,
+                promo: data.promo,
+                date_de_naissance: data.date_de_naissance,
+                chambre: data.chambre,
+                ville_origine: data.ville_origine,
+                instruments: data.instruments ? data.instruments : []
+            });
+            if (!isNaN(parseInt(userInfos.promo))) {
+                var data = await chargerUtilisateursParPromo(userInfos.promo - 1);
+                setOptionsP(data.map(elt => ({ value: elt.id, label: elt.prenom + " " + elt.nom })));
+
+                var data = await chargerUtilisateursParPromo(userInfos.promo);
+                setOptionsC(data.map(elt => ({ value: elt.id, label: elt.promo + " " + elt.nom })));
+            }
+        };
+        fetchData();
+    }, [id]);
 
     const copyToClipboard = (text) => {
         if (navigator.clipboard) {
@@ -55,7 +90,7 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
                 console.error("Erreur lors de la copie : ", err);
             });
         } else {
-            console.log("La fonctionnalité de copier dans le presse-papiers n'est pas supportée.");
+            console.err("La fonctionnalité de copier dans le presse-papiers n'est pas supportée.");
         }
     };
 
@@ -69,39 +104,11 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
         setIsGestion(false);
     }
 
-    const [openP, setOpenP] = useState(false);
-    const [selectedP, setSelectedP] = useState([]);
-    const [optionsP, setOptionsP] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await chargerUtilisateursParPromo(donneesUtilisateur.promotion - 1);
-            setOptionsP(data.map(elt => ({ value: elt.id, label: elt.prenom + " " + elt.nom })));
-        };
-        fetchData();
-    }, []);
-
-    const [openC, setOpenC] = useState(false);
-    const [selectedC, setSelectedC] = useState([]);
-    const [optionsC, setOptionsC] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await chargerUtilisateursParPromo(donneesUtilisateur.promotion);
-            setOptionsC(data.map(elt => ({ value: elt.id, label: elt.prenom + " " + elt.nom })));
-        };
-        fetchData();
-    }, []);
-
     const handleInstruChange = (e) => {
         const { name, value } = e.target;
-        console.log(name, value)
         let temp = userInfos.instruments;
-        console.log(temp[name])
         temp[name] = [userInfos.instruments[name][0], value];
-        console.log(`temp: ${temp}`)
         setUserInfos({ ...userInfos, instruments: temp })
-        console.log(userInfos.instruments)
     }
 
     const handleInstruNameChange = (e) => {
@@ -109,12 +116,10 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
         var temp = userInfos.instruments;
         temp[name] = [value, userInfos.instruments[name][1]];
         setUserInfos({ ...userInfos, instruments: temp })
-        console.log(userInfos.instruments)
     }
 
     const ajouterInstru = () => {
         setUserInfos({ ...userInfos, instruments: [...userInfos.instruments, ["Piano", "1 an"]] })
-        console.log(userInfos.instruments)
     }
 
     return (<>
@@ -126,9 +131,9 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
             {/* Section Téléphone */}
             <div className="user-contact">
                 <img src="/assets/icons/phone.svg" alt="Phone" className="user-icon" />
-                <p className='user-donnee-contact'>{donneesUtilisateur.telephone || '01 23 45 67 89'}</p> {/* Mettre le numéro réel ici */}
+                <p className='user-donnee-contact'>{userInfos.telephone || '01 23 45 67 89'}</p> {/* Mettre le numéro réel ici */}
                 <div className='asso-button'>
-                    <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon" onClick={() => copyToClipboard(donneesUtilisateur.telephone || '01 23 45 67 89')} />
+                    <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon" onClick={() => copyToClipboard(userInfos.telephone || '01 23 45 67 89')} />
                     <p id="texteCopier">copier</p>
                 </div>
             </div>
@@ -136,9 +141,9 @@ export default function TabInfo({ id, donneesUtilisateur, autoriseAModifier }) {
             {/* Section Email */}
             <div className="user-contact">
                 <img src="/assets/icons/mail.svg" alt="Mail" className="user-icon" />
-                <p className='user-donnee-contact'>{donneesUtilisateur.email || 'example@mail.com'}</p> {/* Mettre l'email réel ici */}
+                <p className='user-donnee-contact'>{userInfos.email || 'example@mail.com'}</p> {/* Mettre l'email réel ici */}
                 <div className='asso-button'>
-                    <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon copy" onClick={() => copyToClipboard(donneesUtilisateur.email || 'example@mail.com')} />
+                    <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon copy" onClick={() => copyToClipboard(userInfos.email || 'example@mail.com')} />
                     <p id="texteCopier">copier</p>
                 </div>
             </div>
