@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import { chargerUtilisateursParPromo, modifierInfos} from "../../../api/api_utilisateurs";
+import { chargerUtilisateursParPromo, modifierInfos, obtenirDataUser} from "../../../api/api_utilisateurs";
 import { Row, Col, Button, Form, InputGroup } from "react-bootstrap";
+import { useLayout } from "../../../layouts/Layout";
 
 function DropDownSelect({ options, open, setOpen, selected, setSelected, single }) {
     return (<div>
@@ -130,15 +131,15 @@ export default function TabInfo({ id, autoriseAModifier }) {
             <Col md={6}>
                 <InputGroup className="mb-3">
                     <InputGroup.Text><img src="/assets/icons/phone.svg" alt="Phone" style={{width: '20px'}}/></InputGroup.Text>
-                    <Form.Control value={donneesUtilisateur.telephone || '01 23 45 67 89'} disabled/>
-                    <Button variant="outline-secondary" onClick={() => copyToClipboard(donneesUtilisateur.telephone || '01 23 45 67 89')}>Copier</Button>
+                    <Form.Control value={userInfos.telephone || '01 23 45 67 89'} disabled/>
+                    <Button variant="outline-secondary" onClick={() => copyToClipboard(userInfos.telephone || '01 23 45 67 89')}>Copier</Button>
                 </InputGroup>
             </Col>
             <Col md={6}>
                 <InputGroup className="mb-3">
                     <InputGroup.Text><img src="/assets/icons/mail.svg" alt="Mail" style={{width: '20px'}}/></InputGroup.Text>
-                    <Form.Control value={donneesUtilisateur.email || 'example@mail.com'} disabled/>
-                    <Button variant="outline-secondary" onClick={() => copyToClipboard(donneesUtilisateur.email || 'example@mail.com')}>Copier</Button>
+                    <Form.Control value={userInfos.email || 'example@mail.com'} disabled/>
+                    <Button variant="outline-secondary" onClick={() => copyToClipboard(userInfos.email || 'example@mail.com')}>Copier</Button>
                 </InputGroup>
             </Col>
         </Row>
