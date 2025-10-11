@@ -61,7 +61,7 @@ function PageUtilisateur() {
                 <Card.Body>
                     <Row>
                         <Col>
-                            <h2>{userData.prenom} {userData.nom}</h2>
+                            <h2>{donneesUtilisateur.prenom} {donneesUtilisateur.nom}</h2>
                         </Col>
                     </Row>
                 </Card.Body>
