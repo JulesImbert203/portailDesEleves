@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { requeteProposerSondage } from './../../api/api_sondages';  // Importation de la fonction proposerSondage
-import '../../assets/styles/proposer_sondage.scss';  // Import du CSS global du layout
 import { useNavigate } from "react-router-dom";
+import { Container, Form, Button, InputGroup, Alert } from "react-bootstrap";
 
 function ProposerSondage() {
   const navigate = useNavigate();
@@ -56,72 +56,58 @@ function ProposerSondage() {
   };
 
   return (
-    <div className="proposer_sondage_container">
-      <h1 className="proposer_sondage_title">Proposer un sondage</h1>
-      <form onSubmit={handleSubmit} className="proposer_sondage_form">
-        <div className="proposer_sondage_field">
-          <label htmlFor="question">Question :</label>
-          <input
+    <Container className="mt-4">
+      <h1>Proposer un sondage</h1>
+      <Form onSubmit={handleSubmit} className="mt-3">
+        <Form.Group className="mb-3">
+          <Form.Label>Question</Form.Label>
+          <Form.Control
             type="text"
-            id="question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             required
-            className="proposer_sondage_input"
           />
-        </div>
+        </Form.Group>
 
-        <div className="proposer_sondage_field">
-          <label>Réponses :</label>
+        <Form.Group className="mb-3">
+          <Form.Label>Réponses</Form.Label>
           {reponses.map((reponse, index) => (
-            <div key={index} className="proposer_sondage_reponse_group">
-              <input
+            <InputGroup className="mb-2" key={index}>
+              <Form.Control
                 type="text"
                 value={reponse}
                 onChange={(e) => handleReponseChange(index, e.target.value)}
                 required
-                className="proposer_sondage_input"
               />
               {reponses.length > 2 && (
-                <button
-                  type="button"
-                  onClick={() => removeReponse(index)}
-                  className="proposer_sondage_button"
-                  title="Retirer"
-                >
-                  <img src="/assets/icons/delete.svg" alt="Bouton en forme de poubelle"/>
-                </button>
+                <Button variant="outline-danger" onClick={() => removeReponse(index)}>
+                  <img src="/assets/icons/delete.svg" alt="Supprimer" />
+                </Button>
               )}
-            </div>
+            </InputGroup>
           ))}
-          <button
-            type="button"
-            onClick={addReponse}
-            className="proposer_sondage_button"
-            title="Ajouter une réponse"
-          >
-            <img src="/assets/icons/plus.svg" alt="Bouton en forme de plus"/> 
-          </button>
-        </div>
+          {reponses.length < 4 && (
+            <Button variant="outline-primary" onClick={addReponse}>
+                <img src="/assets/icons/plus.svg" alt="Ajouter" />
+            </Button>
+          )}
+        </Form.Group>
 
-        <button type="submit" className="proposer_sondage_submit">
+        <Button variant="primary" type="submit">
           Soumettre
-        </button>
-      </form>
+        </Button>
+      </Form>
 
       {message && (
-        <div className="proposer_sondage_message">
-          <p>{message}</p>
-        </div>
+        <Alert variant={message.includes("succès") ? "success" : "danger"} className="mt-3">
+          {message}
+        </Alert>
       )}
 
-      <button
-        onClick={() => navigate("/")}
-        className="proposer_sondage_retour"
-      >
+      <Button variant="link" onClick={() => navigate("/")} className="mt-3">
         Retour
-      </button>
-    </div>
+      </Button>
+    </Container>
 
   );
 }

@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { Card } from 'react-bootstrap';
 import { obtenirProchainsAnnivs } from '../../api/api_utilisateurs';
 
 // "undefined" means the URL will be computed from the `window.location` object
@@ -15,13 +16,15 @@ export default function BlocAnniversaire() {
         fetchData();
     }, []);
 
-    return <>
-        <h1>Anniversaires</h1>
+    return <Card id="bloc-anniversaire" className="bloc-global">
+        <Card.Header as="h5" className="text-center">Anniversaires</Card.Header>
+        <Card.Body>
         {annivs.map(elt => {
             return(
             <div key={elt[0]}><p>{new Date(elt[0]).toLocaleString("fr-FR", { day: "numeric", month: "long" })}</p>
                 {elt[1].map(nom => {return <div key={nom}>{nom}</div>})}
             </div>)
         })}
-    </>
+        </Card.Body>
+    </Card>
 }

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import '../../../assets/styles/utilisateur.scss';
-import { chargerUtilisateursParPromo, modifierInfos, obtenirDataUser } from "../../../api/api_utilisateurs";
-import { useLayout } from "../../../layouts/Layout";
+import { chargerUtilisateursParPromo, modifierInfos} from "../../../api/api_utilisateurs";
+import { Row, Col, Button, Form, InputGroup } from "react-bootstrap";
 
 function DropDownSelect({ options, open, setOpen, selected, setSelected, single }) {
     return (<div>
@@ -123,31 +122,26 @@ export default function TabInfo({ id, autoriseAModifier }) {
     }
 
     return (<>
-        {autoriseAModifier && <div className='asso-button' id="asso-description-button" onClick={() => setIsGestion(!isGestion)}>
-            <img src="/assets/icons/edit.svg" alt="Copy" />
-            <p id="texteCopier">Éditer</p>
-        </div>}
-        <div className='user-info-contact'>
-            {/* Section Téléphone */}
-            <div className="user-contact">
-                <img src="/assets/icons/phone.svg" alt="Phone" className="user-icon" />
-                <p className='user-donnee-contact'>{userInfos.telephone || '01 23 45 67 89'}</p> {/* Mettre le numéro réel ici */}
-                <div className='asso-button'>
-                    <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon" onClick={() => copyToClipboard(userInfos.telephone || '01 23 45 67 89')} />
-                    <p id="texteCopier">copier</p>
-                </div>
-            </div>
-
-            {/* Section Email */}
-            <div className="user-contact">
-                <img src="/assets/icons/mail.svg" alt="Mail" className="user-icon" />
-                <p className='user-donnee-contact'>{userInfos.email || 'example@mail.com'}</p> {/* Mettre l'email réel ici */}
-                <div className='asso-button'>
-                    <img src="/assets/icons/copy.svg" alt="Copy" className="user-icon copy" onClick={() => copyToClipboard(userInfos.email || 'example@mail.com')} />
-                    <p id="texteCopier">copier</p>
-                </div>
-            </div>
-        </div>
+        {autoriseAModifier && <Button variant="outline-primary" className="float-end" onClick={() => setIsGestion(!isGestion)}>
+            <img src="/assets/icons/edit.svg" alt="Edit" /> Éditer
+        </Button>}
+        
+        <Row className="mb-3">
+            <Col md={6}>
+                <InputGroup className="mb-3">
+                    <InputGroup.Text><img src="/assets/icons/phone.svg" alt="Phone" style={{width: '20px'}}/></InputGroup.Text>
+                    <Form.Control value={donneesUtilisateur.telephone || '01 23 45 67 89'} disabled/>
+                    <Button variant="outline-secondary" onClick={() => copyToClipboard(donneesUtilisateur.telephone || '01 23 45 67 89')}>Copier</Button>
+                </InputGroup>
+            </Col>
+            <Col md={6}>
+                <InputGroup className="mb-3">
+                    <InputGroup.Text><img src="/assets/icons/mail.svg" alt="Mail" style={{width: '20px'}}/></InputGroup.Text>
+                    <Form.Control value={donneesUtilisateur.email || 'example@mail.com'} disabled/>
+                    <Button variant="outline-secondary" onClick={() => copyToClipboard(donneesUtilisateur.email || 'example@mail.com')}>Copier</Button>
+                </InputGroup>
+            </Col>
+        </Row>
 
         {!isGestion ?
             <>
@@ -161,31 +155,59 @@ export default function TabInfo({ id, autoriseAModifier }) {
                 </div>
             </>
             :
-            <>
-                <p>Promo : {userInfos.promo}</p>
-                <p>Ville d'origine : <input type="text" name="ville_origine" value={userInfos.ville_origine} onChange={e => handleChange(e)} ></input></p>
-                <p>Chambre : <input type="text" name="chambre" value={userInfos.chambre} onChange={e => handleChange(e)} ></input></p>
-                <div><h3>Instruments</h3>
-                    <ul>
-                        {userInfos.instruments.map((elt, ind) => (<li><input value={elt[0]} name={ind} onChange={handleInstruNameChange}></input> : <input value={elt[1]} name={ind} onChange={handleInstruChange}></input></li>))}
-                    </ul>
-                    <button onClick={ajouterInstru}>Ajouter instrument</button>
-                </div>
-                Co : <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC} single={true} />
-                Parrainne : <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP} single={false} />
+            <Form>
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm="2">Promo</Form.Label>
+                    <Col sm="10">
+                        <Form.Control value={userInfos.promo} disabled />
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm="2">Ville d'origine</Form.Label>
+                    <Col sm="10">
+                        <Form.Control type="text" name="ville_origine" value={userInfos.ville_origine} onChange={e => handleChange(e)} />
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm="2">Chambre</Form.Label>
+                    <Col sm="10">
+                        <Form.Control type="text" name="chambre" value={userInfos.chambre} onChange={e => handleChange(e)} />
+                    </Col>
+                </Form.Group>
+                
+                <h3>Instruments</h3>
+                {userInfos.instruments.map((elt, ind) => (
+                    <Row key={ind} className="mb-2">
+                        <Col>
+                            <Form.Control value={elt[0]} name={ind} onChange={handleInstruNameChange}/>
+                        </Col>
+                        <Col>
+                            <Form.Control value={elt[1]} name={ind} onChange={handleInstruChange}/>
+                        </Col>
+                    </Row>
+                ))}
+                <Button variant="outline-primary" size="sm" onClick={ajouterInstru}>Ajouter instrument</Button>
 
-                <div className='buttons-container'>
-                    <div className='valider-button' onClick={validerModifierInfos}>
-                        <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                        <p>Ajouter</p>
-                    </div>
-                    <div className='annuler-button' onClick={() => setIsGestion(false)}>
-                        <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                        <p>Annuler</p>
-                    </div>
+                <h3 className="mt-3">Relations</h3>
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm="2">Co</Form.Label>
+                    <Col sm="10">
+                        <DropDownSelect options={optionsC} open={openC} setOpen={setOpenC} selected={selectedC} setSelected={setSelectedC} single={true} />
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm="2">Parrain(s)</Form.Label>
+                    <Col sm="10">
+                        <DropDownSelect options={optionsP} open={openP} setOpen={setOpenP} selected={selectedP} setSelected={setSelectedP} single={false} />
+                    </Col>
+                </Form.Group>
+
+                <div className="d-flex gap-2 mt-3">
+                    <Button variant="success" onClick={validerModifierInfos}>Valider</Button>
+                    <Button variant="danger" onClick={() => setIsGestion(false)}>Annuler</Button>
                 </div>
-            </>}
+            </Form>
+            }
     </>
     );
 }
-

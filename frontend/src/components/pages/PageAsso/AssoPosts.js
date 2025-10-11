@@ -4,6 +4,7 @@ import { creerNouveauCommentaire, creerNouvellePublication, modifierCommentaire,
 import { useLayout } from "../../../layouts/Layout";
 import RichEditor, { RichTextDisplay } from "../../blocs/RichEditor";
 import { BASE_URL } from "../../../api/base";
+import { Card, Button, Form, Row, Col, Image } from "react-bootstrap";
 
 function AssoPosts({ asso_id }) {
     const { userData } = useLayout();
@@ -263,177 +264,163 @@ function AssoPosts({ asso_id }) {
 
     return (
         <>
-            <div className='asso-info-section'>
-                <div className='asso-titre-description'>
-                    <h2>Les publications</h2>
-                    {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => setIsGestion(!isGestion)}>
-                        <img src="/assets/icons/edit.svg" alt="Copy" />
-                        <p id="texteCopier">Éditer</p>
-                    </div>}
-                </div>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h2>Les publications</h2>
+                {isMembreAutorise && <Button variant="outline-primary" onClick={() => setIsGestion(!isGestion)}>
+                    <img src="/assets/icons/edit.svg" alt="Edit" />
+                    Éditer
+                </Button>}
             </div>
-            {isGestion && !isNewPost && <div className='buttons-container'>
-                <div className='valider-button' onClick={() => setIsNewPost(true)}>
-                    <img src="/assets/icons/plus.svg" alt="Ajouter une publications" />
-                    <p>Ajouter une publication</p>
-                </div>
+            {isGestion && !isNewPost && <div className="d-flex gap-2 mb-3">
+                <Button variant="success" onClick={() => setIsNewPost(true)}>
+                    <img src="/assets/icons/plus.svg" alt="Ajouter une publication" />
+                    Ajouter une publication
+                </Button>
             </div>}
-            <div className='asso-content-container'>
+            <div className="d-flex flex-column gap-3">
 
                 {/* formulaire pour une nouvelle publication */}
-                {isNewPost && <div className='asso-bloc-interne'>
-                    <h2>Titre : <input value={newPost.titre} name='titre' type='text' onChange={handleSetNewPost} /></h2>
-                    <p>Autoriser les commentaires : <input type="checkbox" checked={newPost.is_commentable} name='is_commentable' onChange={handleSetNewPost} /></p>
-                    <p>Publication interne : <input type="checkbox" checked={newPost.is_publication_interne} name='is_publication_interne' onChange={handleSetNewPost} /></p>
-                    <p>Cacher aux 1A : <input type="checkbox" checked={newPost.a_cacher_aux_nouveaux} name='a_cacher_aux_nouveaux' onChange={handleSetNewPost} /></p>
-                    <p>
-                        Cacher aux cycles :
-                        {["ic", "ast", "ev", "vs", "isup"].map(cycle => (
-                            <label key={cycle}>
-                                <input type="checkbox" name="a_cacher_to_cycles" value={cycle} checked={newPost.a_cacher_to_cycles.includes(cycle)} onChange={handleSetNewPost} />
-                                {cycle}
-                            </label>
-                        ))}
-                    </p>
-                    <p>Description :</p>
-                    <RichEditor value={newPost.contenu} onChange={handleSetNewPostContent} />
-                    <div className='buttons-container'>
-                        <div className='valider-button' onClick={validateNewPost}>
-                            <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                            <p>Ajouter</p>
-                        </div>
-                        <div className='annuler-button' onClick={() => setIsNewPost(false)}>
-                            <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                            <p>Annuler</p>
-                        </div>
-                    </div>
-                </div>}
+                {isNewPost && <Card>
+                    <Card.Body>
+                        <Form>
+                            <Form.Group as={Row} className="mb-3">
+                                <Form.Label column sm="2">Titre</Form.Label>
+                                <Col sm="10">
+                                    <Form.Control value={newPost.titre} name='titre' type='text' onChange={handleSetNewPost} />
+                                </Col>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Check type="checkbox" label="Autoriser les commentaires" checked={newPost.is_commentable} name='is_commentable' onChange={handleSetNewPost} />
+                                <Form.Check type="checkbox" label="Publication interne" checked={newPost.is_publication_interne} name='is_publication_interne' onChange={handleSetNewPost} />
+                                <Form.Check type="checkbox" label="Cacher aux 1A" checked={newPost.a_cacher_aux_nouveaux} name='a_cacher_aux_nouveaux' onChange={handleSetNewPost} />
+                            </Form.Group>
+                            <Form.Group as={Row} className="mb-3">
+                                <Form.Label column sm="2">Cacher aux cycles</Form.Label>
+                                <Col sm="10">
+                                    {["ic", "ast", "ev", "vs", "isup"].map(cycle => (
+                                        <Form.Check inline key={cycle} type="checkbox" name="a_cacher_to_cycles" value={cycle} label={cycle} checked={newPost.a_cacher_to_cycles.includes(cycle)} onChange={handleSetNewPost} />
+                                    ))}
+                                </Col>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Description</Form.Label>
+                                <RichEditor value={newPost.contenu} onChange={handleSetNewPostContent} />
+                            </Form.Group>
+                            <div className="d-flex gap-2">
+                                <Button variant="success" onClick={validateNewPost}>Ajouter</Button>
+                                <Button variant="danger" onClick={() => setIsNewPost(false)}>Annuler</Button>
+                            </div>
+                        </Form>
+                    </Card.Body>
+                </Card>}
 
                 {listePosts.map((post) =>
-                    <div key={post.id} className='asso-bloc-interne'>
+                    <Card key={post.id}>
+                        <Card.Body>
+                            {/* Les publications existantes */}
+                            {idModifyPost !== post.id && <>
+                                <Card.Title>{post.titre}</Card.Title>
+                                <RichTextDisplay content={post.contenu} />
+                                <div className="d-flex justify-content-between align-items-center mt-3">
+                                    <div className="d-flex gap-2">
+                                        {!isGestion && <>
+                                            <Button variant="outline-primary" onClick={() => handleChangePostLike(post.id)}>
+                                                {post.likes.includes(userData.id) ? <img src="/assets/icons/heart_plain.svg" alt="Je n'aime plus" /> : <img src="/assets/icons/heart.svg" alt="J'aime" />}
+                                                {post.likes.length}
+                                            </Button>
+                                            <Button variant="outline-secondary" onClick={() => handleSetIdNewComment(post.id)}>Commenter</Button>
+                                        </>}
+                                        {isGestion && <>
+                                            <Button variant="primary" onClick={() => handleSetIdModifyPost(post.id)}>Éditer</Button>
+                                            <Button variant="danger" onClick={() => removePost(post.id)}>Supprimer</Button>
+                                        </>}
+                                    </div>
+                                    <small className="text-muted">Publié le : {formatPublicationDate(post.date_publication)}</small>
+                                </div>
 
-                        {/* Les publications existantes */}
-                        {idModifyPost !== post.id && <>
-                            <h2>{post.titre}</h2>
-                            <RichTextDisplay content={post.contenu} />
-                            {!isGestion && <div className='buttons-container'>
-                                <div className='asso-button' onClick={() => handleChangePostLike(post.id)}>
-                                    {post.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
-                                    {!post.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
-                                    <p>{post.likes.length}</p>
-                                </div>
-                                <div className='asso-button' onClick={() => handleSetIdNewComment(post.id)}>
-                                    <img src="/assets/icons/comment.svg" alt="commentaire" />
-                                    <p>Commenter</p>
-                                </div>
-                                <p className="publication-date">Publié le : {formatPublicationDate(post.date_publication)}</p>
-                            </div>}
-                            {isGestion && <div className='buttons-container'>
-                                <div className='asso-button' onClick={() => handleSetIdModifyPost(post.id)}>
-                                    <img src="/assets/icons/edit.svg" alt="Editer" />
-                                    <p>Editer</p>
-                                </div>
-                                <div className='annuler-button' onClick={() => removePost(post.id)}>
-                                    <img src="/assets/icons/delete.svg" alt="Supprimer" />
-                                    <p>Supprimer</p>
-                                </div>
-                            </div>}
+                                {/* Nouveau commentaire */}
+                                {idNewComment === post.id && <Card className="mt-3">
+                                    <Card.Body>
+                                        <Form>
+                                            <Form.Group className="mb-3">
+                                                <Form.Control as="textarea" rows={3} value={newComment} placeholder="Écrivez votre commentaire ici" onChange={(e) => setNewComment(e.target.value)} />
+                                            </Form.Group>
+                                            <div className="d-flex gap-2">
+                                                <Button variant="success" onClick={() => validateNewComment(post.id)}>Valider</Button>
+                                                <Button variant="danger" onClick={() => handleSetIdNewComment(null)}>Annuler</Button>
+                                            </div>
+                                        </Form>
+                                    </Card.Body>
+                                </Card>}
 
-                            {/* Nouveau commentaire */}
-                            {idNewComment === post.id && <div className="asso-bloc-comment">
-                                <div className="asso-item-comment">
-                                    <img src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={`${post.auteur}`} />
-                                    <textarea className="comment-input" value={newComment} type='text' placeholder="Écrivez votre commentaire ici" onChange={(e) => setNewComment(e.target.value)} />
-                                </div>
-                                <div className='buttons-container'>
-                                    <div className='valider-button' onClick={() => validateNewComment(post.id)}>
-                                        <img src="/assets/icons/check-mark.svg" alt="Valider" />
-                                        <p>Valider</p>
-                                    </div>
-                                    <div className='annuler-button' onClick={() => handleSetIdNewComment(null)}>
-                                        <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                                        <p>Annuler</p>
-                                    </div>
-                                </div>
-                            </div>}
+                                {post.commentaires.map((comment) => <Card className="mt-3" key={comment.id}>
+                                    <Card.Body>
+                                        {comment.id !== idModifyComment && <>
+                                            <div className="d-flex align-items-center gap-3">
+                                                <Image src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={`${comment.auteur}`} roundedCircle width={50} height={50} />
+                                                <p className="mb-0">{comment.contenu}</p>
+                                            </div>
+                                            <div className="d-flex justify-content-between align-items-center mt-2">
+                                                <div className="d-flex gap-2">
+                                                    <Button variant="outline-primary" size="sm" onClick={() => handleChangeCommentLike(comment.id)}>
+                                                        {comment.likes.includes(userData.id) ? <img src="/assets/icons/heart_plain.svg" alt="Je n'aime plus" /> : <img src="/assets/icons/heart.svg" alt="J'aime" />}
+                                                        {comment.likes.length}
+                                                    </Button>
+                                                    {comment.id_auteur === userData.id && <Button variant="outline-secondary" size="sm" onClick={() => handleSetIdModifyComment(comment.id)}>Éditer</Button>}
+                                                    {(isGestion || comment.id_auteur === userData.id) && <Button variant="outline-danger" size="sm" onClick={() => removeComment(comment.id)}>Supprimer</Button>}
+                                                </div>
+                                                <small className="text-muted">Publié le : {formatPublicationDate(comment.date)}</small>
+                                            </div>
+                                        </>}
 
-                            {post.commentaires.map((comment) => <div className="asso-bloc-comment" key={comment.id}>
-
-                                {/* Les commentaires */}
-                                {comment.id !== idModifyComment && <>
-                                    <div className="asso-item-comment">
-                                        <img src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={`${post.auteur}`} />
-                                        <p>{comment.contenu}</p>
-                                    </div>
-                                    <div className='buttons-container'>
-                                        <div className='asso-button' onClick={() => handleChangeCommentLike(comment.id)}>
-                                            {comment.likes.includes(userData.id) && <img src="/assets/icons/heart_plain.svg" alt="J'aime" />}
-                                            {!comment.likes.includes(userData.id) && <img src="/assets/icons/heart.svg" alt="J'aime" />}
-                                            <p>{comment.likes.length}</p>
-                                        </div>
-                                        {comment.id_auteur === userData.id &&
-                                            <div className='asso-button' onClick={() => handleSetIdModifyComment(comment.id)}>
-                                                <img src="/assets/icons/edit.svg" alt="Editer" />
-                                                <p>Editer</p>
-                                            </div>}
-                                        {(isGestion || comment.id_auteur === userData.id) && <div className='annuler-button' onClick={() => removeComment(comment.id)}>
-                                            <img src="/assets/icons/delete.svg" alt="Supprimer" />
-                                            <p>Supprimer</p>
-                                        </div>}
-                                        <p className="publication-date">Publié le : {formatPublicationDate(comment.date)}</p>
-                                    </div>
-                                </>}
-
-                                {/* commentaire en cours d'édition */}
-                                {comment.id === idModifyComment && <>
-                                    <div className="asso-item-comment">
-                                        <img src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`} alt={`${post.auteur}`} />
-                                        <textarea className="comment-input" value={modifyComment} type='text' placeholder="Écrivez votre commentaire ici" onChange={(e) => setModifyComment(e.target.value)} />
-                                    </div>
-                                    <div className='buttons-container'>
-                                        <div className='valider-button' onClick={() => validateModifyComment(comment.id)}>
-                                            <img src="/assets/icons/check-mark.svg" alt="Valider" />
-                                            <p>Valider</p>
-                                        </div>
-                                        <div className='annuler-button' onClick={() => handleSetIdModifyComment(null)}>
-                                            <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                                            <p>Annuler</p>
-                                        </div>
-                                    </div>
-                                </>}
-                            </div>)}
-                        </>}
-
-                        {/* Publication en cours d'édition */}
-                        {idModifyPost === post.id &&
-                            <>
-                                <h2>Titre : <input value={modifyPost.titre} name='titre' type='text' onChange={handleSetModifyPost} /></h2>
-                                <p>Autoriser les commentaires : <input type="checkbox" checked={modifyPost.is_commentable} name='is_commentable' onChange={handleSetModifyPost} /></p>
-                                <p>Publication interne : <input type="checkbox" checked={modifyPost.is_publication_interne} name='is_publication_interne' onChange={handleSetModifyPost} /></p>
-                                <p>Cacher aux 1A : <input type="checkbox" checked={modifyPost.a_cacher_aux_nouveaux} name='a_cacher_aux_nouveaux' onChange={handleSetModifyPost} /></p>
-                                <p>
-                                    Cacher aux cycles :
-                                    {["ic", "ast", "ev", "vs", "isup"].map(cycle => (
-                                        <label key={cycle}>
-                                            <input type="checkbox" name="a_cacher_to_cycles" value={cycle} checked={modifyPost.a_cacher_to_cycles.includes(cycle)} onChange={handleSetModifyPost} />
-                                            {cycle}
-                                        </label>
-                                    ))}
-                                </p>
-                                <p>Description :</p>
-                                <RichEditor value={modifyPost.contenu} onChange={handleSetModifyPostContent} />
-                                <div className='buttons-container'>
-                                    <div className='valider-button' onClick={validateModifyPost}>
-                                        <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                                        <p>Ajouter</p>
-                                    </div>
-                                    <div className='annuler-button' onClick={() => setIdModifyPost(null)}>
-                                        <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                                        <p>Annuler</p>
-                                    </div>
-                                </div>
+                                        {comment.id === idModifyComment && <>
+                                            <Form>
+                                                <Form.Group className="mb-3">
+                                                    <Form.Control as="textarea" rows={3} value={modifyComment} placeholder="Écrivez votre commentaire ici" onChange={(e) => setModifyComment(e.target.value)} />
+                                                </Form.Group>
+                                                <div className="d-flex gap-2">
+                                                    <Button variant="success" onClick={() => validateModifyComment(comment.id)}>Valider</Button>
+                                                    <Button variant="danger" onClick={() => handleSetIdModifyComment(null)}>Annuler</Button>
+                                                </div>
+                                            </Form>
+                                        </>}
+                                    </Card.Body>
+                                </Card>)}
                             </>}
-                    </div>
+
+                            {/* Publication en cours d'édition */}
+                            {idModifyPost === post.id &&
+                                <Form>
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Titre</Form.Label>
+                                        <Col sm="10">
+                                            <Form.Control value={modifyPost.titre} name='titre' type='text' onChange={handleSetModifyPost} />
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group className="mb-3">
+                                        <Form.Check type="checkbox" label="Autoriser les commentaires" checked={modifyPost.is_commentable} name='is_commentable' onChange={handleSetModifyPost} />
+                                        <Form.Check type="checkbox" label="Publication interne" checked={modifyPost.is_publication_interne} name='is_publication_interne' onChange={handleSetModifyPost} />
+                                        <Form.Check type="checkbox" label="Cacher aux 1A" checked={modifyPost.a_cacher_aux_nouveaux} name='a_cacher_aux_nouveaux' onChange={handleSetModifyPost} />
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Cacher aux cycles</Form.Label>
+                                        <Col sm="10">
+                                            {["ic", "ast", "ev", "vs", "isup"].map(cycle => (
+                                                <Form.Check inline key={cycle} type="checkbox" name="a_cacher_to_cycles" value={cycle} label={cycle} checked={modifyPost.a_cacher_to_cycles.includes(cycle)} onChange={handleSetModifyPost} />
+                                            ))}
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Description</Form.Label>
+                                        <RichEditor value={modifyPost.contenu} onChange={handleSetModifyPostContent} />
+                                    </Form.Group>
+                                    <div className="d-flex gap-2">
+                                        <Button variant="success" onClick={validateModifyPost}>Valider</Button>
+                                        <Button variant="danger" onClick={() => setIdModifyPost(null)}>Annuler</Button>
+                                    </div>
+                                </Form>}
+                        </Card.Body>
+                    </Card>
                 )}
             </div>
         </>

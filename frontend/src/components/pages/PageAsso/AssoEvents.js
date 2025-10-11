@@ -6,6 +6,7 @@ import {
     supprimerEvenement
 } from "../../../api/api_evenements";
 import { estUtilisateurDansAsso } from "../../../api/api_associations";
+import { Card, Button, Form, Row, Col } from "react-bootstrap";
 
 function AssoEvents({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
@@ -324,127 +325,201 @@ function AssoEvents({ asso_id }) {
 
     return (
         <>
-            <div className='asso-titre-description'>
+            <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>Les événements</h2>
-                {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => handleIsGestionEvents(!isGestionEvents)}>
-                    <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
-                    <p id="texteCopier">Éditer</p>
-                </div>}
+                {isMembreAutorise && <Button variant="outline-primary" onClick={() => handleIsGestionEvents(!isGestionEvents)}>
+                    <img src="/assets/icons/edit.svg" alt="Edit" />
+                    Éditer
+                </Button>}
             </div>
-            {isGestionEvents && !isNewEvent && <div className='buttons-container'>
-                <div className='valider-button' onClick={() => setIsNewEvent(true)}>
+            {isGestionEvents && !isNewEvent && <div className="d-flex gap-2 mb-3">
+                <Button variant="success" onClick={() => setIsNewEvent(true)}>
                     <img src="/assets/icons/plus.svg" alt="Ajouter un événement" />
-                    <p>Ajouter un événement</p>
-                </div>
+                    Ajouter un événement
+                </Button>
             </div>}
-            <div className='asso-content-container'>
+            <div className="d-flex flex-column gap-3">
 
                 {/* formulaire pour un nouvel événement */}
-                {isNewEvent && <div className='asso-bloc-interne'>
-                    <h2>Titre : <input value={nouvelEvent.nom} name='nom' onChange={handleSetNouvelEvent} /></h2>
-                    <p>Événement périodique <input type="checkbox" checked={nouvelEvent.evenement_periodique} name='evenement_periodique' onChange={handleSetNouvelEvent} /></p>
-                    <p><strong>Quand</strong> : </p>
+                {isNewEvent && <Card>
+                    <Card.Body>
+                        <Form>
+                            <Form.Group as={Row} className="mb-3">
+                                <Form.Label column sm="2">Titre</Form.Label>
+                                <Col sm="10">
+                                    <Form.Control value={nouvelEvent.nom} name='nom' onChange={handleSetNouvelEvent} />
+                                </Col>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Check type="checkbox" label="Événement périodique" checked={nouvelEvent.evenement_periodique} name='evenement_periodique' onChange={handleSetNouvelEvent} />
+                            </Form.Group>
 
-                    {/* événement périodique */}
-                    {nouvelEvent.evenement_periodique && <>
-                        <p>
-                            Jours :
-                            {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map(day => (
-                                <label key={day}>
-                                    <input type="checkbox" name="jours_de_la_semaine" value={day} checked={newEventTempsPeriodique.jours_de_la_semaine.includes(day)} onChange={handleSetNewEventTempsPeriodique} />
-                                    {day}
-                                </label>
-                            ))}
-                        </p>
-                        <p>Heure début : <input value={newEventTempsPeriodique.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetNewEventTempsPeriodique} /></p>
-                        <p>Heure fin : <input value={newEventTempsPeriodique.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetNewEventTempsPeriodique} /></p>
-                    </>}
+                            {nouvelEvent.evenement_periodique && <>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Jours</Form.Label>
+                                    <Col sm="10">
+                                        {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map(day => (
+                                            <Form.Check inline key={day} type="checkbox" name="jours_de_la_semaine" value={day} label={day} checked={newEventTempsPeriodique.jours_de_la_semaine.includes(day)} onChange={handleSetNewEventTempsPeriodique} />
+                                        ))}
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Heure de début</Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control value={newEventTempsPeriodique.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetNewEventTempsPeriodique} />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Heure de fin</Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control value={newEventTempsPeriodique.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetNewEventTempsPeriodique} />
+                                    </Col>
+                                </Form.Group>
+                            </>}
 
-                    {/* événement unique */}
-                    {!nouvelEvent.evenement_periodique && <>
-                        <p>Date de début : <input value={newEventTemps.date_de_debut} name='date_de_debut' type='date' onChange={handleSetNewEventTemps} /></p>
-                        <p>Heure de début : <input value={newEventTemps.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetNewEventTemps} /></p>
-                        <p>Date de fin : <input value={newEventTemps.date_de_fin} name='date_de_fin' type='date' onChange={handleSetNewEventTemps} /></p>
-                        <p>Heure de fin : <input value={newEventTemps.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetNewEventTemps} /></p>
-                    </>}
-                    <p><strong>Où</strong> : <input value={nouvelEvent.lieu} name='lieu' onChange={handleSetNouvelEvent} /></p>
-                    <p>Description : <textarea value={nouvelEvent.description} name='description' onChange={handleSetNouvelEvent} /></p>
-                    {isNewEvent && <div className='buttons-container'>
-                        <div className='valider-button' onClick={validerNouvelEvent}>
-                            <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                            <p>Ajouter</p>
-                        </div>
-                        <div className='annuler-button' onClick={() => setIsNewEvent(false)}>
-                            <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                            <p>Annuler</p>
-                        </div>
-                    </div>}
-                </div>}
+                            {!nouvelEvent.evenement_periodique && <>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Date de début</Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control value={newEventTemps.date_de_debut} name='date_de_debut' type='date' onChange={handleSetNewEventTemps} />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Heure de début</Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control value={newEventTemps.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetNewEventTemps} />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Date de fin</Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control value={newEventTemps.date_de_fin} name='date_de_fin' type='date' onChange={handleSetNewEventTemps} />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Heure de fin</Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control value={newEventTemps.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetNewEventTemps} />
+                                    </Col>
+                                </Form.Group>
+                            </>}
+                            <Form.Group as={Row} className="mb-3">
+                                <Form.Label column sm="2">Lieu</Form.Label>
+                                <Col sm="10">
+                                    <Form.Control value={nouvelEvent.lieu} name='lieu' onChange={handleSetNouvelEvent} />
+                                </Col>
+                            </Form.Group>
+                            <Form.Group as={Row} className="mb-3">
+                                <Form.Label column sm="2">Description</Form.Label>
+                                <Col sm="10">
+                                    <Form.Control as="textarea" value={nouvelEvent.description} name='description' onChange={handleSetNouvelEvent} />
+                                </Col>
+                            </Form.Group>
+                            <div className="d-flex gap-2">
+                                <Button variant="success" onClick={validerNouvelEvent}>Ajouter</Button>
+                                <Button variant="danger" onClick={() => setIsNewEvent(false)}>Annuler</Button>
+                            </div>
+                        </Form>
+                    </Card.Body>
+                </Card>}
 
                 {/* Les événements existants */}
                 {listeEvents.map((event) => (
-                    <div key={event.id} className='asso-bloc-interne'>
-                        {idEventModifier !== event.id &&
-                            <>
-                                <h2>{event.nom}</h2>
-                                <p><strong>Quand</strong> : {formatEventDate(event)}</p>
-                                <p><strong>Où</strong> : {event.lieu}</p>
-                                <p>{event.description}</p>
-                                {isGestionEvents && <div className='buttons-container'>
-                                    <div className='asso-button' onClick={() => handleSetIdEventModifier(event.id)}>
-                                        <img src="/assets/icons/edit.svg" alt="Editer" />
-                                        <p>Editer</p>
-                                    </div>
-                                    <div className='annuler-button' onClick={() => removeEvent(event.id)}>
-                                        <img src="/assets/icons/delete.svg" alt="Supprimer" />
-                                        <p>Supprimer</p>
-                                    </div>
-                                </div>}
-                            </>}
-
-                        {/* Modification d'événement */}
-                        {idEventModifier === event.id &&
-                            <>
-                                <h2>Titre : <input value={modifierEvent.nom} name='nom' onChange={handleSetModifierEvent} /></h2>
-                                <p>Événement périodique <input type="checkbox" checked={modifierEvent.evenement_periodique} name='evenement_periodique' onChange={handleSetModifierEvent} /></p>
-                                <p><strong>Quand</strong> : </p>
-
-                                {/* événement périodique */}
-                                {modifierEvent.evenement_periodique && <>
-                                    <p>
-                                        Jours :
-                                        {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map(day => (
-                                            <label key={day}>
-                                                <input type="checkbox" name="jours_de_la_semaine" value={day} checked={modifierEventTempsPeriodique.jours_de_la_semaine.includes(day)} onChange={handleSetModifierEventTempsPeriodique} />
-                                                {day}
-                                            </label>
-                                        ))}
-                                    </p>
-                                    <p>Heure début : <input value={modifierEventTempsPeriodique.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetModifierEventTempsPeriodique} /></p>
-                                    <p>Heure fin : <input value={modifierEventTempsPeriodique.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetModifierEventTempsPeriodique} /></p>
+                    <Card key={event.id}>
+                        <Card.Body>
+                            {idEventModifier !== event.id &&
+                                <>
+                                    <Card.Title>{event.nom}</Card.Title>
+                                    <Card.Subtitle className="mb-2 text-muted">{formatEventDate(event)}</Card.Subtitle>
+                                    <Card.Text><strong>Où</strong> : {event.lieu}</Card.Text>
+                                    <Card.Text>{event.description}</Card.Text>
+                                    {isGestionEvents && <div className="d-flex gap-2 mt-3">
+                                        <Button variant="primary" onClick={() => handleSetIdEventModifier(event.id)}>Éditer</Button>
+                                        <Button variant="danger" onClick={() => removeEvent(event.id)}>Supprimer</Button>
+                                    </div>}
                                 </>}
 
-                                {/* événement unique */}
-                                {!modifierEvent.evenement_periodique && <>
-                                    <p>Date de début : <input value={modifierEventTemps.date_de_debut} name='date_de_debut' type='date' onChange={handleSetModifierEventTemps} /></p>
-                                    <p>Heure de début : <input value={modifierEventTemps.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetModifierEventTemps} /></p>
-                                    <p>Date de fin : <input value={modifierEventTemps.date_de_fin} name='date_de_fin' type='date' onChange={handleSetModifierEventTemps} /></p>
-                                    <p>Heure de fin : <input value={modifierEventTemps.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetModifierEventTemps} /></p>
-                                </>}
-                                <p><strong>Où</strong> : <input value={modifierEvent.lieu} name='lieu' onChange={handleSetModifierEvent} /></p>
-                                <p>Description : <textarea value={modifierEvent.description} name='description' onChange={handleSetModifierEvent} /></p>
-                                <div className='buttons-container'>
-                                    <div className='valider-button' onClick={validerModifierEvent}>
-                                        <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                                        <p>Ajouter</p>
+                            {/* Modification d'événement */}
+                            {idEventModifier === event.id &&
+                                <Form>
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Titre</Form.Label>
+                                        <Col sm="10">
+                                            <Form.Control value={modifierEvent.nom} name='nom' onChange={handleSetModifierEvent} />
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group className="mb-3">
+                                        <Form.Check type="checkbox" label="Événement périodique" checked={modifierEvent.evenement_periodique} name='evenement_periodique' onChange={handleSetModifierEvent} />
+                                    </Form.Group>
+
+                                    {modifierEvent.evenement_periodique && <>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Jours</Form.Label>
+                                            <Col sm="10">
+                                                {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map(day => (
+                                                    <Form.Check inline key={day} type="checkbox" name="jours_de_la_semaine" value={day} label={day} checked={modifierEventTempsPeriodique.jours_de_la_semaine.includes(day)} onChange={handleSetModifierEventTempsPeriodique} />
+                                                ))}
+                                            </Col>
+                                        </Form.Group>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Heure de début</Form.Label>
+                                            <Col sm="10">
+                                                <Form.Control value={modifierEventTempsPeriodique.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetModifierEventTempsPeriodique} />
+                                            </Col>
+                                        </Form.Group>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Heure de fin</Form.Label>
+                                            <Col sm="10">
+                                                <Form.Control value={modifierEventTempsPeriodique.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetModifierEventTempsPeriodique} />
+                                            </Col>
+                                        </Form.Group>
+                                    </>}
+
+                                    {!modifierEvent.evenement_periodique && <>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Date de début</Form.Label>
+                                            <Col sm="10">
+                                                <Form.Control value={modifierEventTemps.date_de_debut} name='date_de_debut' type='date' onChange={handleSetModifierEventTemps} />
+                                            </Col>
+                                        </Form.Group>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Heure de début</Form.Label>
+                                            <Col sm="10">
+                                                <Form.Control value={modifierEventTemps.heure_de_debut} name='heure_de_debut' type='time' onChange={handleSetModifierEventTemps} />
+                                            </Col>
+                                        </Form.Group>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Date de fin</Form.Label>
+                                            <Col sm="10">
+                                                <Form.Control value={modifierEventTemps.date_de_fin} name='date_de_fin' type='date' onChange={handleSetModifierEventTemps} />
+                                            </Col>
+                                        </Form.Group>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Heure de fin</Form.Label>
+                                            <Col sm="10">
+                                                <Form.Control value={modifierEventTemps.heure_de_fin} name='heure_de_fin' type='time' onChange={handleSetModifierEventTemps} />
+                                            </Col>
+                                        </Form.Group>
+                                    </>}
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Lieu</Form.Label>
+                                        <Col sm="10">
+                                            <Form.Control value={modifierEvent.lieu} name='lieu' onChange={handleSetModifierEvent} />
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Description</Form.Label>
+                                        <Col sm="10">
+                                            <Form.Control as="textarea" value={modifierEvent.description} name='description' onChange={handleSetModifierEvent} />
+                                        </Col>
+                                    </Form.Group>
+                                    <div className="d-flex gap-2">
+                                        <Button variant="success" onClick={validerModifierEvent}>Valider</Button>
+                                        <Button variant="danger" onClick={() => setIdEventModifier(null)}>Annuler</Button>
                                     </div>
-                                    <div className='annuler-button' onClick={() => setIdEventModifier(null)}>
-                                        <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                                        <p>Annuler</p>
-                                    </div>
-                                </div>
-                            </>}
-                    </div>
+                                </Form>}
+                        </Card.Body>
+                    </Card>
                 ))}
             </div>
         </>

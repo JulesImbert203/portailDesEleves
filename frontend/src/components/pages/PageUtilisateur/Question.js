@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { obtenirQuestionsReponses, modifierQuestionsReponses } from "../../../api/api_utilisateurs";
-import '../../../assets/styles/utilisateur.scss';
+import { Button, Form, Row, Col } from "react-bootstrap";
 
 export default function TabQuestions({ id, autoriseAModifier }) {
     const [questionsReponses, setQuestionsReponses] = useState({});
@@ -26,38 +26,32 @@ export default function TabQuestions({ id, autoriseAModifier }) {
     }
 
     return (<>
-        <div className='asso-info-section'>
-            <div className='asso-titre-description'>
-                <h2>Un peu plus sur moi</h2>
-                {autoriseAModifier && <div className='asso-button' id="asso-description-button" onClick={() => setIsGestion(!isGestion)}>
-                    <img src="/assets/icons/edit.svg" alt="Copy" />
-                    <p id="texteCopier">Éditer</p>
-                </div>}
-            </div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+            <h2>Un peu plus sur moi</h2>
+            {autoriseAModifier && <Button variant="outline-primary" onClick={() => setIsGestion(!isGestion)}>
+                <img src="/assets/icons/edit.svg" alt="Edit" /> Éditer
+            </Button>}
         </div>
-        {!isGestion && <>
+
+        {!isGestion ? <>
             {Object.keys(questionsReponses).map(key => {
-                return (<p key={key}>{key.slice(3, -1)} : {questionsReponses[key]}</p>)
+                return (<p key={key}><strong>{key.slice(3, -1)} :</strong> {questionsReponses[key]}</p>)
             })}
-        </>}
-        {isGestion && <>
+        </> : <Form>
             {Array.from(Object.keys(questionsReponses)).sort().map(key => {
-                return (<p key={key}>
-                    {key.slice(3, -1)} : <input type="text" name={key} value={questionsReponses[key]} onChange={handleChange} ></input>
-                </p>)
+                return (
+                    <Form.Group as={Row} className="mb-3" key={key}>
+                        <Form.Label column sm="4">{key.slice(3, -1)}</Form.Label>
+                        <Col sm="8">
+                            <Form.Control type="text" name={key} value={questionsReponses[key]} onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                )
             })}
-            <div className='valider-button' onClick={validerModifierEvent}>
-                <img src="/assets/icons/check-mark.svg" alt="Ajouter" />
-                <p>Ajouter</p>
+            <div className="d-flex gap-2">
+                <Button variant="success" onClick={validerModifierEvent}>Valider</Button>
+                <Button variant="danger" onClick={() => setIsGestion(false)}>Annuler</Button>
             </div>
-            <div className='annuler-button' onClick={() => setIsGestion(false)}>
-                <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                <p>Annuler</p>
-            </div>
-        </>}
-        {/* {isGestion && <div className='asso-bloc-interne'>
-            <p>Titre : <input value={newPost.titre} name='titre' type='text' onChange={handleChange} /></p>
-        </div>} */}
+        </Form>}
     </>)
 }
-

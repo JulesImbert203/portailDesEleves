@@ -62,7 +62,7 @@ function Asso() {
     };
 
     return (
-        <Container className="asso-container">
+        <Container className="position-relative">
             {/* Champ de fichier caché */}
             <input
                 type="file"
@@ -95,7 +95,7 @@ function Asso() {
                 <Card.Body>
                     <Row className="align-items-center">
                         <Col>
-                            <h2 className='asso-nom'>{asso.nom}</h2>
+                            <h2 className="ms-5 me-3">{asso.nom}</h2>
                         </Col>
                         {/* Administration de l'asso */}
                         {isMembreAutorise &&

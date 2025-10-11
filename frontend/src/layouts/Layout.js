@@ -1,4 +1,3 @@
-// src/layouts/Layout.js
 import { createContext, useState, useContext, useEffect } from 'react';
 import Header from '../components/blocs/Header';  // Import du Header
 import BlocSondage from '../components/blocs/blocSondage';  // Bloc de sondage
@@ -8,6 +7,7 @@ import '../assets/styles/layout.scss';  // Import du CSS global du layout
 import { obtenirIdUser, estAuthentifie } from '../api/api_global';
 import { obtenirDataUser } from '../api/api_utilisateurs';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { Container, Row, Col } from 'react-bootstrap';
 
 const LayoutContext = createContext();
 
@@ -46,20 +46,20 @@ export function LayoutProvider() {
       {userData &&
         <div className="layout">
           <Header className="header-global" />
-          <div className="main-content-global">
-            <div className="sidebar-global left">
-              <BlocSondage reloadSondage={reloadSondage} />
-            </div>
-            <div className="content-global">
-              <Outlet />
-            </div>
-            <div className="sidebar-global right">
-                <BlocChat />
-              <div className="bloc-global">
-                <BlocAnniversaire />
-              </div>
-            </div>
-          </div>
+            <Container fluid className="main-content-global">
+                <Row>
+                    <Col md={3} className="sidebar-global left">
+                        <BlocSondage reloadSondage={reloadSondage} />
+                    </Col>
+                    <Col md={6} className="content-global">
+                        <Outlet />
+                    </Col>
+                    <Col md={3} className="sidebar-global right">
+                        <BlocChat />
+                        <BlocAnniversaire />
+                    </Col>
+                </Row>
+            </Container>
         </div>}
     </LayoutContext.Provider>
   );

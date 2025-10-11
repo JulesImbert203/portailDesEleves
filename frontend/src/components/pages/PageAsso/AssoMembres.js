@@ -3,6 +3,7 @@ import { ajouterMembre, chargerAsso, estUtilisateurDansAsso, modifierPositionMem
 import { obtenirListeDesPromos, chargerUtilisateursParPromo } from "../../../api/api_utilisateurs";
 import { BASE_URL } from "../../../api/base";
 import { useNavigate } from "react-router-dom";
+import { Card, Button, Form, Row, Col, Image } from "react-bootstrap";
 
 function AssoMembres({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
@@ -120,74 +121,85 @@ function AssoMembres({ asso_id }) {
     }, [asso_id]);
 
     return (
-        <div className="asso-membres">
-            <div className='asso-titre-description'>
+        <div>
+            <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>Les membres</h2>
-                {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => handleSetIsGestionMembres(!isGestionMembres)}>
-                    <img src="/assets/icons/edit.svg" alt="Copy" className="asso-button-icon" />
-                    <p id="texteCopier">Éditer</p>
-                </div>}
+                {isMembreAutorise && <Button variant="outline-primary" onClick={() => handleSetIsGestionMembres(!isGestionMembres)}>
+                    <img src="/assets/icons/edit.svg" alt="Edit" />
+                    Éditer
+                </Button>}
             </div>
-            <div className="asso-membres-grid">
+            <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                 {listeMembres.map((user) => (
-                    <div className="asso-membres-item" key={user.id}>
-                        <div className='member-image-holder'>
+                    <Col key={user.id}>
+                        <Card className="text-center">
+                            <Card.Body>
+                                <div className="position-relative">
+                                    {isGestionMembres && (<Button variant="danger" size="sm" className="position-absolute top-0 end-0" title="Supprimer ce membre" onClick={() => handleRetirerMembre(user.id)}>
+                                        <img src="/assets/icons/delete.svg" alt="suppression du membre" />
+                                    </Button>)}
+                                    {isGestionMembres && (<Button variant="primary" size="sm" className="position-absolute top-0 start-0" title="Modifier les paramètres" onClick={() => { handleModifierParametres(user.id, user.role, user.position) }}>
+                                        <img src="/assets/icons/edit.svg" alt="modification de rôle" />
+                                    </Button>)}
+                                    <Image
+                                        src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`}
+                                        alt={`${user.nom_utilisateur}`}
+                                        roundedCircle
+                                        fluid
+                                        onClick={() => navigate(`/utilisateur/${user.id}`)}
+                                        style={{cursor: "pointer"}}
+                                    />
+                                </div>
+                                <Card.Title className="mt-2">{user.nom_utilisateur}</Card.Title>
+                                {idMembreModifier !== user.id && <Card.Text>{user.role}</Card.Text>}
 
-                            {/* Bouton pour supprimer le membre */}
-                            {isGestionMembres && (<div className='button-suppression-membre' title='Supprimer ce membre' onClick={() => handleRetirerMembre(user.id)}>
-                                <img src="/assets/icons/delete.svg" alt="suppression du membre" />
-                            </div>)}
-
-                            {/* Bouton pour éditer le rôle et la position */}
-                            {isGestionMembres && (<div className='button-modification-role' title='Modifier les paramètres' onClick={() => { handleModifierParametres(user.id, user.role, user.position) }}>
-                                <img src="/assets/icons/edit.svg" alt="modification de rôle" />
-                            </div>)}
-                            <img
-                                src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`}
-                                alt={`${user.nom_utilisateur}`}
-                                className="asso-membres-photo"
-                                onClick={() => navigate(`/utilisateur/${user.id}`)}
-                            />
-                        </div>
-                        <p className="asso-membres-name">{user.nom_utilisateur}</p>
-                        {idMembreModifier !== user.id && <p className="asso-membres-role">{user.role}</p>}
-
-                        {/* Input pour changer le rôle */}
-                        {idMembreModifier === user.id && <>
-                            <label htmlFor='role-input' className='asso-membres-label'>Rôle</label>
-                            <input value={nouveauRole} id='role-input' className='asso-membres-input' onChange={(e) => setNouveauRole(e.target.value)}></input>
-                        </>}
-                        {isGestionMembres && idMembreModifier !== user.id && <p className="asso-membres-position"><hr />Position : {user.position}</p>}
-
-                        {/* Input pour changer l'ordre d'affichage */}
-                        {idMembreModifier === user.id && <>
-                            <label htmlFor='position-input' className='asso-membres-label'>Position</label>
-                            <input value={nouvellePosition} type='number' id='position-input' className='asso-membres-input' onChange={(e) => setNouvellePosition(e.target.value)}></input>
-                            {/* Validation de changements */}
-                            <button onClick={() => handleMembreChange(user.id)}>Valider</button>
-                        </>}
-                    </div>
+                                {idMembreModifier === user.id && <>
+                                    <Form.Group className="mb-2">
+                                        <Form.Label>Rôle</Form.Label>
+                                        <Form.Control value={nouveauRole} onChange={(e) => setNouveauRole(e.target.value)} />
+                                    </Form.Group>
+                                    <Form.Group className="mb-2">
+                                        <Form.Label>Position</Form.Label>
+                                        <Form.Control type="number" value={nouvellePosition} onChange={(e) => setNouvellePosition(e.target.value)} />
+                                    </Form.Group>
+                                    <Button variant="success" onClick={() => handleMembreChange(user.id)}>Valider</Button>
+                                </>}
+                            </Card.Body>
+                            {isGestionMembres && idMembreModifier !== user.id && <Card.Footer>Position : {user.position}</Card.Footer>}
+                        </Card>
+                    </Col>
                 ))}
 
-                {/* Bouton pour rajouter un nouveau membre */}
-                {isMembreAutorise && isGestionMembres && <div className='asso-membres-item'>
-                    <img src='/assets/icons/plus.svg' alt="Ajouter une association" className="asso-membres-photo-plus" onClick={() => setIsAjoutMembre(!isAjoutMembre)} />
-                    {!isAjoutMembre && <p className="asso-membres-name">Ajouter un membre</p>}
-                    {isAjoutMembre && <>
-                        <label htmlFor='promo-select' className='asso-membres-label'>Promotion</label>
-                        <select id='promo-select' className='asso-newmember-selector' value={promoAjoutMembre} onChange={(e) => handleSetPromoAjoutMembre(e.target.value)}>
-                            <option value="">---</option>
-                            {listePromos.map((promoId) => <option key={promoId}>{promoId}</option>)}
-                        </select>
-                        <label htmlFor='membre-select' className='asso-membres-label'>Nom</label>
-                        <select id='membre-select' className='asso-newmember-selector' value={idAjoutMembre} onChange={(e) => setIdAjoutMembre(e.target.value)}>
-                            <option value="">---</option>
-                            {listeNouveauxMembres.map((user) => <option key={user.id} value={user.id}>{user.nom_utilisateur}</option>)}
-                        </select>
-                        <button onClick={() => handleAjoutMembre(idAjoutMembre)}>Ajouter</button>
-                    </>}
-                </div>}
-            </div>
+                {isMembreAutorise && isGestionMembres && <Col>
+                    <Card className="text-center h-100">
+                        <Card.Body className="d-flex flex-column justify-content-center">
+                            {!isAjoutMembre && <>
+                                <Button variant="outline-primary" onClick={() => setIsAjoutMembre(true)}>
+                                    <img src='/assets/icons/plus.svg' alt="Ajouter une association" style={{width: "50px"}}/>
+                                </Button>
+                                <Card.Title className="mt-2">Ajouter un membre</Card.Title>
+                            </>}
+                            {isAjoutMembre && <>
+                                <Form.Group className="mb-2">
+                                    <Form.Label>Promotion</Form.Label>
+                                    <Form.Select value={promoAjoutMembre} onChange={(e) => handleSetPromoAjoutMembre(e.target.value)}>
+                                        <option value="">---</option>
+                                        {listePromos.map((promoId) => <option key={promoId}>{promoId}</option>)}
+                                    </Form.Select>
+                                </Form.Group>
+                                <Form.Group className="mb-2">
+                                    <Form.Label>Nom</Form.Label>
+                                    <Form.Select value={idAjoutMembre} onChange={(e) => setIdAjoutMembre(e.target.value)}>
+                                        <option value="">---</option>
+                                        {listeNouveauxMembres.map((user) => <option key={user.id} value={user.id}>{user.nom_utilisateur}</option>)}
+                                    </Form.Select>
+                                </Form.Group>
+                                <Button variant="primary" onClick={() => handleAjoutMembre(idAjoutMembre)}>Ajouter</Button>
+                            </>}
+                        </Card.Body>
+                    </Card>
+                </Col>}
+            </Row>
         </div>
     )
 }

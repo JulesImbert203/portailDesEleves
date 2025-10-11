@@ -80,9 +80,9 @@ export default function BlocChat() {
       <Card.Body>
         <div ref={messageDisplayRef} id="message-display" className="overflow-auto mb-3" onScroll={handleScroll}>
           {messages.map((msg, idx) => (
-            <div key={idx} className="p-1 rounded-lg bg-light" style={{ fontSize: "0.8em" }}>
+            <div key={idx} className="p-1 rounded-lg bg-light chat-message">
               <span className="text-muted">{msg.time}</span>{" "}
-              <span style={{ color: msg.is_you ? "blue" : "gray" }}>
+              <span className={msg.is_you ? "chat-author-me" : "chat-author-other"}>
                 {msg.author}
               </span>{" "}
               :{" "}
@@ -91,7 +91,7 @@ export default function BlocChat() {
           ))}
         </div>
         <InputGroup >
-          <Form.Control style={{ fontSize: "0.8em" }}
+          <Form.Control className="chat-input"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
