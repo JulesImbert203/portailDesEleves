@@ -80,7 +80,7 @@ export default function BlocChat() {
       <Card.Body>
         <div ref={messageDisplayRef} id="message-display" className="overflow-auto mb-3" onScroll={handleScroll}>
           {messages.map((msg, idx) => (
-            <div key={idx} className="p-1 rounded-lg bg-light chat-message">
+            <div key={idx} className="p-1 rounded-lg chat-message">
               <span className="text-muted">{msg.time}</span>{" "}
               <span className={msg.is_you ? "chat-author-me" : "chat-author-other"}>
                 {msg.author}

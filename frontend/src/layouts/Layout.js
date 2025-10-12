@@ -48,13 +48,13 @@ export function LayoutProvider() {
           <Header className="header-global" />
             <Container fluid className="main-content-global">
                 <Row>
-                    <Col md={3} className="sidebar-global left">
+                    <Col md={2} className="sidebar-global left">
                         <BlocSondage reloadSondage={reloadSondage} />
                     </Col>
-                    <Col md={6} className="content-global">
+                    <Col md={8} className="content-global">
                         <Outlet />
                     </Col>
-                    <Col md={3} className="sidebar-global right">
+                    <Col md={2} className="sidebar-global right">
                         <BlocChat />
                         <BlocAnniversaire />
                     </Col>

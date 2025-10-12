@@ -2,40 +2,24 @@
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/mixins";
 
-/* Déclaration des variables globales */
 :root {
     --primary-color: #007bff;
-    --secondary-color: #f8f9fa;
-    --valider-color: #28a745;
-    --valider-hover-color: #218838;
-    --annuler-color: #dc3545;
-    --annuler-hover-color: #c82333;
     --text-color: #333;
-    --background-color: white;
-    --asso-border-radius: 15px;
-    --banner-height: 200px;
-    --logo-page-asso-size: 130px;
-    --container-width: 900px;
-    --asso-padding: 25px;
-    --asso-logo-border-size: 6px;
-    --asso-margin-button-admin: 10px;
+}
 
-    /*icon photo modifier*/
-    --asso-margin-photo-modifier: calc(var(--banner-height) * 0.05);
+.asso-banner {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+}
 
-    /**/
-    --asso-bloc-background: hsl(0, 0%, 100%);
-    --asso-bloc-radius: 15px;
-    --asso-bloc-shadow: 0 0px 6px rgba(0, 0, 0, 0.2);
-    --asso-bloc-border: 0px solid var(--global-style-secondary-color);
-
-    /*membres de l'asso*/
-    --asso-members-transition-duration: 0.2s;
-    --asso-members-scale-factor: 1.05;
-    --asso-members-spacing-medium: 20px;
-    --asso-members-spacing-small: 10px;
-    --asso-members-spacing-extra-small: 5px;
-
+.asso-logo {
+    margin-top: -75px;
+    width: 150px;
+    height: 150px;
+    border: 6px solid $light;
+    background-color: $light;
+    object-fit: cover;
 }
 
 .nav-tabs .nav-link {
@@ -46,11 +30,4 @@
 .nav-tabs .nav-link.active {
     color: var(--primary-color);
     border-bottom: 3px solid var(--primary-color);
-}
-
-.tab-content {
-    padding-top: calc(var(--asso-padding)/2);
-    padding-left: var(--asso-padding);
-    padding-bottom: var(--asso-padding);
-    padding-right: var(--asso-padding);
 }
