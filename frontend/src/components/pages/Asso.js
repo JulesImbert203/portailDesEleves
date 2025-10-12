@@ -91,8 +91,7 @@ function Asso() {
                             <Image
                                 src={asso.img ? `${BASE_URL}/upload/associations/${asso.nom_dossier}/${asso.img}` : '/assets/icons/group.svg'}
                                 alt={asso.nom}
-                                roundedCircle
-                                className="asso-logo"
+                                className="asso-logo rounded-3"
                             />
                             {isMembreAutorise && (
                                 <div className="position-absolute top-50 start-50 translate-middle opacity-75">
