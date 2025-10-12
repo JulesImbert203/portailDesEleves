@@ -24,9 +24,9 @@ export default function FormulaireConnexion() {
 
   return (
     <Container className="connexion-main-container d-flex flex-column align-items-center justify-content-center vh-100">
-      <h2>Connexion</h2>
+      <h2 className="m-4">Connexion</h2>
       {erreur && <Alert variant="danger">{erreur}</Alert>}
-      <Form onSubmit={handleSubmit} className="connexion-form">
+      <Form onSubmit={handleSubmit} className="connexion-form border rounded p-4 d-flex flex-column">
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Nom d'utilisateur</Form.Label>
           <Form.Control type="text" placeholder="Entrer le nom d'utilisateur" value={username} onChange={(e) => setUsername(e.target.value)} />

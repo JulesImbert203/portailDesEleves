@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { chargerAsso, estUtilisateurDansAsso, modifierDescriptionAsso } from "../../../api/api_associations";
 import RichEditor, { RichTextDisplay } from '../../blocs/RichEditor';
+import { Button } from "react-bootstrap";
 
 function AssoInfo({ asso_id }) {
     const [isEdition, setIsEdition] = useState(false);
@@ -15,7 +16,7 @@ function AssoInfo({ asso_id }) {
                 setDescription(newDescription);
                 setIsEdition(false);
             } catch (error) {
-                console.log(error);
+                console.err(error);
             }
         }
     };
@@ -43,30 +44,30 @@ function AssoInfo({ asso_id }) {
     return (
         <>
             {/* Description de l'asso */}
-            <div className='asso-info-section'>
-                <div className='asso-titre-description'>
+            <div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
                     <h2>Description de l'association</h2>
-                    {isMembreAutorise && <div className='asso-button' id="asso-description-button" onClick={() => setIsEdition(!isEdition)}>
+                    {isMembreAutorise && <Button variant="outline-primary" onClick={() => setIsEdition(!isEdition)}>
                         <img src="/assets/icons/edit.svg" alt="Copy" />
-                        <p id="texteCopier">Éditer</p>
-                    </div>}
+                        Éditer
+                    </Button>}
                 </div>
                 {/*  */}
-                {!isEdition && <div className='asso-description'>
+                {!isEdition && <div>
                     <RichTextDisplay content={description}></RichTextDisplay>
                 </div>}
                 {/* Modification de description */}
                 {isEdition && <>
                     <RichEditor value={newDescription} onChange={setNewDescription} />
-                    <div className='buttons-container'>
-                        <div className='valider-button' onClick={handleModifierDescription}>
+                    <div className="d-flex gap-2 mt-3">
+                        <Button variant="success" onClick={handleModifierDescription}>
                             <img src="/assets/icons/check-mark.svg" alt="Valider" />
-                            <p>Valider</p>
-                        </div>
-                        <div className='annuler-button' onClick={annulerModifierDescription}>
+                            Valider
+                        </Button>
+                        <Button variant="danger" onClick={annulerModifierDescription}>
                             <img src="/assets/icons/cross-mark.svg" alt="Annuler" />
-                            <p>Annuler</p>
-                        </div>
+                            Annuler
+                        </Button>
                     </div>
                 </>}
             </div>

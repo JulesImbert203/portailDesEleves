@@ -5,7 +5,7 @@ import { seDeconnecter } from '../../api/api_global';
 import { verifierSuperutilisateur } from '../../api/api_utilisateurs';
 import { useEffect, useState } from 'react';
 import { verifierPermission } from '../../api/api_soifguard';
-import { Container, Row, Col, Dropdown, Button } from 'react-bootstrap';
+import { Container, Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
 
 import '../../assets/styles/header.scss';
 
@@ -39,42 +39,26 @@ export default function Header() {
   }
 
   return (
-    <Container fluid className="global-header-header">
-      <Row className="align-items-center">
-        <Col xs="auto">
-          <Dropdown>
-            <Dropdown.Toggle variant="primary" id="dropdown-menu">
-              Menu
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={() => navigate("/")}>Accueil</Dropdown.Item>
-              <Dropdown.Item onClick={() => navigate("/assos")}>Assos</Dropdown.Item>
-              <Dropdown.Item onClick={() => navigate("/assos/planning")}>Planning associatif</Dropdown.Item>
-              <Dropdown.Item onClick={() => navigate("/trombi")}>Trombinoscope</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </Col>
-        {hasPermission && <Col xs="auto"><Button variant="info" onClick={() => navigate("/soifguard")}>Soifguard</Button></Col>}
-        {isSuperUser && <Col xs="auto"><Button variant="danger" onClick={() => navigate("/administration")}>Administration</Button></Col>}
-
-        <Col className="text-center">
-          <h1 onClick={() => navigate("/")} style={{ cursor: "pointer" }}>Portail des élèves</h1>
-        </Col>
-
-        <Col xs="auto">
-          <Dropdown>
-            <Dropdown.Toggle variant="secondary" id="dropdown-user">
-              {userData ? userData.nom_utilisateur : "Chargement..."}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu align="end">
-              <Dropdown.Item onClick={() => navigate(`utilisateur/${userData.id}`)}>Ma page</Dropdown.Item>
-              <Dropdown.Item onClick={() => handleLogout()}>Se déconnecter</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </Col>
-      </Row>
-    </Container>
+    <Navbar bg="dark" variant="dark" expand="lg" className="global-header-header">
+      <Container fluid>
+        <NavDropdown title="Menu" id="basic-nav-dropdown">
+            <NavDropdown.Item onClick={() => navigate("/")}>Accueil</NavDropdown.Item>
+            <NavDropdown.Item onClick={() => navigate("/assos")}>Assos</NavDropdown.Item>
+            <NavDropdown.Item onClick={() => navigate("/assos/planning")}>Planning associatif</NavDropdown.Item>
+            <NavDropdown.Item onClick={() => navigate("/trombi")}>Trombinoscope</NavDropdown.Item>
+        </NavDropdown>
+        <Nav className="me-auto">
+            {hasPermission && <Button variant="info" onClick={() => navigate("/soifguard")}>Soifguard</Button>}
+            {isSuperUser && <Button variant="danger" onClick={() => navigate("/administration")}>Administration</Button>}
+        </Nav>
+        <Navbar.Brand href="#" onClick={() => navigate("/")} className="mx-auto">Portail des élèves</Navbar.Brand>
+        <Nav>
+            <NavDropdown title={userData ? userData.nom_utilisateur : "Chargement..."} id="basic-nav-dropdown" align="end">
+                <NavDropdown.Item onClick={() => navigate(`utilisateur/${userData.id}`)}>Ma page</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => handleLogout()}>Se déconnecter</NavDropdown.Item>
+            </NavDropdown>
+        </Nav>
+      </Container>
+    </Navbar>
   );
 };
