@@ -1,4 +1,3 @@
-// src/components/blocs/Header.js
 import { useNavigate } from 'react-router-dom';
 import { useLayout } from '../../layouts/Layout';
 import { seDeconnecter } from '../../api/api_global';
@@ -39,25 +38,30 @@ export default function Header() {
   }
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="global-header-header">
+    <Navbar bg="dark" variant="dark" expand="md" className="global-header-header">
       <Container fluid>
-        <NavDropdown title="Menu" id="basic-nav-dropdown">
-            <NavDropdown.Item onClick={() => navigate("/")}>Accueil</NavDropdown.Item>
-            <NavDropdown.Item onClick={() => navigate("/assos")}>Assos</NavDropdown.Item>
-            <NavDropdown.Item onClick={() => navigate("/assos/planning")}>Planning associatif</NavDropdown.Item>
-            <NavDropdown.Item onClick={() => navigate("/trombi")}>Trombinoscope</NavDropdown.Item>
-        </NavDropdown>
-        <Nav className="me-auto">
-            {hasPermission && <Button variant="info" onClick={() => navigate("/soifguard")}>Soifguard</Button>}
-            {isSuperUser && <Button variant="danger" onClick={() => navigate("/administration")}>Administration</Button>}
-        </Nav>
-        <Navbar.Brand href="#" onClick={() => navigate("/")} className="mx-auto">Portail des élèves</Navbar.Brand>
-        <Nav>
-            <NavDropdown title={userData ? userData.nom_utilisateur : "Chargement..."} id="basic-nav-dropdown" align="end">
+        <Navbar.Brand href="#" onClick={() => navigate("/")}>Portail des élèves</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <NavDropdown title="Menu" id="basic-nav-dropdown">
+                <NavDropdown.Item onClick={() => navigate("/")}>Accueil</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigate("/assos")}>Assos</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigate("/assos/planning")}>Planning associatif</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigate("/trombi")}>Trombinoscope</NavDropdown.Item>
+            </NavDropdown>
+            <div className="d-grid d-md-flex gap-2 mt-2 mt-md-0 ms-md-3">
+                {hasPermission && <Button variant="info" size="sm" onClick={() => navigate("/soifguard")}>Soifguard</Button>}
+                {isSuperUser && <Button variant="danger" size="sm" onClick={() => navigate("/administration")}>Administration</Button>}
+            </div>
+          </Nav>
+          <Nav className="ms-auto">
+            <NavDropdown title={userData ? userData.nom_utilisateur : "Chargement..."} id="user-nav-dropdown" align="end">
                 <NavDropdown.Item onClick={() => navigate(`utilisateur/${userData.id}`)}>Ma page</NavDropdown.Item>
                 <NavDropdown.Item onClick={() => handleLogout()}>Se déconnecter</NavDropdown.Item>
             </NavDropdown>
-        </Nav>
+          </Nav>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );
