@@ -165,10 +165,12 @@ def assos_utilisateur(user_id: int):
 
     data = {
         "associations_actuelles": [
-            {"role": role.role, "nom": role.association.nom, "asso_id": role.association_id} for role in roles_actuels
+            {"role": role.role, "nom": role.association.nom, "id": role.association_id, "img": role.association.logo_path, "nom_dossier": role.association.nom_dossier}
+            for role in roles_actuels
         ],
         "associations_anciennes": [
-            {"role": role.role, "nom": role.association.nom, "asso_id": role.association_id} for role in roles_anciens
+            {"role": role.role, "nom": role.association.nom, "id": role.association_id, "img": role.association.logo_path, "nom_dossier": role.association.nom_dossier}
+            for role in roles_anciens
         ]
     }
     return jsonify(data)

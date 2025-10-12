@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import '../../../assets/styles/liste_assos.scss';
 import '../../../assets/styles/asso.scss';
 
+import { Row, Container } from "react-bootstrap";
 import { obtenirAssosUtilisateur } from "../../../api/api_utilisateurs";
 import { BASE_URL } from "../../../api/base";
 import { useNavigate } from "react-router-dom";
+import AssoCard from "../../elements/AssoCard";
 
 
 export default function TabAsso({ id }) {
@@ -17,6 +19,7 @@ export default function TabAsso({ id }) {
         const chargerAssos = async () => {
             const data = await obtenirAssosUtilisateur(id);
             setAssosActuelles(data.associations_actuelles);
+            console.log(assosActuelles)
         };
         chargerAssos();
     }, [id]);
@@ -27,50 +30,22 @@ export default function TabAsso({ id }) {
     };
 
     return (<>
-        <div className="liste-assos">
+        <Container className="py-4">
             <h2>Assos actuelles</h2>
-            <div className="liste-assos__grid">
-                <div className="liste-assos__grid-container">
-                    {assosActuelles.map((asso) => (
-                        <div
-                            key={asso.id}
-                            className="liste-assos__grid-item"
-                            onClick={() => handleClick(asso.asso_id)}
-                        >
-                            <img
-                                src={`http://${BASE_URL}/upload/associations/${asso.nom_dossier}/${asso.img}`}
-                                alt={asso.nom}
-                                className="liste-assos__image"
-                            />
-                            <p className="liste-assos__name">{asso.nom}</p>
-                            <p className="asso-membre-role">{asso.role}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-        <div className="liste-assos">
-            <h2>Anciennes assos</h2>
-            <div className="liste-assos__grid">
-                <div className="liste-assos__grid-container">
-                    {assosAnciennes.map((asso) => (
-                        <div
-                            key={asso.id}
-                            className="liste-assos__grid-item"
-                            onClick={() => handleClick(asso.asso_id)}
-                        >
-                            <img
-                                src={`http://${BASE_URL}/upload/associations/${asso.nom_dossier}/${asso.img}`}
-                                alt={asso.nom}
-                                className="liste-assos__image"
-                            />
-                            <p className="liste-assos__name">{asso.nom}</p>
-                            <p className="asso-membre-role">{asso.role}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
+            <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-4 justify-content-center">
+                {assosActuelles.map((asso) => (
+                    <AssoCard asso={asso} />
+                ))}
+            </Row>
+        </Container>
+        <Container className="py-4">
+            <h2>Assos anciennes</h2>
+            <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-4 justify-content-center">
+                {assosAnciennes.map((asso) => (
+                    <AssoCard asso={asso} />
+                ))}
+            </Row>
+        </Container>
     </>);
 }
 

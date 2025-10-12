@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { obtenirListeDesUtilisateurs } from '../../api/api_utilisateurs';
 import { useNavigate, useParams } from 'react-router-dom';
+import UserCard from '../elements/UserCard';
 
 function TrombiPromo() {
     const [cyclesSelectionnes, setCyclesSelectionnes] = useState(["ic", "ast", "ev", "vs"]); // Les cycles sont pré-cochés
@@ -35,9 +36,9 @@ function TrombiPromo() {
             <div>
                 {cyclesDisponibles.map(cycle => (
                     <label key={cycle}>
-                        <input 
-                            type="checkbox" 
-                            value={cycle} 
+                        <input
+                            type="checkbox"
+                            value={cycle}
                             checked={cyclesSelectionnes.includes(cycle)}
                             onChange={() => toggleCycle(cycle)}
                         />
@@ -47,16 +48,10 @@ function TrombiPromo() {
             </div>
 
             {cyclesSelectionnes.length > 0 ? (
-                <div className='liste_utilisateurs_grid'>
-                    <div className='liste_utilisateurs_grid_container'>
-                        {utilisateurs.map(user => (
-                            <div className='liste_utilisateurs_grid_item' key={user.id} onClick={() => navigate(`/utilisateur/${user.id}`)}>
-                                {user.prenom} {user.surnom ? `'${user.surnom}'` : ''} {user.nom}
-                                <br />
-                                {user.cycle} {user.promotion}
-                            </div>
-                        ))}
-                    </div>
+                <div className="member-grid">
+                    {utilisateurs.map(user => (
+                        <UserCard user={user} isGestion={false} isModifying={false} />
+                    ))}
                 </div>
             ) : (
                 <div className='liste_utilisateurs'></div> // Affiche une page blanche si aucune case n'est cochée

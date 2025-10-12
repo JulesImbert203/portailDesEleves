@@ -4,6 +4,7 @@ import { obtenirListeDesPromos, chargerUtilisateursParPromo } from "../../../api
 import { BASE_URL } from "../../../api/base";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Form } from "react-bootstrap";
+import UserCard from "../../elements/UserCard";
 
 function AssoMembres({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
@@ -131,48 +132,25 @@ function AssoMembres({ asso_id }) {
             </div>
             <div className="member-grid">
                 {listeMembres.map((user) => (
-                    <Card key={user.id} className="text-center">
-                        <div className="position-relative">
-                            {isGestionMembres && (<Button variant="danger" size="sm" className="position-absolute top-0 end-0" title="Supprimer ce membre" onClick={() => handleRetirerMembre(user.id)} style={{ zIndex: 1 }}>
-                                <img src="/assets/icons/delete.svg" alt="suppression du membre" />
-                            </Button>)}
-                            {isGestionMembres && (<Button variant="primary" size="sm" className="position-absolute top-0 start-0" title="Modifier les paramètres" onClick={() => { handleModifierParametres(user.id, user.role, user.position) }} style={{ zIndex: 1 }}>
-                                <img src="/assets/icons/edit.svg" alt="modification de rôle" />
-                            </Button>)}
-                            <Card.Img
-                                variant="top"
-                                src={`${BASE_URL}/upload/utilisateurs/09brique.jpg`}
-                                alt={`${user.nom_utilisateur}`}
-                                onClick={() => navigate(`/utilisateur/${user.id}`)}
-                                style={{cursor: "pointer"}}
-                            />
-                        </div>
-                        <Card.Body>
-                            <Card.Title className="h6 bold">{user.nom_utilisateur}</Card.Title>
-                            {idMembreModifier !== user.id && <Card.Text>{user.role}</Card.Text>}
-
-                            {idMembreModifier === user.id && <>
-                                <Form.Group className="mb-2">
-                                    <Form.Label>Rôle</Form.Label>
-                                    <Form.Control value={nouveauRole} onChange={(e) => setNouveauRole(e.target.value)} />
-                                </Form.Group>
-                                <Form.Group className="mb-2">
-                                    <Form.Label>Position</Form.Label>
-                                    <Form.Control type="number" value={nouvellePosition} onChange={(e) => setNouvellePosition(e.target.value)} />
-                                </Form.Group>
-                                <Button variant="success" onClick={() => handleMembreChange(user.id)}>Valider</Button>
-                            </>}
-                        </Card.Body>
-                        {isGestionMembres && idMembreModifier !== user.id && <Card.Footer>Position : {user.position}</Card.Footer>}
-                    </Card>
+                    <UserCard user={user} isGestion={isGestionMembres} isModifying={idMembreModifier === user.id}
+                        f1={() => handleRetirerMembre(user.id)}
+                        t1="Supprimer ce membre"
+                        f2={() => { handleModifierParametres(user.id, user.role, user.position) }}
+                        t2="Modifier les paramètres"
+                        values={[
+                            { label: "Rôle", value: nouveauRole, onChange: (e) => setNouveauRole(e.target.value) },
+                            { label: "Position", value: nouvellePosition, onChange: (e) => setNouvellePosition(e.target.value) }
+                        ]}
+                        validate={() => handleMembreChange(user.id)}
+                    />
                 ))}
 
-                {isMembreAutorise && isGestionMembres && 
+                {isMembreAutorise && isGestionMembres &&
                     <Card className="text-center h-100">
                         <Card.Body className="d-flex flex-column justify-content-center">
                             {!isAjoutMembre && <>
                                 <Button variant="outline-primary" onClick={() => setIsAjoutMembre(true)}>
-                                    <img src='/assets/icons/plus.svg' alt="Ajouter une association" style={{width: "50px"}}/>
+                                    <img src='/assets/icons/plus.svg' alt="Ajouter une association" style={{ width: "50px" }} />
                                 </Button>
                                 <Card.Title className="mt-2">Ajouter un membre</Card.Title>
                             </>}
