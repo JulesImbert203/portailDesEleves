@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import { obtenirQuestionsReponses, modifierQuestionsReponses } from "../../../api/api_utilisateurs";
 import { Button, Form, Row, Col } from "react-bootstrap";
+import BoutonEditer from "../../elements/BoutonEditer";
 
 export default function TabQuestions({ id, autoriseAModifier }) {
     const [questionsReponses, setQuestionsReponses] = useState({});
@@ -28,9 +29,7 @@ export default function TabQuestions({ id, autoriseAModifier }) {
     return (<>
         <div className="d-flex justify-content-between align-items-center mb-3">
             <h2>Un peu plus sur moi</h2>
-            {autoriseAModifier && <Button variant="outline-primary" onClick={() => setIsGestion(!isGestion)}>
-                <img src="/assets/icons/edit.svg" alt="Edit" /> Éditer
-            </Button>}
+            {autoriseAModifier && <BoutonEditer onClick={() => setIsGestion(!isGestion)}/>}
         </div>
 
         {!isGestion ? <>

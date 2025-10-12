@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { chargerAsso, estUtilisateurDansAsso, modifierDescriptionAsso } from "../../../api/api_associations";
 import RichEditor, { RichTextDisplay } from '../../blocs/RichEditor';
 import { Button } from "react-bootstrap";
+import BoutonEditer from "../../elements/BoutonEditer";
 
 function AssoInfo({ asso_id }) {
     const [isEdition, setIsEdition] = useState(false);
@@ -47,10 +48,7 @@ function AssoInfo({ asso_id }) {
             <div>
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h2>Description de l'association</h2>
-                    {isMembreAutorise && <Button variant="outline-primary" onClick={() => setIsEdition(!isEdition)}>
-                        <img src="/assets/icons/edit.svg" alt="Copy" />
-                        Éditer
-                    </Button>}
+                    {isMembreAutorise && <BoutonEditer onClick={() => setIsEdition(!isEdition)}/>}
                 </div>
                 {/*  */}
                 {!isEdition && <div>

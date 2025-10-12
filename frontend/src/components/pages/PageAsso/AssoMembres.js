@@ -5,6 +5,7 @@ import { BASE_URL } from "../../../api/base";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Form } from "react-bootstrap";
 import UserCard from "../../elements/UserCard";
+import BoutonEditer from "../../elements/BoutonEditer";
 
 function AssoMembres({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
@@ -125,10 +126,7 @@ function AssoMembres({ asso_id }) {
         <div>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>Les membres</h2>
-                {isMembreAutorise && <Button variant="outline-primary" onClick={() => handleSetIsGestionMembres(!isGestionMembres)}>
-                    <img src="/assets/icons/edit.svg" alt="Edit" />
-                    Éditer
-                </Button>}
+                {isMembreAutorise && <BoutonEditer onClick={() => handleSetIsGestionMembres(!isGestionMembres)}/>}
             </div>
             <div className="member-grid">
                 {listeMembres.map((user) => (

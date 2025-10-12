@@ -5,6 +5,7 @@ import { useLayout } from "../../../layouts/Layout";
 import RichEditor, { RichTextDisplay } from "../../blocs/RichEditor";
 import { BASE_URL } from "../../../api/base";
 import { Card, Button, Form, Row, Col, Image } from "react-bootstrap";
+import BoutonEditer from "../../elements/BoutonEditer";
 
 function AssoPosts({ asso_id }) {
     const { userData } = useLayout();
@@ -266,10 +267,7 @@ function AssoPosts({ asso_id }) {
         <>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>Les publications</h2>
-                {isMembreAutorise && <Button variant="outline-primary" onClick={() => setIsGestion(!isGestion)}>
-                    <img src="/assets/icons/edit.svg" alt="Edit" />
-                    Éditer
-                </Button>}
+                {isMembreAutorise && <BoutonEditer onClick={() => setIsGestion(!isGestion)}/>}
             </div>
             {isGestion && !isNewPost && <div className="d-flex gap-2 mb-3">
                 <Button variant="success" onClick={() => setIsNewPost(true)}>

@@ -7,6 +7,7 @@ import {
 } from "../../../api/api_evenements";
 import { estUtilisateurDansAsso } from "../../../api/api_associations";
 import { Card, Button, Form, Row, Col } from "react-bootstrap";
+import BoutonEditer from "../../elements/BoutonEditer";
 
 function AssoEvents({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
@@ -327,10 +328,7 @@ function AssoEvents({ asso_id }) {
         <>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>Les événements</h2>
-                {isMembreAutorise && <Button variant="outline-primary" onClick={() => handleIsGestionEvents(!isGestionEvents)}>
-                    <img src="/assets/icons/edit.svg" alt="Edit" />
-                    Éditer
-                </Button>}
+                {isMembreAutorise && <BoutonEditer onClick={() => handleIsGestionEvents(!isGestionEvents)}/>}
             </div>
             {isGestionEvents && !isNewEvent && <div className="d-flex gap-2 mb-3">
                 <Button variant="success" onClick={() => setIsNewEvent(true)}>

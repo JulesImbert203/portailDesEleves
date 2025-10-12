@@ -3,6 +3,7 @@ import Select from "react-select";
 import { chargerUtilisateursParPromo, modifierInfos, obtenirDataUser} from "../../../api/api_utilisateurs";
 import { Row, Col, Button, Form, InputGroup } from "react-bootstrap";
 import { useLayout } from "../../../layouts/Layout";
+import BoutonEditer from "../../elements/BoutonEditer";
 
 function DropDownSelect({ options, open, setOpen, selected, setSelected, single }) {
     return (<div>
@@ -123,9 +124,7 @@ export default function TabInfo({ id, autoriseAModifier }) {
     }
 
     return (<>
-        {autoriseAModifier && <Button variant="outline-primary" className="float-end" onClick={() => setIsGestion(!isGestion)}>
-            <img src="/assets/icons/edit.svg" alt="Edit" /> Éditer
-        </Button>}
+        {autoriseAModifier && <BoutonEditer onClick={() => setIsGestion(!isGestion)}/>}
         
         <Row className="mb-3">
             <Col md={6}>
