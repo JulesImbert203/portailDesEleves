@@ -22,8 +22,8 @@ export default function BlocAnniversaire() {
         <Card.Body>
             {annivs.map(elt => {
                 return (
-                    <div key={elt[0]}>
-                        <p>{new Date(elt[0]).toLocaleString("fr-FR", { day: "numeric", month: "long" })}</p>
+                    <div key={elt[0]} className='mb-3'>
+                        <p className='mb-0'>{new Date(elt[0]).toLocaleString("fr-FR", { day: "numeric", month: "long" })}</p>
                         {elt[1].map(user => {
                             const prenom = user[0];
                             const nom = user[1];

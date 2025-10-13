@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { obtenirListeDesUtilisateurs } from '../../api/api_utilisateurs';
 import { useNavigate, useParams } from 'react-router-dom';
 import UserCard from '../elements/UserCard';
+import { Container, Form, Button, Row, Col } from 'react-bootstrap';
+import '../../assets/styles/asso.scss';
+import '../../assets/styles/_TrombiPromo.scss';
 
 function TrombiPromo() {
     const [cyclesSelectionnes, setCyclesSelectionnes] = useState(["ic", "ast", "ev", "vs"]); // Les cycles sont pré-cochés
@@ -31,34 +34,40 @@ function TrombiPromo() {
     };
 
     return (
-        <div className='page_d_une_promo'>
+        <Container className="py-4 trombi-promo-page">
+            <Button variant="outline-secondary" onClick={() => navigate("/trombi")} className="mb-3">
+                Retour
+            </Button>
             <h1>Promotion {promo}</h1>
-            <div>
-                {cyclesDisponibles.map(cycle => (
-                    <label key={cycle}>
-                        <input
-                            type="checkbox"
-                            value={cycle}
-                            checked={cyclesSelectionnes.includes(cycle)}
-                            onChange={() => toggleCycle(cycle)}
-                        />
-                        {cycle}
-                    </label>
-                ))}
-            </div>
+            <Form className="mb-4">
+                <Row>
+                    <Col>
+                        {cyclesDisponibles.map(cycle => (
+                            <Form.Check
+                                inline
+                                key={cycle}
+                                type="checkbox"
+                                id={`cycle-${cycle}`}
+                                label={cycle.toUpperCase()}
+                                value={cycle}
+                                checked={cyclesSelectionnes.includes(cycle)}
+                                onChange={() => toggleCycle(cycle)}
+                            />
+                        ))}
+                    </Col>
+                </Row>
+            </Form>
 
             {cyclesSelectionnes.length > 0 ? (
                 <div className="member-grid">
                     {utilisateurs.map(user => (
-                        <UserCard user={user} isGestion={false} isModifying={false} />
+                        <UserCard user={user} key={user.id} isGestion={false} isModifying={false} />
                     ))}
                 </div>
             ) : (
-                <div className='liste_utilisateurs'></div> // Affiche une page blanche si aucune case n'est cochée
+                <p>Aucun cycle sélectionné.</p>
             )}
-
-            <button onClick={() => navigate("/trombi")}>Retour</button>
-        </div>
+        </Container>
     );
 }
 

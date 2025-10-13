@@ -12,3 +12,13 @@
     --trombinoscope-item-hover-scale: 1.05;
     --trombinoscope-grid-gap: 15px;
 }
+
+.trombi-card {
+  cursor: pointer;
+  transition: transform var(--trombinoscope-transition), box-shadow var(--trombinoscope-transition);
+
+  &:hover {
+    transform: scale(var(--trombinoscope-item-hover-scale));
+    box-shadow: var(--trombinoscope-shadow);
+  }
+}

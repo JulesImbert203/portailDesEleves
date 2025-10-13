@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { obtenirListeDesPromos } from '../../api/api_utilisateurs';
 import { useNavigate } from 'react-router-dom';
-import { Container, ListGroup } from 'react-bootstrap';
+import { Container, Card } from 'react-bootstrap';
+import '../../assets/styles/asso.scss';
+import '../../assets/styles/trombi.scss';
 
 function Trombi() {
     const [listePromos, setListePromos] = useState(null);
@@ -28,17 +30,15 @@ function Trombi() {
     return (
         <Container className="py-4">
             <h1>Trombinoscopes</h1>
-            <ListGroup>
+            <div className="member-grid">
                 {listePromos.map((promo, index) => (
-                    <ListGroup.Item 
-                        action 
-                        onClick={() => navigate(`/trombi/get/${promo}`)}
-                        key={index}
-                    >
-                        {promo}
-                    </ListGroup.Item>
+                    <Card onClick={() => navigate(`/trombi/get/${promo}`)} key={index} className="text-center trombi-card">
+                        <Card.Body>
+                            <Card.Title>{promo}</Card.Title>
+                        </Card.Body>
+                    </Card>
                 ))}
-            </ListGroup>
+            </div>
         </Container>
     );
 }

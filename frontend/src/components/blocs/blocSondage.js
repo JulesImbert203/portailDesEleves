@@ -115,7 +115,7 @@ export default function BlocSondage({ reloadSondage }) {
   return (
     <Card className="bloc-global">
       <Card.Header as="h5" className="text-center">Sondage du jour</Card.Header>
-      <Card.Body>
+      <Card.Body className='d-flex flex-column'>
         {content}
       </Card.Body>
       <Card.Footer className="d-flex justify-content-between">
