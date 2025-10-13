@@ -24,14 +24,14 @@ function ProposerSondage() {
     // Appel de la fonction proposerSondage du fichier api.js pour soumettre les données
     const data = await requeteProposerSondage(question, reponses);
     if (data.etat) {
-        setMessage("Sondage soumis avec succès!");
-        
-        // Réinitialiser les champs du formulaire après soumission réussie
-        setQuestion("");
-        setReponses(["", ""]);
-      } else {
-        setMessage(data.message);
-      }
+      setMessage("Sondage soumis avec succès!");
+
+      // Réinitialiser les champs du formulaire après soumission réussie
+      setQuestion("");
+      setReponses(["", ""]);
+    } else {
+      setMessage(data.message);
+    }
   };
 
   // Fonction pour ajouter une réponse
@@ -80,31 +80,32 @@ function ProposerSondage() {
                 required
               />
               {reponses.length > 2 && (
-                <Button variant="outline-danger" onClick={() => removeReponse(index)}>
+                <Button variant="danger" onClick={() => removeReponse(index)}>
                   <img src="/assets/icons/delete.svg" alt="Supprimer" />
                 </Button>
               )}
             </InputGroup>
           ))}
           {reponses.length < 4 && (
-            <Button variant="outline-primary" onClick={addReponse}>
-                <img src="/assets/icons/plus.svg" alt="Ajouter" />
+            <Button variant="light border d-flex gap-1 justify-content-center" onClick={addReponse}>
+              <img src="/assets/icons/plus.svg" alt="Ajouter" />
+              <span>Rajouter une option</span>
             </Button>
           )}
         </Form.Group>
 
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" className="mb-3">
           Soumettre
         </Button>
       </Form>
 
       {message && (
-        <Alert variant={message.includes("succès") ? "success" : "danger"} className="mt-3">
+        <Alert variant={message.includes("succès") ? "success" : "danger"}>
           {message}
         </Alert>
       )}
 
-      <Button variant="link" onClick={() => navigate("/")} className="mt-3">
+      <Button variant="secondary" onClick={() => navigate("/")}>
         Retour
       </Button>
     </Container>

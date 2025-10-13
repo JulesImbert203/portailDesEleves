@@ -1,18 +1,20 @@
 // src/components/blocs/BlocSondage.jsx
 import { useEffect, useState } from 'react';
-import {obtenirDataUser } from '../../api/api_utilisateurs';
-import {obtenirSondageDuJour, voterSondage} from '../../api/api_sondages';
+import { obtenirDataUser, verifierSuperutilisateur } from '../../api/api_utilisateurs';
+import { obtenirSondageDuJour, voterSondage } from '../../api/api_sondages';
 import { obtenirIdUser } from '../../api/api_global';
-import {useLayout} from './../../layouts/Layout';
+import { useLayout } from './../../layouts/Layout';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, ProgressBar } from 'react-bootstrap';
 
 export default function BlocSondage({ reloadSondage }) {
   const [sondage, setSondage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { reloadBlocSondage} = useLayout();
+  const { reloadBlocSondage } = useLayout();
   const [voteUser, setVoteUser] = useState(null);
+  const [isSuperUser, setIsSuperUser] = useState(false);
   const navigate = useNavigate();
+
   const voterEtReload = async (id_vote) => {
     try {
       await voterSondage(id_vote);  // Attendre la fin du vote
@@ -21,9 +23,18 @@ export default function BlocSondage({ reloadSondage }) {
       console.error("Erreur lors du vote et du rechargement du sondage", error);
     }
   };
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const check = await verifierSuperutilisateur()
+      setIsSuperUser(check.is_superuser)
+    }
+    checkUser()
+  })
+
   useEffect(() => {
     async function fetchSondageAndVote() {
-      setLoading(true); 
+      setLoading(true);
       try {
         const id_user = await obtenirIdUser();
         if (id_user) {
@@ -92,36 +103,37 @@ export default function BlocSondage({ reloadSondage }) {
   } else {
     content = (
       <>
-        <h3 className="h3 fw-bold">Pas de sondage aujourd'hui</h3>
-        <div className="d-flex justify-content-center" onClick={() => navigate("/sondage/proposer")}>
-          <img src="assets/icons/plus.svg" alt="Bouton en forme de plus" style={{width: "70px", transition: "transform 0.2s ease", cursor: "pointer"}}/>
-        </div>
+        <p className="h4 fw-bold text-center">Pas de sondage aujourd'hui</p>
+        <Button variant='light border' onClick={() => navigate("/sondage/proposer")} style={{cursor : "pointer"}}>
+          <img src="/assets/icons/plus.svg" alt="Bouton en forme de plus" style={{ width: "70px", transition: "transform 0.2s ease"}} />
+          <p className="h6 text-center">Proposer un nouveau sondage</p>
+        </Button>
       </>
     );
   }
 
   return (
     <Card className="bloc-global">
-        <Card.Header as="h5" className="text-center">Sondage du jour</Card.Header>
-        <Card.Body>
-            {content}
-        </Card.Body>
-      <Card.Footer className="d-flex flex-row-reverse">
+      <Card.Header as="h5" className="text-center">Sondage du jour</Card.Header>
+      <Card.Body>
+        {content}
+      </Card.Body>
+      <Card.Footer className="d-flex justify-content-between">
         <Button
           variant="light"
           onClick={() => navigate("/sondage/proposer")}
         >
-          <img src="/assets/icons/plus.svg" alt="Bouton en forme de plus" style={{filter: "brightness(0) saturate(100%)", transition: "transform 0.2s ease"}}/>
+          <img src="/assets/icons/plus.svg" alt="Bouton en forme de plus" style={{ filter: "brightness(0) saturate(100%)", transition: "transform 0.2s ease" }} />
         </Button>
-        <Button
+        {isSuperUser && <Button
           variant="light"
           onClick={() => navigate("/sondage/gerer")}
         >
-          <img src="/assets/icons/manage.svg" alt="Bouton en rouage" style={{filter: "brightness(0) saturate(100%)", transition: "transform 0.2s ease"}}/>
-        </Button>
+          <img src="/assets/icons/manage.svg" alt="Bouton en rouage" style={{ filter: "brightness(0) saturate(100%)", transition: "transform 0.2s ease" }} />
+        </Button>}
       </Card.Footer>
     </Card>
   );
 
-  
+
 }

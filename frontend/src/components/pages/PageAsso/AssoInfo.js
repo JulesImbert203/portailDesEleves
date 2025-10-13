@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { chargerAsso, estUtilisateurDansAsso, modifierDescriptionAsso } from "../../../api/api_associations";
-import RichEditor, { RichTextDisplay } from '../../blocs/RichEditor';
+import RichEditor, { RichTextDisplay } from '../../elements/RichEditor';
 import { Button } from "react-bootstrap";
 import BoutonEditer from "../../elements/BoutonEditer";
 

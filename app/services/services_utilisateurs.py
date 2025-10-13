@@ -104,9 +104,9 @@ def prochains_anniv():
     begin = date(year=2000, month=date.today().month, day=date.today().day - 1)
     end = begin + timedelta(days=7)
 
-    users = db.session.query(Utilisateur.nom, Utilisateur.date_de_naissance).all()
-    ret = sorted([(user.date_de_naissance, user.nom) for user in users if comp(user.date_de_naissance, begin, end)])
-    ret = [(k, list(map(lambda x: x[1], list(g)))) for k, g in groupby(ret, lambda x: x[0])]
+    users = db.session.query(Utilisateur.id, Utilisateur.prenom, Utilisateur.nom, Utilisateur.cycle, Utilisateur.promotion, Utilisateur.date_de_naissance).all()
+    ret = sorted([(user.date_de_naissance, user.prenom, user.nom, user.cycle, user.promotion, user.id) for user in users if comp(user.date_de_naissance, begin, end)])
+    ret = [(k, list(map(lambda x: (x[1], x[2], x[3], x[4], x[5]), list(g)))) for k, g in groupby(ret, lambda x: x[0])]
     print (ret)
     return ret
     

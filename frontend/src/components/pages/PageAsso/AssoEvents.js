@@ -7,7 +7,7 @@ import {
 } from "../../../api/api_evenements";
 import { estUtilisateurDansAsso } from "../../../api/api_associations";
 import { Card, Button, Form, Row, Col } from "react-bootstrap";
-import BoutonEditer from "../../elements/BoutonEditer";
+import BoutonEditer from "../../elements/BoutonEditer"; 
 
 function AssoEvents({ asso_id }) {
     const [isMembreAutorise, setIsMembreAutorise] = useState(false);
